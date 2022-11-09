@@ -1,27 +1,26 @@
-# Create T3 App
+## What?
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+What is this? Well, I ask that question to myself every time I start a new project. However, for phobia. I have an answer. **Phobia** is a platform that __*provides a safe, secure and an anonymous*__ environment for everyone who want's to **journal, rant, vent or help other's** in their lives.
 
-## What's next? How do I make an app with this?
+## Why?
 
-We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
+To put simply, **Phobia** goal is to give people a voice, To whom? To people like me. I want common voice's to heard. I want people to come together to foster an environment where a human can help his fellow kind. *Mental health is barely talked about in our society!!*. Phobia is for everyone who want's to help other's and also for everyone who just wanna rant about their day or vent in a anonymous way. I'm sure there are thousands of people who feel the same way, just like me. So I built **Phobia**.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Ok, Cool but how?
 
-- [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [TailwindCSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+How? Well, I'm glad you asked. Phobia is built on top of the T3 Stack. What is t3 stack? Here's a quick overview:
+- T3 ensures e2e type safety. (Extremely Important)
+- What is 'T3'?
+  - T3 generally means, Typesafe, Tailwind and tRPC, however there is also NextJS, Next-Auth and Prisma which are all remarkable products. Combine them, you get t3.
+- What is 'Typesafe'?
+  - Google.
 
-We also [roll our own docs](https://beta.create.t3.gg) with some summary information and links to the respective documentation.
+## I want to contribute
 
-Also checkout these awesome tutorials on `create-t3-app`.
+Thank You! <3 I'm glad you want to contribute. Here's how you can contribute:
 
-- [Build a Blog With the T3 Stack - tRPC, TypeScript, Next.js, Prisma & Zod](https://www.youtube.com/watch?v=syEWlxVFUrY)
-- [Build a Live Chat Application with the T3 Stack - TypeScript, Tailwind, tRPC](https://www.youtube.com/watch?v=dXRRY37MPuk)
-- [Build a full stack app with create-t3-app](https://www.nexxel.dev/blog/ct3a-guestbook)
-- [A first look at create-t3-app](https://dev.to/ajcwebdev/a-first-look-at-create-t3-app-1i8f)
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deployment/vercel) and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more information.
+```bash
+git clone <repo_link>
+yarn install
+yarn dev
+```
