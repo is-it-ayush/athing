@@ -1,5 +1,3 @@
-'use client';
-
 import { cva, VariantProps } from 'class-variance-authority';
 
 const ButtonStyles = cva(
@@ -20,7 +18,7 @@ const ButtonStyles = cva(
       styles: 'default',
       letterSpaced: 'default',
     },
-  },
+  }
 );
 
 export interface ButtonProps extends VariantProps<typeof ButtonStyles> {

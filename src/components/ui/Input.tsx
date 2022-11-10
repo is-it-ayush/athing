@@ -31,17 +31,21 @@ export interface InputProps extends VariantProps<typeof InputStyles> {
   id: string;
   type: string;
   label: string;
-  value: React.DetailedHTMLProps<
+  value?: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >['value'];
-  onChange: React.DetailedHTMLProps<
+  onChange?: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >['onChange'];
+  checked?: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >['checked'];
 }
 
-export const Input = ({ id, type, label, value, onChange, ...props }: InputProps) => {
+export const Input = ({ id, type, label, value, checked, onChange, ...props }: InputProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const getType = () => {
     if (type === 'password') {
@@ -49,6 +53,29 @@ export const Input = ({ id, type, label, value, onChange, ...props }: InputProps
     }
     return type;
   };
+
+  if (type === 'checkbox') {
+    return (
+      <div className="my-2 flex items-center justify-center">
+        <input
+          id={id}
+          type={type}
+          className={InputStyles(props)}
+          checked={checked}
+          onChange={onChange}
+          style={{
+            width: '1.0rem',
+            backgroundColor: checked ? 'green' : 'white',
+          }}
+        />
+        <label
+          htmlFor={id}
+          className="ml-2 flex h-full w-full items-center justify-center whitespace-nowrap text-sm">
+          {label}
+        </label>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-col">
