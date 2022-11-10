@@ -453,6 +453,21 @@
     "@typescript-eslint/types" "5.42.1"
     eslint-visitor-keys "^3.3.0"
 
+"@zxcvbn-ts/core@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/core/-/core-2.1.0.tgz#026ffaba5b09cb05ee80f28b0183f75217d267d1"
+  integrity sha512-doxol9xrO7LgyVJhguXe7vO0xthnIYmsOKoDwrLg0Ho2kkpQaVtM+AOQw+BkEiKIqNg1V48eUf4/cTzMElXdiA==
+
+"@zxcvbn-ts/language-common@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/language-common/-/language-common-2.0.1.tgz#01c371a64e86de417c317b4443aaa0a0f07f917b"
+  integrity sha512-P+v5MA/UNc9nb3FEOEoDgTyIGQc2vLc6m04pdf5YyuNOzrL0iNANhECk2TUp62JbrjouJVodqhMH0j1a8/24Bg==
+
+"@zxcvbn-ts/language-en@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/language-en/-/language-en-2.1.0.tgz#52c797914380546b191e5b915e0e9843116eae18"
+  integrity sha512-I3n4AAbArjPAZtwCrk9MQnSrcj5+9rq8sic2rUU44fP5QaR17Vk8zDt61+R9dnP9ZRsj09aAUYML4Ash05qZjQ==
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

@@ -1,5 +1,5 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import React from 'react';
+import React, { ReactHTMLElement } from 'react';
 
 // Icons
 import { GrFormView, GrFormViewHide } from 'react-icons/gr';
@@ -31,9 +31,17 @@ export interface InputProps extends VariantProps<typeof InputStyles> {
   id: string;
   type: string;
   label: string;
+  value: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >['value'];
+  onChange: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >['onChange'];
 }
 
-export const Input = ({ id, type, label, ...props }: InputProps) => {
+export const Input = ({ id, type, label, value, onChange, ...props }: InputProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const getType = () => {
     if (type === 'password') {
@@ -46,15 +54,20 @@ export const Input = ({ id, type, label, ...props }: InputProps) => {
     <div className="relative flex flex-col">
       <div className="my-2 flex flex-col">
         <label htmlFor={id}>{label}</label>
-        <input id={id} type={getType()} className={InputStyles(props)} />
+        <input
+          id={id}
+          type={getType()}
+          className={InputStyles(props)}
+          value={value}
+          onChange={onChange}
+        />
       </div>
       {type === 'password' && (
         <div
           className="animate-fade-in absolute right-2 top-[50%] flex cursor-pointer duration-200"
           onClick={() => {
             setShowPassword(!showPassword);
-          }}
-        >
+          }}>
           {showPassword ? (
             <GrFormView className="flex h-[28px] w-[28px]" />
           ) : (
