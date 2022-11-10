@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["trpc"]
+  "cSpell.words": ["trpc"],
+  "html.format.wrapAttributes": "force-aligned",
+  "editor.formatOnSave": true,
+  
 }
