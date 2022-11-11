@@ -1,7 +1,7 @@
 import React from 'react';
 import { type NextPage } from 'next';
 import { trpc } from '@utils/trpc';
-import { loadZxcvbn } from '@utils/client.util';
+import { handleError, loadZxcvbn } from '@utils/client.util';
 import { zxcvbn, zxcvbnOptions, ZxcvbnResult } from '@zxcvbn-ts/core';
 import { z } from 'zod';
 import { useFormik } from 'formik';
@@ -14,6 +14,8 @@ import { StrengthBar } from '@components/ui/StrengthBar';
 import { Loading } from '@components/ui/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { Toast, ToastIntent } from '@components/ui/Toast';
+import { TRPCError } from '@trpc/server';
 
 // PNG
 
@@ -22,6 +24,11 @@ const SignupPage: NextPage = () => {
   const [pwdStrength, setPwdStrength] = React.useState<ZxcvbnResult>(zxcvbn(''));
   const [showPage, setShowPage] = React.useState(0);
   const router = useRouter();
+
+  // Required Toast State
+  const [showToast, setShowToast] = React.useState(false);
+  const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
+  const [toastMessage, setToastMessage] = React.useState('');
 
   //TRPC
   const mutation = trpc.user.signup.useMutation();
@@ -47,11 +54,18 @@ const SignupPage: NextPage = () => {
       },
       validationSchema: toFormikValidationSchema(signupSchema),
       onSubmit: async (values, actions) => {
-        actions.setSubmitting(true);
-        await mutation.mutateAsync({
-          password: values.password,
-        });
-        setShowPage(1);
+        try {
+          actions.setSubmitting(true);
+          const res = await mutation.mutateAsync({
+            password: values.password,
+          });
+          setShowPage(1);
+        } catch (err: TRPCError | any) {
+          const errorMessage = (await handleError(err)) as string;
+          setToastIntent('error');
+          setToastMessage(errorMessage);
+          setShowToast(true);
+        }
       },
     });
 
@@ -75,7 +89,7 @@ const SignupPage: NextPage = () => {
   }
 
   return (
-    <main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
+    <main className="min-w-screen flex h-screen flex-col items-center justify-center overflow-hidden font-spacemono">
       <div className="flex">
         <AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
       </div>
@@ -139,6 +153,16 @@ const SignupPage: NextPage = () => {
               Login
             </Button>
           </motion.div>
+        ) : null}
+        {showToast ? (
+          <Toast
+            key="toastKey"
+            intent={toastIntent}
+            message={toastMessage}
+            onClose={() => {
+              setShowToast(!showToast);
+            }}
+          />
         ) : null}
       </AnimatePresence>
     </main>

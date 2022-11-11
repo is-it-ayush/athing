@@ -4,6 +4,8 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
 import { User } from "@prisma/client";
+import jwt, { Secret } from "jsonwebtoken";
+import { env } from "process";
 
 export const userRouter = router({
     login: publicProcedure.input(z.object(
@@ -27,7 +29,7 @@ export const userRouter = router({
 
             // Doesn't exist; Return.
             if (!user) {
-                throw new TRPCError({ code: 'BAD_REQUEST' });
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
             }
 
 
@@ -35,14 +37,18 @@ export const userRouter = router({
             const valid: Boolean = await comparePassword(password, user.password);
 
             if (!valid) {
-                throw new TRPCError({ code: 'UNAUTHORIZED' });
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
             }
 
-            // TODO: Create JWT
+            // TODO: Create JWT Cookie
+            const secret = env.JWT_SECRET as Secret;
+            const token = jwt.sign({ id: user.id }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
+
 
 
             return {
-                result: true
+                result: true,
+                token: token
             };
         }
         catch (err: TRPCError | any) {
@@ -95,7 +101,7 @@ export const userRouter = router({
             }) as User;
 
             if (!createUser) {
-                throw new TRPCError({ code: 'BAD_REQUEST' });
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create account.', });
             }
 
             return {
