@@ -41,7 +41,7 @@ export const userRouter = router({
             }
 
             // TODO: Create JWT Cookie
-            const secret = env.JWT_SECRET as Secret;
+            const secret = await process.env.JWT_SECRET as string;
             const token = jwt.sign({ id: user.id }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
 
 
@@ -116,4 +116,23 @@ export const userRouter = router({
             // --todo-- add error logging to sentry
         }
     }),
+    logout: protectedProcedure.mutation(async ({ ctx }) => {
+
+
+
+        try {
+            // --todo-- delete JWT Cookie
+            return {
+                result: true
+            };
+        }
+        catch (err: TRPCError | any) {
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
+
+            // --todo-- add error logging to sentry
+        }
+    }
+    ),
 });

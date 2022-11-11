@@ -1,19 +1,18 @@
-import { NextPage } from 'next/types';
-import { motion, AnimatePresence } from 'framer-motion';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import { useRouter } from 'next/navigation';
+import { NextPage } from 'next/types';
 import React from 'react';
 
 const AuthPage: NextPage = () => {
-  // Redirect to login if cookie is not set.
-  const cookies = parseCookies();
+  // Redirect if user is already logged in.
   const router = useRouter();
+  const cookies = parseCookies();
 
   React.useEffect(() => {
-    if (!cookies.token) {
-      router.replace('/auth/login');
+    if (cookies.token && cookies.token != null) {
+      router.push('/app');
     } else {
-      router.replace('/');  
+      router.push('/auth/login');
     }
   }, []);
 

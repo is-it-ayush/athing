@@ -4,6 +4,7 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { NextApiRequest } from "next/types";
 import superjson from "superjson";
 import * as jwt from "jsonwebtoken";
+import { parseCookies } from "nookies";
 
 import { type AppRouter } from "../server/trpc/router/_app";
 
@@ -50,8 +51,11 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
  */
 
 export const getSession = async (opts: { req: NextApiRequest }) => {
-  
-  const session = opts.req.cookies.session as string | undefined;
+
+  console.log(`getSession called!`);
+  const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
+  const session = cookies.token ?? null;
+  const secret = await process.env.JWT_SECRET as string
 
   if (!session) {
     return null;
@@ -59,10 +63,13 @@ export const getSession = async (opts: { req: NextApiRequest }) => {
 
   // Verify JWT (Typescript)
   try {
-    const decoded = jwt.verify(session, process.env.JWT_SECRET as string) as {
-      userId: string;
+    const decoded = jwt.verify(session, secret) as {
+      id: string;
     };
-    return decoded.userId
+
+    // --todo-- check if the user exists and has proper permissions (isn't blacklisted). If not, return null.
+
+    return decoded.id
   }
   catch (err) {
     return null;

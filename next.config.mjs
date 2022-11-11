@@ -3,15 +3,30 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
  */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+!process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
   swcMinify: true,
   i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
+  async redirects() {
+    return [
+      {
+        source: '/auth',
+        has: [
+          {
+            type: 'cookie',
+            key: 'token',
+          },
+        ],
+        permanent: false,
+        destination: '/app',
+      },
+    ];
   },
 };
 export default config;
