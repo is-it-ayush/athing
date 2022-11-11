@@ -15,3 +15,10 @@ export const loadZxcvbn = async (): Promise<{}> => {
         translations: translations.default.translations
     };
 };
+
+
+export type TypeMutationResponseData = {
+    data: JSON,
+    message: string,
+    statusCode: number
+}

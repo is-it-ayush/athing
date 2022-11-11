@@ -2,18 +2,19 @@ import { z } from "zod";
 
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { comparePassword, formatResponse, generateUsername, hashPassword } from "../../../utils/server.util";
+import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
 import { User } from "@prisma/client";
 
 export const userRouter = router({
     login: publicProcedure.input(z.object(
         {
-            username: z.string().regex(/^[a-zA-Z0-9_]{3,20}$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
-            password: z.string().min(8, 'Password must be at least 8 characters long.'),
+            username: z.string().regex(/^[a-z0-9]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
+            password: z.string().min(8, 'Password must be at least 8 characters long.').max(20, 'Password must be at most 20 characters long.'),
+            rememberMe: z.boolean()
         }
-    )).query(async ({ input, ctx }) => {
+    )).mutation(async ({ input, ctx }) => {
 
-        const { username, password } = input;
+        const { username, password, rememberMe } = input;
 
         try {
 
@@ -26,8 +27,9 @@ export const userRouter = router({
 
             // Doesn't exist; Return.
             if (!user) {
-                throw new TRPCError({ code: 'UNAUTHORIZED' });
+                throw new TRPCError({ code: 'BAD_REQUEST' });
             }
+
 
             // Exists; compare password
             const valid: Boolean = await comparePassword(password, user.password);
@@ -39,15 +41,20 @@ export const userRouter = router({
             // TODO: Create JWT
 
 
-            return formatResponse('Login successful', 200);
+            return {
+                result: true
+            };
         }
-        catch (err) {
-            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        catch (err: TRPCError | any) {
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
 
             // --todo-- add error logging to sentry
         }
 
-    }),
+    }
+    ),
     signup: publicProcedure.input(z.object(
         {
             password: z.string().min(8, 'Password must be at least 8 characters long.'),
@@ -91,10 +98,14 @@ export const userRouter = router({
                 throw new TRPCError({ code: 'BAD_REQUEST' });
             }
 
-            return formatResponse('User created successfully', 201, { username: createUser.username });
+            return {
+                username: createUser.username
+            };
         }
-        catch (err) {
-            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        catch (err: TRPCError | any) {
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
 
             // --todo-- add error logging to sentry
         }

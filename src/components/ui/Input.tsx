@@ -43,6 +43,10 @@ export interface InputProps extends VariantProps<typeof InputStyles> {
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >['checked'];
+  onBlur?: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >['onBlur'];
 }
 
 export const Input = ({ id, type, label, value, checked, onChange, ...props }: InputProps) => {
@@ -59,7 +63,7 @@ export const Input = ({ id, type, label, value, checked, onChange, ...props }: I
       <div className="my-2 flex items-center justify-center">
         <input
           id={id}
-          type={type}
+          type="checkbox"
           className={InputStyles(props)}
           checked={checked}
           onChange={onChange}

@@ -1,7 +1,7 @@
 import { cva, VariantProps } from 'class-variance-authority';
 
 const ButtonStyles = cva(
-  'flex flex-col p-3 my-2 border-2 border-gray-400 text-center justify-center items-center w-full duration-200',
+  'flex flex-col p-3 my-2 border-2 border-gray-400 text-center justify-center items-center w-full duration-200 disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       styles: {
@@ -24,11 +24,17 @@ const ButtonStyles = cva(
 export interface ButtonProps extends VariantProps<typeof ButtonStyles> {
   children: React.ReactNode;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
-export const Button = ({ children, onClick, ...props }: ButtonProps) => {
+export const Button = ({ children, onClick, disabled, type, ...props }: ButtonProps) => {
   return (
-    <button onClick={onClick} className={ButtonStyles(props)}>
+    <button
+      onClick={onClick}
+      className={ButtonStyles(props)}
+      disabled={disabled}
+      type={type ?? 'button'}>
       {children}
     </button>
   );

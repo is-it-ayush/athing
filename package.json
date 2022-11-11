@@ -24,6 +24,7 @@
     "@zxcvbn-ts/language-en": "^2.1.0",
     "bcrypt": "^5.1.0",
     "class-variance-authority": "^0.3.0",
+    "formik": "^2.2.9",
     "framer-motion": "^7.6.5",
     "jsonwebtoken": "^8.5.1",
     "next": "13.0.2",
@@ -31,7 +32,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
     "superjson": "1.9.1",
-    "zod": "^3.18.0"
+    "zod": "^3.18.0",
+    "zod-formik-adapter": "^1.1.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.9",
