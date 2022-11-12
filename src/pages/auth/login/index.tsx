@@ -18,161 +18,161 @@ import { Toast, ToastIntent } from '@components/ui/Toast';
 import { handleError } from '@utils/client.util';
 
 const LoginPage: NextPage = () => {
-  const params = useSearchParams();
-  const router = useRouter();
+	const params = useSearchParams();
+	const router = useRouter();
 
-  // Required Toast State
-  const [showToast, setShowToast] = React.useState(false);
-  const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-  const [toastMessage, setToastMessage] = React.useState('');
+	// Required Toast State
+	const [showToast, setShowToast] = React.useState(false);
+	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
+	const [toastMessage, setToastMessage] = React.useState('');
 
-  //TRPC
-  const mutation = trpc.user.login.useMutation();
+	//TRPC
+	const mutation = trpc.user.login.useMutation();
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    if (errors.username || errors.password) {
-      setToastIntent('error');
-      setToastMessage('Please check your username and password');
-      setShowToast(true);
-      return;
-    }
+	const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+		if (errors.username || errors.password) {
+			setToastIntent('error');
+			setToastMessage('Please check your username and password');
+			setShowToast(true);
+			return;
+		}
 
-    try {
-      // [DEBUG] Calculate Time
-      // const start = Date.now();
+		try {
+			// [DEBUG] Calculate Time
+			// const start = Date.now();
 
-      const res = await mutation.mutateAsync({
-        username: values.username.trim(),
-        password: values.password.trim(),
-        rememberMe: values.rememberMe,
-      });
+			const res = await mutation.mutateAsync({
+				username: values.username.trim(),
+				password: values.password.trim(),
+				rememberMe: values.rememberMe,
+			});
 
-      // Set the cookie on the client side.
-      setCookie(null, 'token', res.token, {
-        maxAge: values.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
-        path: '/',
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
-      });
+			// Set the cookie on the client side.
+			setCookie(null, 'token', res.token, {
+				maxAge: values.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
+				path: '/',
+				sameSite: 'strict',
+				secure: process.env.NODE_ENV === 'production',
+			});
 
-      // [DEBUG] Stop the time.
-      // const end = Date.now();
-      // console.log(`Login took ${end - start}ms`);
+			// [DEBUG] Stop the time.
+			// const end = Date.now();
+			// console.log(`Login took ${end - start}ms`);
 
-      setToastIntent('success');
-      setToastMessage('Successfully logged in!');
-      setShowToast(true);
+			setToastIntent('success');
+			setToastMessage('Successfully logged in!');
+			setShowToast(true);
 
-      setTimeout(() => {
-        router.push('/app');
-      }, 1000);
+			setTimeout(() => {
+				router.push('/app');
+			}, 1000);
 
-      // Redirect to the app.
-    } catch (err: TRPCError | any) {
-      const errorMessage = (await handleError(err)) as string;
-      setToastIntent('error');
-      setToastMessage(errorMessage);
-      setShowToast(true);
-    }
-  };
+			// Redirect to the app.
+		} catch (err: TRPCError | any) {
+			const errorMessage = (await handleError(err)) as string;
+			setToastIntent('error');
+			setToastMessage(errorMessage);
+			setShowToast(true);
+		}
+	};
 
-  // Zod Schema for form input validation
-  const loginSchema = z.object({
-    username: z
-      .string()
-      .trim()
-      .min(3)
-      .max(20)
-      .regex(/^[a-z0-9]+$/),
-    password: z.string().trim().min(8).max(20),
-    rememberMe: z.boolean(),
-  });
+	// Zod Schema for form input validation
+	const loginSchema = z.object({
+		username: z
+			.string()
+			.trim()
+			.min(3)
+			.max(20)
+			.regex(/^[a-z0-9]+$/),
+		password: z.string().trim().min(8).max(20),
+		rememberMe: z.boolean(),
+	});
 
-  // Formik hook for form validation and control.
-  const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } =
-    useFormik({
-      initialValues: {
-        username: params.get('username') || '',
-        password: '',
-        rememberMe: false,
-      },
-      validationSchema: toFormikValidationSchema(loginSchema),
-      onSubmit,
-    });
+	// Formik hook for form validation and control.
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } =
+		useFormik({
+			initialValues: {
+				username: params.get('username') || '',
+				password: '',
+				rememberMe: false,
+			},
+			validationSchema: toFormikValidationSchema(loginSchema),
+			onSubmit,
+		});
 
-  React.useEffect(() => {
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        handleSubmit();
-      }
-    });
-  }, []);
+	React.useEffect(() => {
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				handleSubmit();
+			}
+		});
+	}, []);
 
-  return (
-    <main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
-      <div className="flex">
-        <AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
-      </div>
-      <AnimatePresence>
-        <motion.div
-          className="flex min-w-[250px] flex-col"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}>
-          <h1 className="my-2 text-4xl font-bold">Log In</h1>
-          <Input
-            label="Username"
-            type="text"
-            intent="default"
-            id="username"
-            fullWidth={true}
-            value={values.username}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <Input
-            label="Password"
-            type="password"
-            intent="default"
-            id="password"
-            fullWidth={true}
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <Input
-            label="Remember me for 30 days."
-            type="checkbox"
-            intent="default"
-            id="rememberMe"
-            checked={values.rememberMe}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <Button
-            letterSpaced={true}
-            disabled={isSubmitting || Object.keys(errors).length > 0}
-            type="submit"
-            onClick={() => {
-              handleSubmit();
-            }}>
-            Log In
-          </Button>
-        </motion.div>
-        {showToast ? (
-          <Toast
-            key="toastKey"
-            intent={toastIntent}
-            message={toastMessage}
-            onClose={() => {
-              setShowToast(!showToast);
-            }}
-          />
-        ) : null}
-      </AnimatePresence>
-    </main>
-  );
+	return (
+		<main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
+			<div className="flex">
+				<AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
+			</div>
+			<AnimatePresence>
+				<motion.div
+					className="flex min-w-[250px] flex-col"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.3 }}>
+					<h1 className="my-2 text-4xl font-bold">Log In</h1>
+					<Input
+						label="Username"
+						type="text"
+						intent="default"
+						id="username"
+						fullWidth={true}
+						value={values.username}
+						onChange={handleChange}
+						onBlur={handleBlur}
+					/>
+					<Input
+						label="Password"
+						type="password"
+						intent="default"
+						id="password"
+						fullWidth={true}
+						value={values.password}
+						onChange={handleChange}
+						onBlur={handleBlur}
+					/>
+					<Input
+						label="Remember me for 30 days."
+						type="checkbox"
+						intent="default"
+						id="rememberMe"
+						checked={values.rememberMe}
+						onChange={handleChange}
+						onBlur={handleBlur}
+					/>
+					<Button
+						letterSpaced={true}
+						disabled={isSubmitting || Object.keys(errors).length > 0}
+						type="submit"
+						onClick={() => {
+							handleSubmit();
+						}}>
+						Log In
+					</Button>
+				</motion.div>
+				{showToast ? (
+					<Toast
+						key="toastKey"
+						intent={toastIntent}
+						message={toastMessage}
+						onClose={() => {
+							setShowToast(!showToast);
+						}}
+					/>
+				) : null}
+			</AnimatePresence>
+		</main>
+	);
 };
 
 export default LoginPage;
