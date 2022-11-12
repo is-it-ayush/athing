@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { Button } from './Button';
 
@@ -33,9 +33,6 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 				}, 2000);
 			}
 		} catch (err: TRPCError | any) {
-			// [DEBUG]
-			console.log(JSON.stringify(err, null, 2));
-
 			const errorMessage = (await handleError(err)) as string;
 			setToastIntent('error');
 			setToastMessage(errorMessage);
@@ -48,7 +45,15 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
 	const [toastMessage, setToastMessage] = React.useState('');
 
-	React.useEffect(() => {}, [text]);
+	React.useEffect(() => {
+		if (text.length >= 3000) {
+			setToastIntent('error');
+			setToastMessage('Your note is too long! Checkout Journals?');
+			setShowToast(true);
+		} else {
+			setShowToast(false);
+		}
+	}, [text]);
 
 	return (
 		<motion.div
@@ -57,6 +62,16 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}>
+			{
+				<div className="fixed top-0 left-0 flex h-3 w-screen">
+					<span
+						className="transition-all duration-300 "
+						style={{
+							backgroundColor: '#000000',
+							width: `${(text.length / 3000) * 100}%`,
+						}}></span>
+				</div>
+			}
 			<div className="fixed top-5 right-5 flex flex-col">
 				<Button
 					flex="row"
@@ -89,6 +104,8 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 					<textarea
 						className="h-full w-full p-20"
 						placeholder="hey, it'll get better. tell me all about it!!!"
+						minLength={20}
+						maxLength={3000}
 						value={text}
 						onChange={(e) => {
 							setText(e.target.value);
@@ -96,16 +113,18 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 					/>
 				) : null
 			}
-			{showToast ? (
-				<Toast
-					key="toastKey"
-					intent={toastIntent}
-					message={toastMessage}
-					onClose={() => {
-						setShowToast(!showToast);
-					}}
-				/>
-			) : null}
+			<AnimatePresence>
+				{showToast ? (
+					<Toast
+						key="toastKey"
+						intent={toastIntent}
+						message={toastMessage}
+						onClose={() => {
+							setShowToast(!showToast);
+						}}
+					/>
+				) : null}
+			</AnimatePresence>
 		</motion.div>
 	);
 };

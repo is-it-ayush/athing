@@ -7,9 +7,12 @@ import { Post } from "@prisma/client";
 
 export const postRouter = router({
     create: protectedProcedure.input(z.object({
-        text: z.string().trim().min(20, 'Post must be at least 1 character long.').max(3000, 'Post must be at most 1000 characters long.'),
+        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
     })).mutation(async ({ input, ctx }) => {
         const { text } = input;
+
+        // [DEBUG]
+        console.log(`Length: ${text.length}`);
 
         try {
 
@@ -101,7 +104,7 @@ export const postRouter = router({
     }),
     edit: protectedProcedure.input(z.object({
         id: z.string().trim(),
-        text: z.string().trim().min(20, 'Post must be at least 1 character long.').max(3000, 'Post must be at most 1000 characters long.'),
+        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
     })).mutation(async ({ input, ctx }) => {
         const { id, text } = input;
 
@@ -133,5 +136,5 @@ export const postRouter = router({
             // --todo-- add error logging to sentry
         }
 
-    }),
+    })
 });

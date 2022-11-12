@@ -1,6 +1,7 @@
 import { TRPCClientError } from '@trpc/client';
 import { TRPCError } from '@trpc/server';
 import { getHTTPStatusCodeFromError } from '@trpc/server/http';
+import { ZodError } from 'zod';
 
 export const loadZxcvbn = async (): Promise<{}> => {
 
@@ -20,7 +21,10 @@ export const loadZxcvbn = async (): Promise<{}> => {
 };
 
 export const handleError = async (err: any) => {
+
+
     if (err instanceof TRPCClientError) {
+
         switch (err.message) {
             case 'UNAUTHORIZED':
                 return 'You are not authorized to perform this action.';
@@ -29,11 +33,16 @@ export const handleError = async (err: any) => {
                 return 'Invalid username or password.';
                 break;
             default:
-                return 'An unknown error has occurred.';
+                try {
+                    let parsedError = JSON.parse(err.message);
+                    return parsedError[0].message ?? 'An unknown error occurred.';
+                }
+                catch (err: any) {
+                    return 'An unknown error occurred.';
+                }
                 break;
         }
     } else {
-        console.log(err)
         return 'Something went wrong.'
     }
 }
