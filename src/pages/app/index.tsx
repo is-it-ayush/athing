@@ -18,16 +18,17 @@ export const App: NextPage = () => {
 
 	return (
 		<AnimatePresence>
+			<Navbar key="navigation" pageController={setShowPage} menuController={[showMenu, setShowMenu]} />
 			<motion.div
-				className="flex h-screen w-screen flex-col items-center justify-center font-spacemono"
+				key="content"
+				className="flex h-screen w-screen flex-col font-spacemono"
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				exit={{ opacity: 0 }}
 				transition={{ duration: 0.5 }}>
-				<Navbar pageController={setShowPage} menuController={[showMenu, setShowMenu]} />
 				{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <div>404</div>}
-				<Menu pageController={setShowPage} menuController={showMenu} />
 			</motion.div>
+			<Menu key="menu" pageController={setShowPage} menuController={showMenu} />
 		</AnimatePresence>
 	);
 };

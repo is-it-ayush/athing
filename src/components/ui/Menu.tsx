@@ -7,7 +7,7 @@ export const Menu = ({ pageController, menuController }: { pageController: Funct
 	const router = useRouter();
 
 	return menuController ? (
-		<motion.div className="fixed flex min-h-fit w-screen flex-col items-center justify-center bg-black p-5 font-spacemono text-white">
+		<motion.div className="fixed top-[50%] flex min-h-fit w-screen translate-y-[-50%] flex-col items-center justify-center bg-black p-5 font-spacemono text-white">
 			<ul className="lg:hidden">
 				<button
 					className="flex flex-row items-center justify-center"
