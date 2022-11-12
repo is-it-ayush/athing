@@ -1,6 +1,5 @@
 {
-  "cSpell.words": ["trpc"],
-  "html.format.wrapAttributes": "force-aligned",
-  "editor.formatOnSave": true,
-  
+	"cSpell.words": ["spacemono", "trpc"],
+	"html.format.wrapAttributes": "force-aligned",
+	"editor.formatOnSave": true
 }

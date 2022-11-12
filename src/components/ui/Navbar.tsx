@@ -1,26 +1,37 @@
 import { trpc } from '@utils/trpc';
 import { motion } from 'framer-motion';
-import { Button } from './Button';
+import React from 'react';
 
 // Icons
-import { RiMenu5Fill } from 'react-icons/ri';
+import { RiMenu5Fill, RiCloseLine } from 'react-icons/ri';
 
-export function Navbar({ pageController }: { pageController: Function }) {
-	const res = {
-		data: {
-			username: 'anon5124',
-		},
-	}; // trpc.user.me.useQuery();
+export function Navbar({
+	pageController,
+	menuController,
+}: {
+	pageController: Function;
+	menuController: [boolean, Function];
+}) {
+	const res = trpc.user.me.useQuery(void 0, {
+		staleTime: 1000 * 60 * 10,
+	});
 
-	// if (res.isLoading) {
-	// 	return <></>;
-	// }
+	// Skeleton
+	if (res.isLoading) {
+		return <></>;
+	}
 
 	return (
-		<motion.div className="fixed top-5 flex w-screen items-center justify-center font-spacemono">
+		<motion.div
+			className="fixed top-5 flex w-screen items-center justify-center font-spacemono"
+			initial={{ y: -100 }}
+			animate={{ y: 0 }}
+			exit={{ y: -100 }}
+			transition={{ duration: 0.5 }}>
 			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full border-2 border-gray-300 px-5">
 				<div className="flex">
-					Hi! <b className="px-2">{res.data?.username}</b>
+					Hi!
+					<b className="px-2">{res.data?.username}</b>
 				</div>
 				<div className="hidden flex-row divide-x-2 divide-gray-300 lg:flex">
 					<button
@@ -45,7 +56,13 @@ export function Navbar({ pageController }: { pageController: Function }) {
 						<h1>Private</h1>
 					</button>
 				</div>
-				<div className="flex flex-col">{<RiMenu5Fill className="h-8 w-8" />}</div>
+				<div
+					className="flex flex-col rounded-full p-2 transition-colors duration-300 hover:cursor-pointer hover:bg-gray-200"
+					onClick={() => {
+						menuController[1](!menuController[0]);
+					}}>
+					{menuController[0] === false ? <RiMenu5Fill className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
+				</div>
 			</div>
 		</motion.div>
 	);
