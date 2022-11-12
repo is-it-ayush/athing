@@ -27,7 +27,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 export const createContext = async (opts: CreateNextContextOptions) => {
 
   console.log(`createContext called!`);
-  const session = await getSession(opts) as string | null;
+  const session = await getSession(opts, prisma) as string | null;
 
   return {
     session,

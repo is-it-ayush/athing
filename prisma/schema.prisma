@@ -15,6 +15,7 @@ model User {
   username String    @unique
   password String
   email    String?
+  isBlacklisted Boolean @default(false)
   avatarId Int?      @default(0)
   posts    Post[]
   comments Comment[]

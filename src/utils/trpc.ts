@@ -7,6 +7,7 @@ import * as jwt from "jsonwebtoken";
 import { parseCookies } from "nookies";
 
 import { type AppRouter } from "../server/trpc/router/_app";
+import { PrismaClient } from "@prisma/client";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -50,7 +51,7 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
  * @example const session = await getSession(opts.req)
  */
 
-export const getSession = async (opts: { req: NextApiRequest }) => {
+export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
 
   console.log(`getSession called!`);
   const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
@@ -67,8 +68,19 @@ export const getSession = async (opts: { req: NextApiRequest }) => {
       id: string;
     };
 
-    // --todo-- check if the user exists and has proper permissions (isn't blacklisted). If not, return null.
+    // Fetch the user from the database using the id in the JWT
+    const userData = await prisma.user.findUnique({
+      where: {
+        id: decoded.id
+      }
+    })
 
+    // If the user is blacklisted, return null
+    if (userData?.isBlacklisted) {
+      return null;
+    }
+
+    // Return the user
     return decoded.id
   }
   catch (err) {

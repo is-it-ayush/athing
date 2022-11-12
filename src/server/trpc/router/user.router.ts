@@ -32,7 +32,6 @@ export const userRouter = router({
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
             }
 
-
             // Exists; compare password
             const valid: Boolean = await comparePassword(password, user.password);
 
@@ -42,7 +41,9 @@ export const userRouter = router({
 
             // TODO: Create JWT Cookie
             const secret = await process.env.JWT_SECRET as string;
-            const token = jwt.sign({ id: user.id }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
+            const token = jwt.sign({
+                id: user.id,
+            }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
 
 
 
@@ -118,10 +119,12 @@ export const userRouter = router({
     }),
     logout: protectedProcedure.mutation(async ({ ctx }) => {
 
-
-
         try {
-            // --todo-- delete JWT Cookie
+
+
+            // --todo-- Invalidate the session.
+
+
             return {
                 result: true
             };
@@ -135,4 +138,31 @@ export const userRouter = router({
         }
     }
     ),
+    me: protectedProcedure.query(async ({ ctx }) => {
+
+        try {
+
+            if (ctx.session === null) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.', }); // Bogus error message
+            }
+
+            const user = await ctx.prisma.user.findUnique({
+                where: {
+                    id: ctx.session,
+                },
+            }) as User;
+
+            return {
+                username: user.username,
+                id: user.id
+            };
+        }
+        catch (err: TRPCError | any) {
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
+
+            // --todo-- add error logging to sentry
+        }
+    })
 });

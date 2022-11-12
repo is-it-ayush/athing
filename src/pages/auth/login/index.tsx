@@ -49,7 +49,7 @@ const LoginPage: NextPage = () => {
 
 			// Set the cookie on the client side.
 			setCookie(null, 'token', res.token, {
-				maxAge: values.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
+				maxAge: values.rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
 				path: '/',
 				sameSite: 'strict',
 				secure: process.env.NODE_ENV === 'production',
@@ -142,7 +142,7 @@ const LoginPage: NextPage = () => {
 						onBlur={handleBlur}
 					/>
 					<Input
-						label="Remember me for 30 days."
+						label="Remember me for 7 days."
 						type="checkbox"
 						intent="default"
 						id="rememberMe"
