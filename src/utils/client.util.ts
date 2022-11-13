@@ -48,8 +48,6 @@ export const handleError = async (err: any) => {
 }
 
 
-export type TypeMutationResponseData = {
-    data: JSON,
-    message: string,
-    statusCode: number
-}
+
+
+// S

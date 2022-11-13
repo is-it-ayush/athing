@@ -9,13 +9,19 @@ import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { setCookie } from 'nookies';
 import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
 
 // Components
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 import { Loading } from '@components/ui/Loading';
-import { Toast, ToastIntent } from '@components/ui/Toast';
+import { Toast } from '@components/ui/Toast';
 import { handleError } from '@utils/client.util';
+
+// Types
+import { ToastIntent, User } from '@utils/client.typing';
+
+
 
 const LoginPage: NextPage = () => {
 	const params = useSearchParams();
@@ -55,9 +61,6 @@ const LoginPage: NextPage = () => {
 				secure: process.env.NODE_ENV === 'production',
 			});
 
-			// [DEBUG] Stop the time.
-			// const end = Date.now();
-			// console.log(`Login took ${end - start}ms`);
 
 			setToastIntent('success');
 			setToastMessage('Successfully logged in!');
@@ -69,6 +72,7 @@ const LoginPage: NextPage = () => {
 
 			// Redirect to the app.
 		} catch (err: TRPCError | any) {
+			console.log(err);
 			const errorMessage = (await handleError(err)) as string;
 			setToastIntent('error');
 			setToastMessage(errorMessage);
@@ -89,16 +93,15 @@ const LoginPage: NextPage = () => {
 	});
 
 	// Formik hook for form validation and control.
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } =
-		useFormik({
-			initialValues: {
-				username: params.get('username') || '',
-				password: '',
-				rememberMe: false,
-			},
-			validationSchema: toFormikValidationSchema(loginSchema),
-			onSubmit,
-		});
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+		initialValues: {
+			username: params.get('username') || '',
+			password: '',
+			rememberMe: false,
+		},
+		validationSchema: toFormikValidationSchema(loginSchema),
+		onSubmit,
+	});
 
 	React.useEffect(() => {
 		document.addEventListener('keydown', (e) => {
@@ -106,6 +109,15 @@ const LoginPage: NextPage = () => {
 				handleSubmit();
 			}
 		});
+
+		// Cleanup: Remove the event listener on unmount.
+		return () => {
+			document.removeEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
+		};
 	}, []);
 
 	return (

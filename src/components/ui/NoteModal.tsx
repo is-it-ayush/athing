@@ -2,24 +2,29 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { Button } from './Button';
 
+
+// Atoms
+import { userInfo } from '@utils/store';
+
 // Icons
 import { RiSaveLine } from 'react-icons/ri';
-import { Toast, ToastIntent } from './Toast';
+import { Toast } from './Toast';
 import { trpc } from '@utils/trpc';
 import { TRPCError } from '@trpc/server';
 import { handleError } from '@utils/client.util';
 
-type NoteModalProps = {
-	type: 'add' | 'edit' | 'parse'; // Add, Edit, Parse
-	controller: Function;
-	toParseText?: string;
-};
+// Types
+import { NoteModalProps, Note, ToastIntent } from '@utils/client.typing';
+import { useAtom } from 'jotai';
 
-export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => {
+export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) => {
 	// Add Properties
 	const [text, setText] = React.useState('');
 	const createNoteMutation = trpc.post.create.useMutation();
 	const utils = trpc.useContext();
+
+	// Atoms
+	const [user, setUser] = useAtom(userInfo);
 
 	async function handleCreateNoteMutation() {
 		try {
@@ -92,14 +97,16 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 					</svg>
 				</Button>
-				<Button
-					flex="row"
-					type="button"
-					onClick={() => {
-						handleCreateNoteMutation();
-					}}>
-					<RiSaveLine className="h-6 w-6" />
-				</Button>
+				{type === 'add' ? (
+					<Button
+						flex="row"
+						type="button"
+						onClick={() => {
+							handleCreateNoteMutation();
+						}}>
+						<RiSaveLine className="h-6 w-6" />
+					</Button>
+				) : null}
 			</div>
 			{
 				// Add Note Modal
@@ -114,6 +121,15 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 						onChange={(e) => {
 							setText(e.target.value);
 						}}
+					/>
+				) : type === 'parse' ? (
+					<textarea
+						readOnly={true}
+						className="h-full w-full p-20"
+						placeholder="hey, it'll get better. tell me all about it!!!"
+						minLength={20}
+						maxLength={3000}
+						value={selectedNote?.text}
 					/>
 				) : null
 			}

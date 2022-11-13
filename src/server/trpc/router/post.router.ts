@@ -79,16 +79,7 @@ export const postRouter = router({
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was a error fetching Notes.', });
             }
 
-            // Truncate the text to 100 characters
-            const truncatedPosts = posts.map((post) => {
-                return {
-                    ...post,
-                    text: post.text.substring(0, 100),
-                }
-            });
-
-
-            return truncatedPosts; // [DEBUG]
+            return posts; // [DEBUG]
 
             // post.text = post.text.substring(0, 100);
         }

@@ -8,13 +8,25 @@ import React from 'react';
 import { Journal } from './Journal';
 import { Notes } from './Notes';
 import { Private } from './Private';
+import { useAtom } from 'jotai';
 
-// Components
+// Atoms
+import { userInfo } from '@utils/store';
 
 export const App: NextPage = () => {
-	const muatation = trpc.user.logout.useMutation();
+	const userInfoResponse = trpc.user.me.useQuery(void 0, {
+		refetchOnWindowFocus: false,
+		refetchInterval: 1000 * 60 * 5,
+	});
 	const [showPage, setShowPage] = React.useState(0);
 	const [showMenu, setShowMenu] = React.useState(false);
+	const [user, setUser] = useAtom(userInfo);
+
+	React.useEffect(() => {
+		if (userInfoResponse.data) {
+			setUser(userInfoResponse.data);
+		}
+	}, [userInfoResponse.data]);
 
 	return (
 		<AnimatePresence>

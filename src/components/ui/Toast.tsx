@@ -6,6 +6,9 @@ import { IoInformationOutline, IoWarningOutline } from 'react-icons/io5';
 import { TbDiamonds } from 'react-icons/tb';
 import { MdNearbyError } from 'react-icons/md';
 
+// Types
+import { ToastIntent, ToastProps } from '@utils/client.typing';
+
 const ToastIcons = {
   info: <IoInformationOutline className="h-[28px] w-[28px]" />,
   warning: <IoWarningOutline className="h-[28px] w-[28px]" />,
@@ -13,13 +16,7 @@ const ToastIcons = {
   success: <TbDiamonds className="h-[28px] w-[28px]" />,
 };
 
-export type ToastIntent = keyof typeof ToastIcons;
 
-export interface ToastProps {
-  message: string;
-  intent: 'success' | 'error' | 'warning' | 'info';
-  onClose?: () => void;
-}
 
 export const Toast = ({ message, intent, onClose }: ToastProps) => {
   return (

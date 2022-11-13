@@ -1,18 +1,28 @@
 import { trpc } from '@utils/trpc';
+import { useAtom } from 'jotai';
 
 // Components
 import { Button } from '@components/ui/Button';
 import { NoteModal } from '@components/ui/NoteModal';
-
-// Icons
-import { BiNote } from 'react-icons/bi';
-import { IoAdd } from 'react-icons/io5';
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Toast, ToastIntent } from '@components/ui/Toast';
+
+// Icons
+import { BiNote, BiBookOpen } from 'react-icons/bi';
+import { IoAdd } from 'react-icons/io5';
+import { Toast } from '@components/ui/Toast';
+
+// Types
+import { Note } from '@utils/client.typing';
+
+// Atoms
+import { userInfo } from '@utils/store';
 
 export const Notes: React.FC = () => {
-	const [cursor, setCursor] = React.useState('');
+	const [selectedNote, setSelectedNote] = React.useState<Note>();
+
+	// Atoms
+	const [user, setUser] = useAtom(userInfo);
 
 	const notesQuery = trpc.post.get.useInfiniteQuery(
 		{
@@ -71,25 +81,38 @@ export const Notes: React.FC = () => {
 						return (
 							<li
 								key={note.id}
-								className=" m-5 inline-block h-[200px] w-[300px] flex-col border-2 border-gray-300 p-5 lg:m-5 ">
-								<h1 className="text-xl font-bold">{note.User?.username}</h1>
-								<h1 className="mb-3 flex text-sm text-gray-700">
-									{note.at
-										? Intl.DateTimeFormat('en-US', {
-												year: 'numeric',
-												month: 'long',
-												day: '2-digit',
-												hour: 'numeric',
-												minute: 'numeric',
-										  }).format(new Date(note.at))
-										: 'Sometime ago.'}
-								</h1>
+								className={
+									`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black lg:m-5 ` +
+									(user?.username === note.User?.username ? 'border-red-500' : 'border-gray-300')
+								}>
+								<div className="my-3 flex flex-col">
+									<h1 className="text-xl font-bold">{note.User?.username}</h1>
+									<h1 className="flex text-sm text-gray-700">
+										{note.at
+											? Intl.DateTimeFormat('en-US', {
+													year: 'numeric',
+													month: 'long',
+													day: '2-digit',
+													hour: 'numeric',
+													minute: 'numeric',
+											  }).format(new Date(note.at))
+											: 'Sometime ago.'}
+									</h1>
+								</div>
 								<h6 className="whitespace-normal break-words">
-									{note.text.length > 60 ? `${note.text.substring(0, 60)}...` : note.text}
+									{note.text.length > 25 ? `${note.text.substring(0, 25)}...` : note.text}
 								</h6>
-								{
-									
-								}
+								<div className="flex w-full flex-col justify-start">
+									<button
+										className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-gray-300"
+										onClick={() => {
+											setSelectedNote(note);
+											setModalType('parse');
+											setShowModal(true);
+										}}>
+										<BiBookOpen className="h-6 w-6" />
+									</button>
+								</div>
 							</li>
 						);
 					});
@@ -98,7 +121,7 @@ export const Notes: React.FC = () => {
 			<AnimatePresence>
 				{
 					// Show Note Modal
-					showModal && <NoteModal controller={setShowModal} type={modalType} />
+					showModal && <NoteModal controller={setShowModal} type={modalType} selectedNote={selectedNote} />
 				}
 			</AnimatePresence>
 		</div>

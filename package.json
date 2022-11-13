@@ -28,6 +28,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^7.6.5",
     "iron-session": "^6.3.1",
+    "jotai": "^1.9.2",
     "jsonwebtoken": "^8.5.1",
     "next": "13.0.2",
     "nookies": "^2.5.2",
