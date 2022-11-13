@@ -10,7 +10,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 // Icons
 import { BiNote, BiBookOpen } from 'react-icons/bi';
 import { IoAdd } from 'react-icons/io5';
-import { Toast } from '@components/ui/Toast';
 
 // Types
 import { Note } from '@utils/client.typing';

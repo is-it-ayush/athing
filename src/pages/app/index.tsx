@@ -1,13 +1,12 @@
-import { Button } from '@components/ui/Button';
 import { Menu } from '@components/ui/Menu';
 import { Navbar } from '@components/ui/Navbar';
-import { getSession, trpc } from '@utils/trpc';
+import { trpc } from '@utils/trpc';
 import { AnimatePresence, motion } from 'framer-motion';
-import { GetServerSidePropsContext, NextPage } from 'next/types';
+import { NextPage } from 'next/types';
 import React from 'react';
-import { Journal } from './Journal';
-import { Notes } from './Notes';
-import { Private } from './Private';
+import { Journal } from '@components/pages/Journal';
+import { Notes } from '@components/pages/Notes';
+import { Private } from '@components/pages/Private';
 import { useAtom } from 'jotai';
 
 // Atoms
