@@ -25,6 +25,7 @@ model Post {
   id        String    @id @unique @default(uuid())
   text      String
   at        DateTime? @default(now())
+  isPublished Boolean  @default(true)
   updatedAt DateTime? @updatedAt
   User      User?     @relation(fields: [userId], references: [id])
   userId    String?

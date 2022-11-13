@@ -21,7 +21,7 @@ export const App: NextPage = () => {
 			<Navbar key="navigation" pageController={setShowPage} menuController={[showMenu, setShowMenu]} />
 			<motion.div
 				key="content"
-				className="flex h-screen w-screen flex-col font-spacemono"
+				className="flex flex-col font-spacemono"
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				exit={{ opacity: 0 }}

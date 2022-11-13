@@ -42,7 +42,52 @@ export const postRouter = router({
         }
 
     }),
-    get: protectedProcedure.input(z.object({
+    get: protectedProcedure.input(z.object(
+        {
+            cursor: z.string().optional(),
+            limit: z.number().optional(),
+        }
+    )).query(async ({ input, ctx }) => {
+
+        const { cursor, limit } = input;
+
+        try {
+
+            const posts = await ctx.prisma.post.findMany({
+                where: {
+                    isPublished: true,
+                },
+                select: {
+                    id: true,
+                    text: true,
+                    at: true,
+                    userId: true,
+                },
+                orderBy: {
+                    at: 'desc',
+                },
+                take: limit || 10,
+                skip: cursor ? 1 : 0,
+                cursor: cursor ? { id: cursor } : undefined,
+            });
+
+            if (!posts) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was a error fetching Notes.', });
+            }
+
+            return posts;
+        }
+        catch (err: TRPCError | any) {
+
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
+
+            // --todo-- add error logging to sentry
+        }
+
+    }),
+    getbyId: protectedProcedure.input(z.object({
         id: z.string().trim(),
     })).query(async ({ input, ctx }) => {
         const { id } = input;
