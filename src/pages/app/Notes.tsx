@@ -71,7 +71,8 @@ export const Notes: React.FC = () => {
 						return (
 							<li
 								key={note.id}
-								className="prose my-5 inline-block h-[200px] w-[300px] flex-col border-2 border-gray-300 p-5 lg:m-5 ">
+								className=" m-5 inline-block h-[200px] w-[300px] flex-col border-2 border-gray-300 p-5 lg:m-5 ">
+								<h1 className="text-xl font-bold">{note.User?.username}</h1>
 								<h1 className="mb-3 flex text-sm text-gray-700">
 									{note.at
 										? Intl.DateTimeFormat('en-US', {
@@ -83,9 +84,12 @@ export const Notes: React.FC = () => {
 										  }).format(new Date(note.at))
 										: 'Sometime ago.'}
 								</h1>
-								<h6 className="truncate whitespace-pre-line">
-									{note.text.length > 100 ? `${note.text.substring(0, 60)}...` : note.text}
+								<h6 className="whitespace-normal break-words">
+									{note.text.length > 60 ? `${note.text.substring(0, 60)}...` : note.text}
 								</h6>
+								{
+									
+								}
 							</li>
 						);
 					});

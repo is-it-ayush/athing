@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { Post } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 
 
 export const postRouter = router({
@@ -57,11 +57,13 @@ export const postRouter = router({
                 where: {
                     isPublished: true,
                 },
-                select: {
-                    id: true,
-                    text: true,
-                    at: true,
-                    userId: true,
+                include: {
+                    User: {
+                        select: {
+                            username: true,
+                            avatarId: true,
+                        }
+                    },
                 },
                 orderBy: {
                     at: 'desc',
@@ -71,11 +73,24 @@ export const postRouter = router({
                 cursor: cursor ? { id: cursor } : undefined,
             });
 
+            // [Add the avatarid and username to the post]
+
             if (!posts) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was a error fetching Notes.', });
             }
 
-            return posts;
+            // Truncate the text to 100 characters
+            const truncatedPosts = posts.map((post) => {
+                return {
+                    ...post,
+                    text: post.text.substring(0, 100),
+                }
+            });
+
+
+            return truncatedPosts; // [DEBUG]
+
+            // post.text = post.text.substring(0, 100);
         }
         catch (err: TRPCError | any) {
 

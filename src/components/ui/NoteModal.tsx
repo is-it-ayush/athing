@@ -19,6 +19,7 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 	// Add Properties
 	const [text, setText] = React.useState('');
 	const createNoteMutation = trpc.post.create.useMutation();
+	const utils = trpc.useContext();
 
 	async function handleCreateNoteMutation() {
 		try {
@@ -27,6 +28,9 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 				setToastIntent('success');
 				setToastMessage('Your note was created!');
 				setShowToast(true);
+
+				// Invalidate the query
+				utils.post.get.refetch();
 
 				setTimeout(() => {
 					controller(false);
@@ -128,6 +132,3 @@ export const NoteModal = ({ type, controller, toParseText }: NoteModalProps) => 
 		</motion.div>
 	);
 };
-function controller(arg0: boolean) {
-	throw new Error('Function not implemented.');
-}
