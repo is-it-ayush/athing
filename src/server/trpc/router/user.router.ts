@@ -3,9 +3,8 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
-import { User } from "@prisma/client";
-import jwt, { Secret } from "jsonwebtoken";
-import { env } from "process";
+import { type User } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 export const userRouter = router({
     login: publicProcedure.input(z.object(
@@ -33,7 +32,7 @@ export const userRouter = router({
             }
 
             // Exists; compare password
-            const valid: Boolean = await comparePassword(password, user.password);
+            const valid: boolean = await comparePassword(password, user.password);
 
             if (!valid) {
                 throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
@@ -73,7 +72,7 @@ export const userRouter = router({
         // [DEBUG]
         // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
         // REMOVE THIS BEFORE DEPLOYMENT.
-        if (password !== 'nobitchesforayush@1001') {
+        if (password !== 'sheisbeautiful@1001') {
             throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
         }
 
@@ -124,7 +123,7 @@ export const userRouter = router({
             // --todo-- add error logging to sentry
         }
     }),
-    logout: protectedProcedure.mutation(async ({ ctx }) => {
+    logout: protectedProcedure.mutation(async () => {
 
         try {
 

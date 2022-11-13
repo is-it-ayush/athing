@@ -3,14 +3,6 @@ import { type NextPage } from 'next';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Home: NextPage = () => {
-	const [pageLoad, setPageLoad] = React.useState(false);
-
-	React.useEffect(() => {
-		if (!pageLoad) {
-			setPageLoad(true);
-		}
-	}, []);
-
 	return (
 		<AnimatePresence>
 			<motion.div className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">

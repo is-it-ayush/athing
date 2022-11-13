@@ -21,8 +21,6 @@ import { handleError } from '@utils/client.util';
 // Types
 import { ToastIntent, User } from '@utils/client.typing';
 
-
-
 const LoginPage: NextPage = () => {
 	const params = useSearchParams();
 	const router = useRouter();
@@ -60,7 +58,6 @@ const LoginPage: NextPage = () => {
 				sameSite: 'strict',
 				secure: process.env.NODE_ENV === 'production',
 			});
-
 
 			setToastIntent('success');
 			setToastMessage('Successfully logged in!');
@@ -171,6 +168,13 @@ const LoginPage: NextPage = () => {
 						}}>
 						Log In
 					</Button>
+					<div
+						className="my-2 cursor-pointer place-self-center text-sm font-bold transition-all duration-300 hover:underline"
+						onClick={() => {
+							router.replace('/auth/signup');
+						}}>
+						Signup
+					</div>
 				</motion.div>
 				{showToast ? (
 					<Toast

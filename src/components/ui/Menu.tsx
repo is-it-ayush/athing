@@ -3,7 +3,7 @@ import { RiArrowRightSLine } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
 import { setCookie } from 'nookies';
 
-export const Menu = ({ pageController, menuController }: { pageController: Function; menuController: boolean }) => {
+export const Menu = ({ pageController, menuController }: { pageController: React.Dispatch<React.SetStateAction<number>>; menuController: boolean }) => {
 	const router = useRouter();
 
 	return menuController ? (

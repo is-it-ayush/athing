@@ -13,7 +13,7 @@ export type Note = {
 
 export type NoteModalProps = {
     type: 'add' | 'edit' | 'parse'; // Add, Edit, Parse
-    controller: Function;
+    controller: React.Dispatch<React.SetStateAction<boolean>>;
     selectedNote?: Note;
 };
 

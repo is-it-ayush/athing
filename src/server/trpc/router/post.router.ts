@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { Post, User } from "@prisma/client";
+import { type Post } from "@prisma/client";
 
 
 export const postRouter = router({

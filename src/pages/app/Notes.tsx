@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { Button } from '@components/ui/Button';
 import { NoteModal } from '@components/ui/NoteModal';
 import React from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Icons
 import { BiNote, BiBookOpen } from 'react-icons/bi';
@@ -60,7 +60,12 @@ export const Notes: React.FC = () => {
 	const [modalType, setModalType] = React.useState<'add' | 'edit' | 'parse'>('add');
 
 	return (
-		<div className="mt-[60px] flex flex-col p-10">
+		<motion.div className="mt-[60px] flex flex-col p-10"
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 0.3 }}
+		>
 			<div className="flex w-fit flex-col">
 				<Button
 					type="button"
@@ -121,6 +126,6 @@ export const Notes: React.FC = () => {
 					showModal && <NoteModal controller={setShowModal} type={modalType} selectedNote={selectedNote} />
 				}
 			</AnimatePresence>
-		</div>
+		</motion.div>
 	);
 };

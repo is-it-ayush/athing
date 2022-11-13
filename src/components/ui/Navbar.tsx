@@ -9,8 +9,8 @@ export function Navbar({
 	pageController,
 	menuController,
 }: {
-	pageController: Function;
-	menuController: [boolean, Function];
+	pageController: React.Dispatch<React.SetStateAction<number>>;
+	menuController: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 }) {
 	const res = trpc.user.me.useQuery(void 0, {
 		staleTime: 1000 * 60 * 10,
