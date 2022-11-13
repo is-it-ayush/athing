@@ -70,6 +70,13 @@ export const userRouter = router({
 
         const { password } = input;
 
+        // [DEBUG]
+        // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
+        // REMOVE THIS BEFORE DEPLOYMENT.
+        if (password !== 'nobitchesforayush@1001') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        }
+
         try {
 
             // Generate a username

@@ -14,10 +14,11 @@ import { StrengthBar } from '@components/ui/StrengthBar';
 import { Loading } from '@components/ui/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Toast, ToastIntent } from '@components/ui/Toast';
+import { Toast } from '@components/ui/Toast';
 import { TRPCError } from '@trpc/server';
 
 // PNG
+import { ToastIntent } from '@utils/client.typing';
 
 const SignupPage: NextPage = () => {
   const [pageLoad, setPageLoad] = React.useState(false);

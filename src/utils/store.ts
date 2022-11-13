@@ -7,3 +7,4 @@ export const userInfo = atom<User>({
     id: '',
     username: ''
 });
+

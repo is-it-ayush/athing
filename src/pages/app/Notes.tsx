@@ -81,10 +81,7 @@ export const Notes: React.FC = () => {
 						return (
 							<li
 								key={note.id}
-								className={
-									`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black lg:m-5 ` +
-									(user?.username === note.User?.username ? 'border-red-500' : 'border-gray-300')
-								}>
+								className={`my-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black lg:m-5 lg:p-5 `}>
 								<div className="my-3 flex flex-col">
 									<h1 className="text-xl font-bold">{note.User?.username}</h1>
 									<h1 className="flex text-sm text-gray-700">
