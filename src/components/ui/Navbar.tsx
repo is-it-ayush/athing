@@ -25,10 +25,7 @@ export function Navbar({
 			exit={{ y: -100 }}
 			transition={{ duration: 0.5 }}>
 			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full border-2 border-gray-300 px-5 ">
-				<div className="flex">
-					Hi!
-					<b className="px-2">{res.data?.username}</b>
-				</div>
+				<div className="flex font-semibold">@{res.data?.username}</div>
 				<div className="hidden flex-row divide-x-2 divide-gray-300 lg:flex">
 					<button
 						className="duration-400 flex px-5 hover:font-semibold"

@@ -8,11 +8,11 @@ import { type Post } from "@prisma/client";
 export const postRouter = router({
     create: protectedProcedure.input(z.object({
         text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
-        const { text } = input;
+        const { text, isPrivate } = input;
 
-        // [DEBUG]
-        console.log(`Length: ${text.length}`);
+        console.log(`Creating a new post with text: ${text.length} and isPrivate: ${isPrivate}`);
 
         try {
 
@@ -20,6 +20,7 @@ export const postRouter = router({
                 data: {
                     text,
                     userId: ctx.session,
+                    isPublished: !isPrivate,
                 }
             });
 
@@ -135,7 +136,7 @@ export const postRouter = router({
                 },
             }) as Post;
 
-            if (!post) {
+            if (!post || post.userId !== ctx.session) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
             }
 
@@ -156,23 +157,31 @@ export const postRouter = router({
     edit: protectedProcedure.input(z.object({
         id: z.string().trim(),
         text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
-        const { id, text } = input;
+        const { id, text, isPrivate } = input;
 
         try {
 
-            const post = await ctx.prisma.post.update({
+            const post = await ctx.prisma.post.findUnique({
+                where: {
+                    id,
+                }
+            }) as Post;
+
+            if (!post || post.userId !== ctx.session) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid Post.', });
+            }
+
+            const updatedPost = await ctx.prisma.post.update({
                 where: {
                     id,
                 },
                 data: {
                     text,
+                    isPublished: !isPrivate,
                 },
             }) as Post;
-
-            if (!post) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
-            }
 
             return {
                 result: true,

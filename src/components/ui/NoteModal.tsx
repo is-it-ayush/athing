@@ -1,5 +1,9 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
+import { Toast } from './Toast';
+import { trpc } from '@utils/trpc';
+import { TRPCError } from '@trpc/server';
+import { handleError } from '@utils/client.util';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './Button';
 
 // Atoms
@@ -7,30 +11,55 @@ import { userInfo } from '@utils/store';
 
 // Icons
 import { RiSaveLine } from 'react-icons/ri';
-import { Toast } from './Toast';
-import { trpc } from '@utils/trpc';
-import { TRPCError } from '@trpc/server';
-import { handleError } from '@utils/client.util';
+import { BiLockOpenAlt, BiLockAlt } from 'react-icons/bi';
 
 // Types
-import { NoteModalProps, Note, ToastIntent } from '@utils/client.typing';
+import { NoteModalProps, ToastIntent } from '@utils/client.typing';
 import { useAtom } from 'jotai';
 
 export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) => {
-	// Add Properties
-	const [text, setText] = React.useState('');
-	const createNoteMutation = trpc.post.create.useMutation();
-	const utils = trpc.useContext();
+	// Edit Properties
+	const selectedText = selectedNote?.text;
+	const selectedStatus = selectedNote?.isPublished;
 
-	// Atoms
+	// Add Properties
+	const [text, setText] = React.useState(selectedText ?? '');
+	const [isNotePrivate, setIsNotePrivate] = React.useState(!selectedStatus ?? false);
+
+	const createNoteMutation = trpc.post.create.useMutation();
+	const updateNoteMutation = trpc.post.edit.useMutation();
+
+	// Helpers
+	const utils = trpc.useContext();
 	const [user, setUser] = useAtom(userInfo);
 
-	async function handleCreateNoteMutation() {
+	React.useEffect(() => {
+		if (isNotePrivate) {
+			setShowToast(true);
+			setToastIntent('info');
+			setToastMessage('Your note is now private.');
+		} else {
+			setShowToast(true);
+			setToastIntent('info');
+			setToastMessage('Your note is now public.');
+		}
+
+		setTimeout(() => {
+			setShowToast(false);
+		}, 2000);
+	}, [isNotePrivate]);
+
+	async function handleNoteSave() {
 		try {
-			const res = await createNoteMutation.mutateAsync({ text });
+			let res;
+			if (selectedNote !== undefined) {
+				res = await updateNoteMutation.mutateAsync({ id: selectedNote.id, text, isPrivate: isNotePrivate });
+			} else {
+				res = await createNoteMutation.mutateAsync({ text, isPrivate: isNotePrivate });
+			}
 			if (res.result) {
 				setToastIntent('success');
-				setToastMessage('Your note was created!');
+				setToastMessage('The note was saved successfully.');
 				setShowToast(true);
 
 				// Invalidate the query
@@ -53,6 +82,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
 	const [toastMessage, setToastMessage] = React.useState('');
 
+	// Exceed Handler
 	React.useEffect(() => {
 		if (text.length >= 3000) {
 			setToastIntent('error');
@@ -80,7 +110,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 						}}></span>
 				</div>
 			}
-			<div className="fixed top-5 right-5 flex flex-col">
+			<div className="fixed bottom-[10%] right-5 flex flex-col lg:top-5">
 				<Button
 					flex="row"
 					type="button"
@@ -96,20 +126,34 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 					</svg>
 				</Button>
-				{type === 'add' ? (
-					<Button
-						flex="row"
-						type="button"
-						onClick={() => {
-							handleCreateNoteMutation();
-						}}>
-						<RiSaveLine className="h-6 w-6" />
-					</Button>
+				{type === 'add' || type === 'edit' ? (
+					<>
+						<Button
+							flex="row"
+							type="button"
+							onClick={() => {
+								handleNoteSave();
+							}}>
+							<RiSaveLine className="h-6 w-6" />
+						</Button>
+						<Button
+							flex="row"
+							type="button"
+							onClick={() => {
+								setIsNotePrivate(!isNotePrivate);
+							}}>
+							{isNotePrivate ? (
+								<BiLockAlt className="h-6 w-6 text-red-600 " />
+							) : (
+								<BiLockOpenAlt className="h-6 w-6 text-green-600" />
+							)}
+						</Button>
+					</>
 				) : null}
 			</div>
 			{
 				// Add Note Modal
-				type === 'add' ? (
+				type === 'edit' || type === 'add' ? (
 					// Textarea
 					<textarea
 						className="h-full w-full p-20"

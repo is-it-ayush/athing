@@ -6,7 +6,7 @@ import Link from 'next/link';
 const Home: NextPage = () => {
 	return (
 		<AnimatePresence>
-			<motion.div className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
+			<motion.div className="flex h-screen w-screen flex-col items-center justify-center  font-spacemono ">
 				<motion.h1
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
