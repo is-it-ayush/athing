@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import React from 'react';
 
 // Icons
-import { RiMenu5Fill, RiCloseLine } from 'react-icons/ri';
+import { RiCloseLine } from 'react-icons/ri';
+import { CgOptions } from 'react-icons/cg';
 
 export function Navbar({
 	pageController,
@@ -56,7 +57,7 @@ export function Navbar({
 					onClick={() => {
 						menuController[1](!menuController[0]);
 					}}>
-					{menuController[0] === false ? <RiMenu5Fill className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
+					{menuController[0] === false ? <CgOptions className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
 				</div>
 			</div>
 		</motion.div>

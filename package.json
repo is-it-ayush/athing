@@ -29,6 +29,7 @@
 		"jotai": "^1.9.2",
 		"jsonwebtoken": "^8.5.1",
 		"lru-cache": "^7.14.1",
+		"nanoid": "^4.0.0",
 		"next": "13.0.2",
 		"nookies": "^2.5.2",
 		"react": "18.2.0",

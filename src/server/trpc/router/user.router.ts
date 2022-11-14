@@ -10,7 +10,7 @@ export const userRouter = router({
     login: publicProcedure.input(z.object(
         {
             username: z.string().regex(/^[a-z0-9]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
-            password: z.string().min(8, 'Password must be at least 8 characters long.').max(20, 'Password must be at most 20 characters long.'),
+            password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
             rememberMe: z.boolean()
         }
     )).mutation(async ({ input, ctx }) => {
@@ -63,7 +63,7 @@ export const userRouter = router({
     ),
     signup: publicProcedure.input(z.object(
         {
-            password: z.string().min(8, 'Password must be at least 8 characters long.'),
+            password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
             acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
         }
     )).mutation(async ({ input, ctx }) => {

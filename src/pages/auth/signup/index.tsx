@@ -37,15 +37,18 @@ const SignupPage: NextPage = () => {
 	const signupSchema = z.object({
 		password: z
 			.string()
+			.trim()
 			.min(8)
-			.max(20)
-			.refine(() => pwdStrength.score / 4 >= 0.75, {
+			.max(30)
+			.refine(() => pwdStrength.score >= 3, {
 				message: 'Password is too weak',
 			}),
 		acceptTerms: z.boolean().refine((v) => v, {
 			message: 'You must accept the terms and conditions',
 		}),
 	});
+
+	React.useEffect(() => { console.log(`${pwdStrength.score/4}`)},[pwdStrength.score])
 
 	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
 		initialValues: {

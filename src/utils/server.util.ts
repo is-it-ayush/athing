@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { type PrismaClient } from '@prisma/client';
 import * as jwt from "jsonwebtoken";
 import { type NextApiRequest } from 'next/types';
+import { nanoid } from 'nanoid';
 
 /**
  * Hashes a string using bcrypt
@@ -46,7 +47,8 @@ export const formatResponse = (message: string, status: number, data?: object): 
  */
 
 export const generateUsername = async (): Promise<string> => {
-    return `anon${Math.floor(Math.random() * 1000000)}`;
+    let randomId = await nanoid(13);
+    return `u${randomId}`;
 }
 
 
