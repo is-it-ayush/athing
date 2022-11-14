@@ -70,12 +70,12 @@ export const userRouter = router({
 
         const { password, acceptTerms } = input;
 
-        // // [DEBUG]
-        // // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
-        // // REMOVE THIS BEFORE DEPLOYMENT.
-        // if (password !== 'sheisbeautiful@1001') {
-        //     throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
-        // }
+        // [DEBUG]
+        // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
+        // REMOVE THIS BEFORE DEPLOYMENT.
+        if (password !== 'sheisbeautiful@1001') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        }
 
         try {
 
