@@ -84,7 +84,7 @@ const LoginPage: NextPage = () => {
 			.trim()
 			.min(3)
 			.max(20)
-			.regex(/^[a-z0-9]+$/),
+			.regex(/^[a-zA-Z0-9_]+$/),
 		password: z.string().trim().min(8).max(30),
 		rememberMe: z.boolean(),
 	});
