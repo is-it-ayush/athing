@@ -48,8 +48,6 @@ const SignupPage: NextPage = () => {
 		}),
 	});
 
-	React.useEffect(() => { console.log(`${pwdStrength.score/4}`)},[pwdStrength.score])
-
 	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
 		initialValues: {
 			password: '',
