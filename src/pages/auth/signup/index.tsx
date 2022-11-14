@@ -6,6 +6,7 @@ import { zxcvbn, zxcvbnOptions, type ZxcvbnResult } from '@zxcvbn-ts/core';
 import { z } from 'zod';
 import { useFormik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { Captcha } from '@components/ui/Captcha';
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -25,6 +26,9 @@ const SignupPage: NextPage = () => {
 	const [pwdStrength, setPwdStrength] = React.useState<ZxcvbnResult>(zxcvbn(''));
 	const [showPage, setShowPage] = React.useState(0);
 	const router = useRouter();
+
+	// Hcaptch Token
+	const [token, setToken] = React.useState<string>('');
 
 	// Required Toast State
 	const [showToast, setShowToast] = React.useState(false);
@@ -58,6 +62,8 @@ const SignupPage: NextPage = () => {
 				actions.setSubmitting(true);
 				const res = await mutation.mutateAsync({
 					password: values.password,
+					acceptTerms: values.acceptTerms,
+					hCaptchaResponse: token,
 				});
 				setShowPage(1);
 			} catch (err: TRPCError | any) {
@@ -139,6 +145,7 @@ const SignupPage: NextPage = () => {
 							onChange={handleChange}
 							onBlur={handleBlur}
 						/>
+						<Captcha callback={setToken} />
 						<Button
 							letterSpaced={true}
 							disabled={isSubmitting || Object.keys(errors).length > 0}

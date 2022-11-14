@@ -17,8 +17,11 @@ model User {
   password String
   email    String?
   isBlacklisted Boolean @default(false)
+  acceptedTerms Boolean @default(false)
+  acceptedRules Boolean @default(false)
   avatarId Int?      @default(0)
   posts    Post[]
+  role     Role      @default(USER)
   comments Comment[]
 }
 
@@ -41,4 +44,11 @@ model Comment {
   author  User      @relation(fields: [userId], references: [id])
   postsId String
   userId  String
+}
+
+// Role's are required for internal tooling.
+enum Role {
+  ADMIN
+  MODERATOR
+  USER
 }

@@ -64,17 +64,19 @@ export const userRouter = router({
     signup: publicProcedure.input(z.object(
         {
             password: z.string().min(8, 'Password must be at least 8 characters long.'),
+            acceptTerms: z.boolean(),
+            hCaptchaResponse: z.string()
         }
     )).mutation(async ({ input, ctx }) => {
 
-        const { password } = input;
+        const { password, acceptTerms, hCaptchaResponse } = input;
 
-        // // [DEBUG]
-        // // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
-        // // REMOVE THIS BEFORE DEPLOYMENT.
-        // if (password !== 'sheisbeautiful@1001') {
-        //     throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
-        // }
+
+        // [DEBUG]
+        // SETTING A HARD-CODED PASSWORD: REMOVE THIS IN REAL PRODUCTION. This is for test purposes only.
+        if (password !== 'sheisbeautiful@1001') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        }
 
         try {
 

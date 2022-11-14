@@ -6,11 +6,14 @@
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
 // Content Security Policy
+// --todo--: Haven't figured out the regex yet!
 const ContentSecurityPolicy = `
-  default-src 'self';
-  script-src 'self';
-  style-src 'self';
+  default-src 'self' ;
+  script-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
+  style-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
   font-src 'self' fonts.google.com;  
+  frame-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
+  connect-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
 `;
 
 // Cool Security Headers.
@@ -35,10 +38,6 @@ const securityHeaders = [
 		key: 'Referrer-Policy',
 		value: 'strict-origin-when-cross-origin', // https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 	},
-	{
-		key: 'Content-Security-Policy',
-		value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
-	},
 ];
 
 /** @type {import("next").NextConfig} */
@@ -48,6 +47,21 @@ const config = {
 	i18n: {
 		locales: ['en'],
 		defaultLocale: 'en',
+		domains: [
+			{
+				domain: 'dev.phobia.in',
+				defaultLocale: 'en',
+				http: true,
+			},
+		],
+	},
+	headers: async () => {
+		return [
+			{
+				source: '/(.*)',
+				headers: securityHeaders,
+			},
+		];
 	},
 	async redirects() {
 		return [
