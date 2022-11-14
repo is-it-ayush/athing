@@ -15,9 +15,9 @@ model User {
   email         String?
   avatarId      Int?      @default(0)
   isBlacklisted Boolean   @default(false)
-  role          Role      @default(USER)
   acceptedRules Boolean   @default(false)
   acceptedTerms Boolean   @default(false)
+  role          Role      @default(USER)
   comments      Comment[]
   posts         Post[]
 }
