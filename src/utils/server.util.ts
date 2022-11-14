@@ -48,7 +48,7 @@ export const formatResponse = (message: string, status: number, data?: object): 
 
 export const generateUsername = async (): Promise<string> => {
     const randomId = await nanoid(13);
-    return `u${randomId}`;
+    return `u_${randomId}`;
 }
 
 
