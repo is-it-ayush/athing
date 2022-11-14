@@ -1,6 +1,7 @@
 import React from 'react';
 import { type NextPage } from 'next';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 
 const Home: NextPage = () => {
 	return (
@@ -11,7 +12,17 @@ const Home: NextPage = () => {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.5 }}>
-					This supposed to be the front page.
+					<div className="flex flex-col">
+						<h1 className="flex text-center">I&apos;m still working on it, btw you&apos;re amazing :)</h1>
+					</div>
+					<div className="fixed bottom-5 left-0 flex w-full items-center justify-center">
+						<h1 className="flex">
+							Twitter:{' '}
+							<Link href="https://twitter.com/is_it_ayush" target="_blank">
+								<h1 className="mx-2 text-blue-500">@is_it_ayush</h1>
+							</Link>
+						</h1>
+					</div>
 				</motion.h1>
 			</motion.div>
 		</AnimatePresence>
