@@ -20,7 +20,7 @@ export function Navbar({
 	if (res.isLoading) {
 		return (
 			<motion.div
-				className="flex h-screen w-screen flex-row items-center justify-center"
+				className="fixed top-0 left-0 flex h-screen w-screen flex-row items-center justify-center"
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				exit={{ opacity: 0 }}

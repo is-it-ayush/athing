@@ -59,12 +59,12 @@ export const Notes: React.FC = () => {
 	const [modalType, setModalType] = React.useState<'add' | 'edit' | 'parse'>('add');
 
 	return (
-		<motion.div className="mt-[60px] flex flex-col p-10"
+		<motion.div
+			className="mt-[60px] flex flex-col p-10"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
-			transition={{ duration: 0.5 }}
-		>
+			transition={{ duration: 0.5 }}>
 			<div className="flex w-fit flex-col">
 				<Button
 					type="button"
@@ -79,13 +79,13 @@ export const Notes: React.FC = () => {
 					<IoAdd className="lg:hidden" />
 				</Button>
 			</div>
-			<ul className="no-scroll  flex flex-col flex-wrap justify-center sm:flex-row">
+			<ul className="no-scroll flex flex-row flex-wrap justify-center lg:flex-row">
 				{notesQuery.data?.pages.map((page) => {
 					return page.map((note) => {
 						return (
 							<li
 								key={note.id}
-								className={`my-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black lg:m-5 lg:p-5 `}>
+								className={`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black lg:m-5 lg:p-5 `}>
 								<div className="my-3 flex flex-col">
 									<h1 className="text-xl font-bold">{note.User?.username}</h1>
 									<h1 className="flex text-sm text-gray-700">
