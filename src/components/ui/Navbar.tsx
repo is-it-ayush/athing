@@ -16,20 +16,6 @@ export function Navbar({
 		staleTime: 1000 * 60 * 10,
 	});
 
-	// Skeleton
-	if (res.isLoading) {
-		return (
-			<motion.div
-				className="fixed top-0 left-0 flex h-screen w-screen flex-row items-center justify-center"
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				exit={{ opacity: 0 }}
-				transition={{ duration: 0.3 }}>
-				<div className="flex h-6 w-6 animate-spin rounded-full border-b-2 border-black"></div>
-			</motion.div>
-		);
-	}
-
 	return (
 		<motion.div
 			className="fixed top-5 flex w-screen items-center justify-center  font-spacemono backdrop-blur-[3px] backdrop-filter"
