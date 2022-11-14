@@ -1,3 +1,5 @@
+export import '@hcaptcha/types';
+
 export type Note = {
     text: string;
     id: string;

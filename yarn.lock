@@ -51,6 +51,11 @@
   dependencies:
     "@babel/runtime" "^7.17.9"
 
+"@hcaptcha/types@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@hcaptcha/types/-/types-1.0.3.tgz#baf10a4361a45ff1c64862dfb8dc9bbc8292a8fe"
+  integrity sha512-1mbU6eSGawRrqeahRrOzZo/SVLI6oZ5/azuBpSyVrRRR96CnS3fOVDWfzxpngfxKD0/I9Rwu6c/3ITqD8rXeTQ==
+
 "@humanwhocodes/config-array@^0.11.6":
   version "0.11.7"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.7.tgz"

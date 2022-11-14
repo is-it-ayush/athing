@@ -29,6 +29,7 @@ const SignupPage: NextPage = () => {
 
 	// Hcaptch Token
 	const [token, setToken] = React.useState<string>('');
+	const captchaRef = React.useRef(null);
 
 	// Required Toast State
 	const [showToast, setShowToast] = React.useState(false);
@@ -59,13 +60,20 @@ const SignupPage: NextPage = () => {
 		validationSchema: toFormikValidationSchema(signupSchema),
 		onSubmit: async (values, actions) => {
 			try {
-				actions.setSubmitting(true);
-				const res = await mutation.mutateAsync({
-					password: values.password,
-					acceptTerms: values.acceptTerms,
-					hCaptchaResponse: token,
-				});
-				setShowPage(1);
+				if (captchaRef.current) {
+					const captcha = captchaRef.current as HCaptcha;
+					captcha.execute();
+					console.log(captcha.);
+					if (token.length > 0) {
+						actions.setSubmitting(true);
+						const res = await mutation.mutateAsync({
+							password: values.password,
+							acceptTerms: values.acceptTerms,
+							hCaptchaResponse: token,
+						});
+						setShowPage(1);
+					}
+				}
 			} catch (err: TRPCError | any) {
 				const errorMessage = (await handleError(err)) as string;
 				setToastIntent('error');
@@ -145,7 +153,7 @@ const SignupPage: NextPage = () => {
 							onChange={handleChange}
 							onBlur={handleBlur}
 						/>
-						<Captcha callback={setToken} />
+						<Captcha callback={setToken} refer={captchaRef} />
 						<Button
 							letterSpaced={true}
 							disabled={isSubmitting || Object.keys(errors).length > 0}
