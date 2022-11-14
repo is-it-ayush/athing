@@ -10,7 +10,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@prisma/client": "^4.5.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.8",
@@ -31,6 +30,7 @@
     "iron-session": "^6.3.1",
     "jotai": "^1.9.2",
     "jsonwebtoken": "^8.5.1",
+    "lru-cache": "^7.14.1",
     "next": "13.0.2",
     "nookies": "^2.5.2",
     "react": "18.2.0",

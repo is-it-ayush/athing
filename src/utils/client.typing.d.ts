@@ -37,3 +37,9 @@ export interface ToastProps {
 }
 
 export type ToastIntent = 'success' | 'error' | 'warning' | 'info';
+
+
+export type RateLimitOptions = {
+    uniqueTokenPerInterval?: number
+    interval?: number
+}

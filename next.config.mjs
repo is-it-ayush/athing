@@ -6,14 +6,11 @@
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
 // Content Security Policy
-// --todo--: Haven't figured out the regex yet!
 const ContentSecurityPolicy = `
-  default-src 'self' ;
-  script-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
-  style-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
+  default-src 'self';
+  script-src 'self';
+  style-src 'self';
   font-src 'self' fonts.google.com;  
-  frame-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
-  connect-src 'self' should include https://hcaptcha.com, https://*.hcaptcha.com;
 `;
 
 // Cool Security Headers.
@@ -47,15 +44,8 @@ const config = {
 	i18n: {
 		locales: ['en'],
 		defaultLocale: 'en',
-		domains: [
-			{
-				domain: 'dev.phobia.in',
-				defaultLocale: 'en',
-				http: true,
-			},
-		],
 	},
-	headers: async () => {
+	async headers() {
 		return [
 			{
 				source: '/(.*)',

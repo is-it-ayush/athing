@@ -1,5 +1,8 @@
 import { type TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
+import { type NextApiResponse } from 'next/types';
+import LRU from 'lru-cache';
+import { RateLimitOptions } from '@utils/client.typing';
 
 export const loadZxcvbn = async () => {
 
@@ -39,3 +42,32 @@ export const handleError = async (err: TRPCClientError<AppRouter>) => {
     }
     return message;
 };
+
+// Simple Rate Limiter from LRU Cache
+export default function rateLimit(options?: RateLimitOptions) {
+    const tokenCache = new LRU({
+        max: options?.uniqueTokenPerInterval || 500,
+        ttl: options?.interval || 60000,
+    })
+
+    return {
+        check: (res: NextApiResponse, limit: number, token: string) =>
+            new Promise<void>((resolve, reject) => {
+                const tokenCount = (tokenCache.get(token) as number[]) || [0]
+                if (tokenCount[0] === 0) {
+                    tokenCache.set(token, tokenCount)
+                }
+                tokenCount[0] += 1
+
+                const currentUsage = tokenCount[0] as number;
+                const isRateLimited = currentUsage >= limit
+                res.setHeader('X-RateLimit-Limit', limit)
+                res.setHeader(
+                    'X-RateLimit-Remaining',
+                    isRateLimited ? 0 : limit - currentUsage
+                )
+
+                return isRateLimited ? reject() : resolve()
+            }),
+    }
+}

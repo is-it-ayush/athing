@@ -65,39 +65,17 @@ export const userRouter = router({
         {
             password: z.string().min(8, 'Password must be at least 8 characters long.'),
             acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
-            hCaptchaResponse: z.string()
         }
     )).mutation(async ({ input, ctx }) => {
 
-        const { password, acceptTerms, hCaptchaResponse } = input;
+        const { password, acceptTerms } = input;
 
-        if (hCaptchaResponse.length === 0) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid hCaptcha response.' });
-        }
-
-        // Verify Captcha
-        const captchaResponse = await fetch('https://hcaptcha.com/siteverify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                secret: process.env.HCAPTCHA_SECRET as string,
-                response: hCaptchaResponse,
-            }),
-        });
-
-        const captchaData = await captchaResponse.json();
-
-        if (!captchaData.success) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid hCaptcha response.' });
-        }
-
-        // [DEBUG]
-        // SETTING A HARD-CODED PASSWORD: REMOVE THIS IN REAL PRODUCTION. This is for test purposes only.
-        if (password !== 'sheisbeautiful@1001') {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
-        }
+        // // [DEBUG]
+        // // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
+        // // REMOVE THIS BEFORE DEPLOYMENT.
+        // if (password !== 'sheisbeautiful@1001') {
+        //     throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        // }
 
         try {
 

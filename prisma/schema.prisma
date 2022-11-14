@@ -1,52 +1,48 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  shadowDatabaseUrl= env("SHADOW_DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id       String    @id @unique @default(uuid())
-  username String    @unique
-  password String
-  email    String?
-  isBlacklisted Boolean @default(false)
-  acceptedTerms Boolean @default(false)
-  acceptedRules Boolean @default(false)
-  avatarId Int?      @default(0)
-  posts    Post[]
-  role     Role      @default(USER)
-  comments Comment[]
+  id            String    @id @unique @default(uuid())
+  username      String    @unique
+  password      String
+  email         String?
+  avatarId      Int?      @default(0)
+  isBlacklisted Boolean   @default(false)
+  role          Role      @default(USER)
+  acceptedRules Boolean   @default(false)
+  acceptedTerms Boolean   @default(false)
+  comments      Comment[]
+  posts         Post[]
 }
 
 model Post {
-  id        String    @id @unique @default(uuid())
-  text      String
-  at        DateTime? @default(now())
-  isPublished Boolean  @default(true)
-  updatedAt DateTime? @updatedAt
-  User      User?     @relation(fields: [userId], references: [id])
-  userId    String?
-  Comment   Comment[]
+  id          String    @id @unique @default(uuid())
+  text        String
+  at          DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  userId      String?
+  isPublished Boolean   @default(true)
+  User        User?     @relation(fields: [userId], references: [id])
+  Comment     Comment[]
 }
 
 model Comment {
   id      String    @id @unique @default(uuid())
   text    String
   at      DateTime? @default(now())
-  post    Post      @relation(fields: [postsId], references: [id])
-  author  User      @relation(fields: [userId], references: [id])
   postsId String
   userId  String
+  post    Post      @relation(fields: [postsId], references: [id])
+  author  User      @relation(fields: [userId], references: [id])
 }
 
-// Role's are required for internal tooling.
 enum Role {
   ADMIN
   MODERATOR
