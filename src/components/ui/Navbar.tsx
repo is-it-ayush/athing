@@ -18,7 +18,16 @@ export function Navbar({
 
 	// Skeleton
 	if (res.isLoading) {
-		return <></>;
+		return (
+			<motion.div
+				className="flex h-screen w-screen flex-row items-center justify-center"
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				transition={{ duration: 0.3 }}>
+				<div className="flex h-6 w-6 animate-spin rounded-full border-b-2 border-black"></div>
+			</motion.div>
+		);
 	}
 
 	return (

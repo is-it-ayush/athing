@@ -1,8 +1,9 @@
 import { type TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
-import { type NextApiResponse } from 'next/types';
+import {  type NextApiResponse } from 'next/types';
 import LRU from 'lru-cache';
-import { RateLimitOptions } from '@utils/client.typing';
+import { type RateLimitOptions } from '@utils/client.typing';
+
 
 export const loadZxcvbn = async () => {
 
@@ -71,3 +72,10 @@ export default function rateLimit(options?: RateLimitOptions) {
             }),
     }
 }
+
+
+/**
+ * Helper for getting the user's session. Only used internally.
+ * @example const session = await getSession(opts.req)
+ */
+

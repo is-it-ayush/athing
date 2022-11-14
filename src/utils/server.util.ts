@@ -1,4 +1,7 @@
 import bcrypt from 'bcrypt';
+import { type PrismaClient } from '@prisma/client';
+import * as jwt from "jsonwebtoken";
+import { type NextApiRequest } from 'next/types';
 
 /**
  * Hashes a string using bcrypt
@@ -44,4 +47,42 @@ export const formatResponse = (message: string, status: number, data?: object): 
 
 export const generateUsername = async (): Promise<string> => {
     return `anon${Math.floor(Math.random() * 1000000)}`;
+}
+
+
+export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
+
+    console.log(`getSession called!`);
+    const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
+    const session = cookies.token ?? null;
+    const secret = await process.env.JWT_SECRET as string
+
+    if (!session) {
+        return null;
+    }
+
+    // Verify JWT (Typescript)
+    try {
+        const decoded = jwt.verify(session, secret) as {
+            id: string;
+        };
+
+        // Fetch the user from the database using the id in the JWT
+        const userData = await prisma.user.findUnique({
+            where: {
+                id: decoded.id
+            }
+        })
+
+        // If the user is blacklisted, return null
+        if (userData?.isBlacklisted) {
+            return null;
+        }
+
+        // Return the user
+        return decoded.id
+    }
+    catch (err) {
+        return null;
+    }
 }
