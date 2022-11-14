@@ -81,6 +81,23 @@ const SignupPage: NextPage = () => {
 		setPwdStrength(results);
 	}, [values.password]);
 
+	React.useEffect(() => {
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				handleSubmit();
+			}
+		});
+
+		// Cleanup: Remove the event listener on unmount.
+		return () => {
+			document.removeEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
+		};
+	}, []);
+
 	async function loadOptions(): Promise<void> {
 		console.log(`Loaded options.`);
 		const options = await loadZxcvbn();

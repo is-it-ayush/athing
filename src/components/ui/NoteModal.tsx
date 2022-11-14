@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { Button } from './Button';
 
-
 // Atoms
 import { userInfo } from '@utils/store';
 
@@ -39,7 +38,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 
 				setTimeout(() => {
 					controller(false);
-				}, 2000);
+				}, 500);
 			}
 		} catch (err: TRPCError | any) {
 			const errorMessage = (await handleError(err)) as string;
