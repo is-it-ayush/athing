@@ -64,6 +64,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 
 				// Invalidate the query
 				utils.post.get.refetch();
+				utils.post.getAllByUserId.refetch({ id: user.id });
 
 				setTimeout(() => {
 					controller(false);

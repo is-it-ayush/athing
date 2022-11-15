@@ -1,4 +1,3 @@
-export import '@hcaptcha/types';
 
 export type Note = {
     text: string;
@@ -13,10 +12,17 @@ export type Note = {
     } | null;
 };
 
+export type ShortNote = {
+    text: string;
+    id: string;
+    at: Date | null;
+    isPublished: boolean;
+}
+
 export type NoteModalProps = {
     type: 'add' | 'edit' | 'parse'; // Add, Edit, Parse
     controller: React.Dispatch<React.SetStateAction<boolean>>;
-    selectedNote?: Note;
+    selectedNote?: Note | ShortNote;
 };
 
 export type TypeMutationResponseData = {

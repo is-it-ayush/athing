@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { type Post } from "@prisma/client";
+import { User, type Post } from "@prisma/client";
 
 
 export const postRouter = router({
@@ -94,24 +94,44 @@ export const postRouter = router({
         }
 
     }),
-    getbyId: protectedProcedure.input(z.object({
+    getAllByUserId: protectedProcedure.input(z.object({
         id: z.string().trim(),
     })).query(async ({ input, ctx }) => {
         const { id } = input;
 
         try {
 
-            const post = await ctx.prisma.post.findUnique({
+            if (ctx.session !== id) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: "You're not authorized.", });
+            }
+
+            const userPosts = await ctx.prisma.user.findUnique({
                 where: {
                     id,
                 },
-            }) as Post;
+                include: {
+                    posts: {
+                        orderBy: {
+                            at: 'desc',
+                        },
+                        select: {
+                            id: true,
+                            text: true,
+                            at: true,
+                            isPublished: true,
+                        }
+                    }
+                },
+            });
 
-            if (!post) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
+            if (!userPosts || userPosts.posts.length === 0) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was an error finding notes.', });
             }
 
-            return post;
+            return {
+                id: userPosts.id,
+                posts: userPosts.posts,
+            };
         }
         catch (err: TRPCError | any) {
 
