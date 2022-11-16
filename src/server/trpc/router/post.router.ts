@@ -132,7 +132,7 @@ export const postRouter = router({
 
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
-                message: err.message || 'Could not find notes.',
+                message: err.message,
             });
 
             // --todo-- add error logging to sentry

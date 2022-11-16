@@ -188,10 +188,9 @@ export const journalRouter = router({
             return user?.journals ? user.journals : [];
         }
         catch (err: TRPCError | any) {
-            // throw new TRPCError({
-            //     code: err.code || 'INTERNAL_SERVER_ERROR',
-            // });
-            return [];
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
             // --todo-- add error logging to sentry
         }
     }),

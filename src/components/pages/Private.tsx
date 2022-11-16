@@ -41,25 +41,27 @@ export const Private: React.FC = () => {
 	const [user, _] = useAtom(userInfo);
 
 	// TRPC
+	const deleteNote = trpc.post.delete.useMutation();
 	const allPostsData = trpc.post.getPostsByUserId.useQuery(
 		{
 			id: user.id,
 		},
 		{
-			onError: (error) => {
-				handleError(error);
+			onError(err) {
+				setNotes([]);
 			},
+			retryDelay: 20000,
 		},
 	);
-	const deleteNote = trpc.post.delete.useMutation();
 	const journalsQuery = trpc.journals.getJournalsByUserId.useQuery(
 		{
 			id: user.id,
 		},
 		{
-			onError: (error) => {
-				handleError(error);
+			onError(err) {
+				setJournals([]);
 			},
+			retryDelay: 20000,
 		},
 	);
 
@@ -98,13 +100,15 @@ export const Private: React.FC = () => {
 				<h1 className="flex text-xl font-semibold">Your Notes</h1>
 				<div>
 					{notes.length > 0 ? (
-						<motion.ul className="no-select flex flex-grow flex-row overflow-x-auto" layout="position">
-							<ScrollContainer className="flex flex-row" hideScrollbars={true}>
+						<motion.ul
+							className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
+							layout="position">
+							<ScrollContainer className=" flex flex-row">
 								{notes.map((note) => {
 									return (
 										<motion.li
 											key={note.id}
-											className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black `}
+											className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 p-5 transition-all hover:border-black `}
 											layout
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
@@ -176,9 +180,9 @@ export const Private: React.FC = () => {
 					)}
 				</div>
 			</div>
-			<div className="flex flex-col">
+			<div className="mt-10 flex flex-col">
 				<h1 className="flex text-xl font-semibold">Your Journals</h1>
-				<div className="flex flex-row">
+				<div className="flex w-full flex-row">
 					<div>
 						{journals.length > 0 ? (
 							<motion.ul className="no-select flex flex-grow flex-row overflow-x-auto" layout="position">
@@ -203,8 +207,10 @@ export const Private: React.FC = () => {
 								</ScrollContainer>
 							</motion.ul>
 						) : (
-							<div className="mt-10 flex flex-col items-center justify-center">
-								<h1 className="text-center text-xl font-semibold text-gray-400">You have no Journals? Create One!</h1>
+							<div className="mt-10 flex w-full flex-col items-center justify-center">
+								<h1 className="w-full text-center text-xl font-semibold text-gray-400">
+									It's all empty. Wanna create one?
+								</h1>
 							</div>
 						)}
 					</div>

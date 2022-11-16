@@ -21,13 +21,9 @@ export const loadZxcvbn = async () => {
 
 export const handleError = async (err: TRPCClientError<AppRouter> | TRPCClientErrorLike<AppRouter>) => {
     let message: string;
-    console.log(JSON.stringify(err, null, 2));
-    if (err instanceof Array) {
+    if (err instanceof Object) {
         const parsedError = JSON.parse(err.message);
         message = parsedError[0].message ?? 'Something went wrong!';
-    }
-    else if (err.message) {
-        message = err.message;
     }
     else {
         message = 'Something went wrong!';
