@@ -7,7 +7,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './Button';
 
 // Atoms
-import { userInfo } from '@utils/store';
+import {
+	userInfo,
+	showModal,
+	noteModal,
+	selectedNoteAtom,
+	showToastAtom,
+	toastIntentAtom,
+	toastMessageAtom,
+} from '@utils/store';
 
 // Icons
 import { RiSaveLine } from 'react-icons/ri';
@@ -16,22 +24,27 @@ import { BiLockOpenAlt, BiLockAlt } from 'react-icons/bi';
 // Types
 import { NoteModalProps, ToastIntent } from '@utils/client.typing';
 import { useAtom } from 'jotai';
+import { type } from 'os';
 
-export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) => {
-	// Edit Properties
-	const selectedText = selectedNote?.text;
-	const selectedStatus = selectedNote?.isPublished;
+export const NoteModal = () => {
+	// Atoms
+	const [noteModelType,] = useAtom(noteModal);
+	const [, setDisplayModal] = useAtom(showModal);
+	const [selectedNote,] = useAtom(selectedNoteAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setShowToast] = useAtom(showToastAtom);
 
 	// Add Properties
-	const [text, setText] = React.useState(selectedText ?? '');
-	const [isNotePrivate, setIsNotePrivate] = React.useState(!selectedStatus ?? false);
+	const [text, setText] = React.useState(selectedNote?.text ?? '');
+	const [isNotePrivate, setIsNotePrivate] = React.useState(!selectedNote?.isPublished ?? false);
 
 	const createNoteMutation = trpc.post.create.useMutation();
 	const updateNoteMutation = trpc.post.edit.useMutation();
 
 	// Helpers
 	const utils = trpc.useContext();
-	const [user, setUser] = useAtom(userInfo);
+	const [user,] = useAtom(userInfo);
 
 	React.useEffect(() => {
 		if (isNotePrivate) {
@@ -43,16 +56,12 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 			setToastIntent('info');
 			setToastMessage('Your note is now public.');
 		}
-
-		setTimeout(() => {
-			setShowToast(false);
-		}, 2000);
 	}, [isNotePrivate]);
 
 	async function handleNoteSave() {
 		try {
 			let res;
-			if (selectedNote !== undefined) {
+			if (selectedNote !== null) {
 				res = await updateNoteMutation.mutateAsync({ id: selectedNote.id, text, isPrivate: isNotePrivate });
 			} else {
 				res = await createNoteMutation.mutateAsync({ text, isPrivate: isNotePrivate });
@@ -64,11 +73,9 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 
 				// Invalidate the query
 				utils.post.get.refetch();
-				utils.post.getAllByUserId.refetch({ id: user.id });
+				utils.post.getPostsByUserId.refetch({ id: user.id });
 
-				setTimeout(() => {
-					controller(false);
-				}, 500);
+				setDisplayModal(false);
 			}
 		} catch (err: TRPCError | any) {
 			const errorMessage = (await handleError(err)) as string;
@@ -77,11 +84,6 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 			setShowToast(true);
 		}
 	}
-
-	// Required Toast State
-	const [showToast, setShowToast] = React.useState(false);
-	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-	const [toastMessage, setToastMessage] = React.useState('');
 
 	// Exceed Handler
 	React.useEffect(() => {
@@ -96,7 +98,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 
 	return (
 		<motion.div
-			className="font-monospace fixed top-0 left-0 flex h-screen w-screen bg-white text-black"
+			className="font-monospace z-998 fixed top-0 left-0 flex h-screen w-screen bg-white text-black"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -116,7 +118,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 					flex="row"
 					type="button"
 					onClick={() => {
-						controller(false);
+						setDisplayModal(false);
 					}}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +129,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 					</svg>
 				</Button>
-				{type === 'add' || type === 'edit' ? (
+				{noteModelType === 'add' || noteModelType === 'edit' ? (
 					<>
 						<Button
 							flex="row"
@@ -154,7 +156,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 			</div>
 			{
 				// Add Note Modal
-				type === 'edit' || type === 'add' ? (
+				noteModelType === 'edit' || noteModelType === 'add' ? (
 					// Textarea
 					<textarea
 						className="h-full w-full p-20"
@@ -166,7 +168,7 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 							setText(e.target.value);
 						}}
 					/>
-				) : type === 'parse' ? (
+				) : noteModelType === 'parse' ? (
 					<textarea
 						readOnly={true}
 						className="h-full w-full p-20"
@@ -177,18 +179,6 @@ export const NoteModal = ({ type, controller, selectedNote }: NoteModalProps) =>
 					/>
 				) : null
 			}
-			<AnimatePresence>
-				{showToast ? (
-					<Toast
-						key="toastKey"
-						intent={toastIntent}
-						message={toastMessage}
-						onClose={() => {
-							setShowToast(!showToast);
-						}}
-					/>
-				) : null}
-			</AnimatePresence>
 		</motion.div>
 	);
 };

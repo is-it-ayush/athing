@@ -20,15 +20,16 @@ import { handleError } from '@utils/client.util';
 
 // Types
 import { ToastIntent, User } from '@utils/client.typing';
+import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
 
 const LoginPage: NextPage = () => {
 	const params = useSearchParams();
 	const router = useRouter();
 
 	// Required Toast State
-	const [showToast, setShowToast] = React.useState(false);
-	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-	const [toastMessage, setToastMessage] = React.useState('');
+	const [showToast, setShowToast] = useAtom(showToastAtom);
+	const [toastIntent, setToastIntent] = useAtom(toastIntentAtom);
+	const [toastMessage, setToastMessage] = useAtom(toastMessageAtom);
 
 	//TRPC
 	const mutation = trpc.user.login.useMutation();
@@ -84,7 +85,7 @@ const LoginPage: NextPage = () => {
 			.trim()
 			.min(3)
 			.max(20)
-			.regex(/^[a-zA-Z0-9_]+$/),
+			.regex(/^[a-zA-Z0-9_-]+$/),
 		password: z.string().trim().min(8).max(30),
 		rememberMe: z.boolean(),
 	});
@@ -176,16 +177,7 @@ const LoginPage: NextPage = () => {
 						Signup
 					</div>
 				</motion.div>
-				{showToast ? (
-					<Toast
-						key="toastKey"
-						intent={toastIntent}
-						message={toastMessage}
-						onClose={() => {
-							setShowToast(!showToast);
-						}}
-					/>
-				) : null}
+				{showToast ? <Toast key="toastKey" /> : null}
 			</AnimatePresence>
 		</main>
 	);

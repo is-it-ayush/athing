@@ -36,16 +36,5 @@ export type User = {
     username: string;
 }
 
-export interface ToastProps {
-    message: string;
-    intent: 'success' | 'error' | 'warning' | 'info';
-    onClose?: () => void;
-}
 
 export type ToastIntent = 'success' | 'error' | 'warning' | 'info';
-
-
-export type RateLimitOptions = {
-    uniqueTokenPerInterval?: number
-    interval?: number
-}

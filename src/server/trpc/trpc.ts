@@ -19,7 +19,7 @@ const t = initTRPC.context<Context>().create({
 const isAuthenticated = t.middleware(async ({ ctx, next }) => {
 
   console.log(`isAuthenticated middleware called!`);
-  console.log(ctx.session)
+
 
   if (!ctx.session) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -31,6 +31,7 @@ const isAuthenticated = t.middleware(async ({ ctx, next }) => {
     }
   });
 });
+
 
 export const router = t.router;
 

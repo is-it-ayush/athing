@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 export const userRouter = router({
     login: publicProcedure.input(z.object(
         {
-            username: z.string().regex(/^[a-zA-Z0-9_]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
+            username: z.string().regex(/^[a-zA-Z0-9_-]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
             password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
             rememberMe: z.boolean()
         }

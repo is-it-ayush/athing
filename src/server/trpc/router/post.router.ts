@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { User, type Post } from "@prisma/client";
+import { type Post } from "@prisma/client";
 
 
 export const postRouter = router({
@@ -46,11 +46,10 @@ export const postRouter = router({
     get: protectedProcedure.input(z.object(
         {
             cursor: z.string().optional(),
-            limit: z.number().optional(),
         }
     )).query(async ({ input, ctx }) => {
 
-        const { cursor, limit } = input;
+        const { cursor } = input;
 
         try {
 
@@ -69,7 +68,7 @@ export const postRouter = router({
                 orderBy: {
                     at: 'desc',
                 },
-                take: limit || 10,
+                take: 10,
                 skip: cursor ? 1 : 0,
                 cursor: cursor ? { id: cursor } : undefined,
             });
@@ -94,7 +93,7 @@ export const postRouter = router({
         }
 
     }),
-    getAllByUserId: protectedProcedure.input(z.object({
+    getPostsByUserId: protectedProcedure.input(z.object({
         id: z.string().trim(),
     })).query(async ({ input, ctx }) => {
         const { id } = input;
@@ -114,12 +113,6 @@ export const postRouter = router({
                         orderBy: {
                             at: 'desc',
                         },
-                        select: {
-                            id: true,
-                            text: true,
-                            at: true,
-                            isPublished: true,
-                        }
                     }
                 },
             });
@@ -135,8 +128,11 @@ export const postRouter = router({
         }
         catch (err: TRPCError | any) {
 
+            console.log(err);
+
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
+                message: err.message || 'Could not find notes.',
             });
 
             // --todo-- add error logging to sentry
@@ -182,7 +178,6 @@ export const postRouter = router({
         const { id, text, isPrivate } = input;
 
         try {
-
             const post = await ctx.prisma.post.findUnique({
                 where: {
                     id,
