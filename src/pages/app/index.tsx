@@ -15,23 +15,25 @@ import { Button } from '@components/ui/Button';
 import { IoAdd } from 'react-icons/io5';
 
 // Atoms
-import { userInfo, noteModal, showModal, selectedNoteAtom, showToastAtom } from '@utils/store';
+import { userInfo, noteModal, showModal, selectedNoteAtom, showToastAtom, showActionWheelAtom } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
+import { ActionWheel } from '@components/ui/ActionWheel';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
-		refetchOnWindowFocus: false,
-		refetchInterval: 1000 * 60 * 5,
+		refetchOnWindowFocus: false, // Because it's not needed, since data doesn't change.
+		refetchInterval: 1000 * 60 * 5, // 5 minutes
 	});
+
 	const [showPage, setShowPage] = React.useState(0);
 	const [showMenu, setShowMenu] = React.useState(false);
 	const [showLoading, setShowLoading] = React.useState(false);
 
+	// Atoms
 	const [, setUser] = useAtom(userInfo);
-	const [, setNoteModalType] = useAtom(noteModal);
-	const [displayModel, setDisplayModal] = useAtom(showModal);
-	const [, setSelectedNoteAtom] = useAtom(selectedNoteAtom);
+	const [displayModel] = useAtom(showModal);
+	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
 
 	const [displayToast] = useAtom(showToastAtom);
 
@@ -72,23 +74,25 @@ export const App: NextPage = () => {
 					)}
 				</motion.div>
 				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
-					<Button
-						type="button"
-						onClick={() => {
-							// --todo-- make this have more options such as for journals too.
-							setSelectedNoteAtom(null);
-							setNoteModalType('edit');
-							setDisplayModal(true);
-						}}
-						flex="row"
-						width="fit"
-						styles="opposite">
-						<IoAdd className="h-6 w-6" />
-					</Button>
+					{showActionWheel ? null : (
+						<Button
+							type="button"
+							onClick={() => {
+								setShowActionWheel(true);
+								// --todo-- make this have more options such as for journals too.
+
+							}}
+							flex="row"
+							width="fit"
+							styles="opposite">
+							<IoAdd className="h-6 w-6" />
+						</Button>
+					)}
 				</div>
 				<AnimatePresence key="modalAnimation">
 					{displayModel ? <NoteModal key="modalKey" /> : null}
 					{displayToast ? <Toast key="toastKey" /> : null}
+					{showActionWheel ? <ActionWheel key="actionWheelKey" /> : null}
 				</AnimatePresence>
 				<Menu key="menu" pageController={setShowPage} menuController={showMenu} />
 			</AnimatePresence>

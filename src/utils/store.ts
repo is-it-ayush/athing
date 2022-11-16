@@ -15,3 +15,6 @@ export const selectedNoteAtom = atom<Note | ShortNote | null>(null);
 export const toastIntentAtom = atom<ToastIntent>('info');
 export const toastMessageAtom = atom<string | null>(null);
 export const showToastAtom = atom<boolean>(false);
+
+
+export const showActionWheelAtom = atom<boolean>(false);
