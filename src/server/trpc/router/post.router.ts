@@ -3,6 +3,7 @@ import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { type Post } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 
 export const postRouter = router({
@@ -98,12 +99,11 @@ export const postRouter = router({
     })).query(async ({ input, ctx }) => {
         const { id } = input;
 
+        if (ctx.session !== id) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: "You're not authorized.", });
+        }
+
         try {
-
-            if (ctx.session !== id) {
-                throw new TRPCError({ code: 'UNAUTHORIZED', message: "You're not authorized.", });
-            }
-
             const userPosts = await ctx.prisma.user.findUnique({
                 where: {
                     id,
@@ -117,25 +117,23 @@ export const postRouter = router({
                 },
             });
 
-            if (!userPosts || userPosts.posts.length === 0) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was an error finding notes.', });
-            }
+            if (!userPosts) return { id: ctx.session, posts: [] };
 
             return {
                 id: userPosts.id,
                 posts: userPosts.posts,
             };
         }
-        catch (err: TRPCError | any) {
-
-            console.log(err);
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-                message: err.message,
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err: PrismaClientKnownRequestError | any) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2021' || err.code === 'P2022') {
+                    return {
+                        id: ctx.session,
+                        posts: [],
+                    };
+                }
+            }
+            throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
         }
 
     }),
@@ -160,7 +158,13 @@ export const postRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
+        catch (err: PrismaClientKnownRequestError | any) {
+
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2025' || err.code === 'P2018') {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested notes were not found!', });
+                }
+            }
 
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',

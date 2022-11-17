@@ -48,9 +48,9 @@ export const Private: React.FC = () => {
 		},
 		{
 			onError(err) {
+				console.log(`Yo! I think something happened! :)`);
 				setNotes([]);
 			},
-			retryDelay: 20000,
 		},
 	);
 	const journalsQuery = trpc.journals.getJournalsByUserId.useQuery(
@@ -61,7 +61,6 @@ export const Private: React.FC = () => {
 			onError(err) {
 				setJournals([]);
 			},
-			retryDelay: 20000,
 		},
 	);
 
@@ -174,15 +173,17 @@ export const Private: React.FC = () => {
 							</ScrollContainer>
 						</motion.ul>
 					) : (
-						<div className="mt-10 flex flex-col items-center justify-center">
-							<h1 className="text-2xl font-semibold">You have no notes</h1>
+						<div className="mt-10 flex w-full flex-col items-center justify-center">
+							<h1 className="w-full text-center text-xl font-semibold text-gray-400">
+								I found nothing. Tell me about you!
+							</h1>
 						</div>
 					)}
 				</div>
 			</div>
 			<div className="mt-10 flex flex-col">
 				<h1 className="flex text-xl font-semibold">Your Journals</h1>
-				<div className="flex w-full flex-row">
+				<div className="flex w-full flex-row items-center justify-center">
 					<div>
 						{journals.length > 0 ? (
 							<motion.ul className="no-select flex flex-grow flex-row overflow-x-auto" layout="position">

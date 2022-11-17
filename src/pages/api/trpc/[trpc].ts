@@ -10,8 +10,14 @@ export default createNextApiHandler({
   createContext,
   onError:
     env.NODE_ENV === "development"
-      ? ({ path, error }) => {
-          console.error(`❌ tRPC failed on ${path}: ${error}`);
+      ? ({ error, type, path, input, ctx, req }) => {
+        console.log("Error in", type, "at", path, "with input", input);
+        console.log("Error:", error);
+      }
+      : ({ error, type, path, input, ctx, req }) => {
+        console.error('Error:', error);
+        if (error.code === 'INTERNAL_SERVER_ERROR') {
+          // --todo-- add error logging to sentry/axiom :)
         }
-      : undefined,
+      }
 });

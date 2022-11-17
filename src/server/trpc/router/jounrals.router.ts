@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { type Journal, type Entry, User } from "@prisma/client";
 import { trpc } from "@utils/trpc";
 import { useTime } from "framer-motion";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export const journalRouter = router({
     // This will create a new journal.
@@ -76,13 +77,16 @@ export const journalRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
+        catch (err: PrismaClientKnownRequestError | any) {
 
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2025' || err.code === 'P2018') {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested journal was not found!', });
+                }
+            }
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
             });
-
-            // --todo-- add error logging to sentry
         }
 
     }),
@@ -111,7 +115,13 @@ export const journalRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
+        catch (err: PrismaClientKnownRequestError | any) {
+
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2025' || err.code === 'P2018') {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested journal was not found!', });
+                }
+            }
 
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
@@ -187,11 +197,13 @@ export const journalRouter = router({
 
             return user?.journals ? user.journals : [];
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-            // --todo-- add error logging to sentry
+        catch (err: PrismaClientKnownRequestError | any) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2021' || err.code === 'P2022') {
+                    return [];
+                }
+            }
+            throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
         }
     }),
     // This will get you a single journal.
