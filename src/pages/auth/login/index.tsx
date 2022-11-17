@@ -19,7 +19,6 @@ import { Toast } from '@components/ui/Toast';
 import { handleError } from '@utils/client.util';
 
 // Types
-import { ToastIntent, User } from '@utils/client.typing';
 import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
 
 const LoginPage: NextPage = () => {
@@ -28,8 +27,8 @@ const LoginPage: NextPage = () => {
 
 	// Required Toast State
 	const [showToast, setShowToast] = useAtom(showToastAtom);
-	const [toastIntent, setToastIntent] = useAtom(toastIntentAtom);
-	const [toastMessage, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
 
 	//TRPC
 	const mutation = trpc.user.login.useMutation();

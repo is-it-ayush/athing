@@ -3,9 +3,7 @@ import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { type Journal, type Entry } from "@prisma/client";
-import { trpc } from "@utils/trpc";
-
+import type { Entry } from "@prisma/client";
 
 
 export const entryRouter = router({

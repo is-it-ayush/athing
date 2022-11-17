@@ -210,7 +210,7 @@ export const Private: React.FC = () => {
 						) : (
 							<div className="mt-10 flex w-full flex-col items-center justify-center">
 								<h1 className="w-full text-center text-xl font-semibold text-gray-400">
-									It's all empty. Wanna create one?
+									It&apos;s all empty. Wanna create one?
 								</h1>
 							</div>
 						)}

@@ -2,9 +2,7 @@ import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { type Journal, type Entry, User } from "@prisma/client";
-import { trpc } from "@utils/trpc";
-import { useTime } from "framer-motion";
+import { type Journal } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export const journalRouter = router({

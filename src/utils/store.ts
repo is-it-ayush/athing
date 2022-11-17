@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
 // Types
-import { Note, NoteModalProps, ShortNote, ToastIntent, type User } from './client.typing';
+import { type Note, NoteModalProps, type ShortNote, type ToastIntent, type User } from './client.typing';
 
 export const userInfo = atom<User>({
     id: '',

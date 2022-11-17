@@ -70,7 +70,7 @@ export const App: NextPage = () => {
 					) : showPage === 2 ? (
 						<Private />
 					) : (
-						<div className="text-2xl font-semibold">You aren't supposed to be here</div>
+						<div className="text-2xl font-semibold">You aren&apos;t supposed to be here</div>
 					)}
 				</motion.div>
 				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">

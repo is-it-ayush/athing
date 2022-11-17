@@ -18,7 +18,8 @@ import { Toast } from '@components/ui/Toast';
 import { TRPCError } from '@trpc/server';
 
 // PNG
-import { type ToastIntent } from '@utils/client.typing';
+import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
+import { useAtom } from 'jotai';
 
 const SignupPage: NextPage = () => {
 	const [pageLoad, setPageLoad] = React.useState(false);
@@ -27,9 +28,9 @@ const SignupPage: NextPage = () => {
 	const router = useRouter();
 
 	// Required Toast State
-	const [showToast, setShowToast] = React.useState(false);
-	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-	const [toastMessage, setToastMessage] = React.useState('');
+	const [displayToast, setDisplayToast] = useAtom(showToastAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
 
 	//TRPC
 	const mutation = trpc.user.signup.useMutation();
@@ -66,7 +67,7 @@ const SignupPage: NextPage = () => {
 				const errorMessage = (await handleError(err)) as string;
 				setToastIntent('error');
 				setToastMessage(errorMessage);
-				setShowToast(true);
+				setDisplayToast(true);
 			}
 		},
 	});
@@ -179,16 +180,7 @@ const SignupPage: NextPage = () => {
 						</Button>
 					</motion.div>
 				) : null}
-				{showToast ? (
-					<Toast
-						key="toastKey"
-						intent={toastIntent}
-						message={toastMessage}
-						onClose={() => {
-							setShowToast(!showToast);
-						}}
-					/>
-				) : null}
+				{displayToast ? <Toast key="toastKey" /> : null}
 			</AnimatePresence>
 		</main>
 	);

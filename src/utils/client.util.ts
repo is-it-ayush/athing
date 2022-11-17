@@ -1,6 +1,5 @@
-import { TRPCClientErrorLike, type TRPCClientError } from '@trpc/client';
+import type { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
-import { type NextApiResponse } from 'next/types';
 
 export const loadZxcvbn = async () => {
 

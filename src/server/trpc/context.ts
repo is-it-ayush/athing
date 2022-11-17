@@ -1,7 +1,7 @@
 import { type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getSession } from "@utils/server.util";
-import { NextApiRequest } from "next";
+import type { NextApiRequest } from "next";
 
 import { prisma } from "../db/client";
 
