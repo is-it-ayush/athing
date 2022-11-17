@@ -107,7 +107,7 @@ export const Private: React.FC = () => {
 									return (
 										<motion.li
 											key={note.id}
-											className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 p-5 transition-all hover:border-black `}
+											className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
 											layout
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
@@ -192,7 +192,7 @@ export const Private: React.FC = () => {
 										return (
 											<motion.li
 												key={journal.id}
-												className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer flex-col justify-evenly border-2 p-5 transition-all hover:border-black `}
+												className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
 												layout
 												initial={{ opacity: 0 }}
 												animate={{ opacity: 1 }}

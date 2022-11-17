@@ -1,10 +1,10 @@
 import { trpc } from '@utils/trpc';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 
 // Icons
 import { RiCloseLine } from 'react-icons/ri';
-import { CgOptions } from 'react-icons/cg';
+import { CgOptions, CgMenuRight } from 'react-icons/cg';
 
 export function Navbar({
 	pageController,
@@ -24,7 +24,7 @@ export function Navbar({
 			animate={{ y: 0 }}
 			exit={{ y: -100 }}
 			transition={{ duration: 0.5 }}>
-			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full border-2 border-gray-300 px-5 ">
+			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full  px-5 ">
 				<div className="flex font-semibold">@{res.data?.username}</div>
 				<div className="hidden flex-row divide-x-2 divide-gray-300 lg:flex">
 					<button
@@ -54,7 +54,7 @@ export function Navbar({
 					onClick={() => {
 						menuController[1](!menuController[0]);
 					}}>
-					{menuController[0] === false ? <CgOptions className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
+					{menuController[0] === false ? <CgMenuRight className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
 				</div>
 			</div>
 		</motion.div>

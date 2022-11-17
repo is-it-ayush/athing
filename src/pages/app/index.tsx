@@ -52,13 +52,13 @@ export const App: NextPage = () => {
 	}, [userInfoResponse.data]);
 
 	return (
-		<main className="font-spacemono">
+		<main className="bg-cross-pattern font-spacemono">
 			<AnimatePresence>
 				{showLoading === true ? <FullLoad /> : null}
 				<Navbar key="navigation" pageController={setShowPage} menuController={[showMenu, setShowMenu]} />
 				<motion.div
 					key="content"
-					className="flex flex-col font-spacemono"
+					className="flex min-h-screen flex-col font-spacemono"
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
@@ -80,7 +80,6 @@ export const App: NextPage = () => {
 							onClick={() => {
 								setShowActionWheel(true);
 								// --todo-- make this have more options such as for journals too.
-
 							}}
 							flex="row"
 							width="fit"
