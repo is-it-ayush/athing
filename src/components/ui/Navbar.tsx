@@ -19,7 +19,7 @@ export function Navbar({
 
 	return (
 		<motion.div
-			className="fixed top-5 flex w-screen items-center justify-center  font-spacemono backdrop-blur-[3px] backdrop-filter"
+			className=" no-select fixed top-5 flex w-screen items-center justify-center  font-spacemono backdrop-blur-[3px] backdrop-filter"
 			initial={{ y: -100 }}
 			animate={{ y: 0 }}
 			exit={{ y: -100 }}
