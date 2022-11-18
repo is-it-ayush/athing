@@ -68,7 +68,7 @@ export const JournalPicker = () => {
 					})
 				) : (
 					<div className="flex flex-col">
-						<h1 className="text-center text-2xl font-bold">You have no journals! Create One First!</h1>
+						<h1 className="text-center text-2xl font-bold">You have no journals! You have to create one first.!</h1>
 					</div>
 				)}
 			</div>

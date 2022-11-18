@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-
-// Icons
-import { MdOutlineCreate } from 'react-icons/md';
-import { GrFormClose } from 'react-icons/gr';
+import TextareaAutosize from 'react-textarea-autosize';
 
 // Atoms
 import { showJournalModalAtom, showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
@@ -67,13 +64,15 @@ export const AddJournalBox = () => {
 			<div className="m-5 flex flex-col">
 				<div className="flex flex-col">
 					<h1 className="my-2 text-sm text-white opacity-60">Title</h1>
-					<textarea
+					<TextareaAutosize
 						value={titleText}
 						onChange={(e) => setTitleText(e.target.value)}
 						className="h-[180px] w-[150px] resize-none overflow-hidden border-0 bg-black p-0 text-2xl text-white placeholder-white placeholder:opacity-20 focus:border-0 focus:outline-none focus:ring-0"
 						placeholder="Write your amazing title..."
+						maxRows={7}
 						maxLength={50}
-						minLength={10}></textarea>
+						minLength={10}
+					/>
 				</div>
 				<div className="absolute -bottom-5 left-[50%] flex -translate-x-[50%] flex-row gap-5">
 					<button

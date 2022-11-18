@@ -33,6 +33,7 @@ import { AddJournalBox } from '@components/ui/AddJournalBox';
 import { JournalIndex } from '@components/ui/JournalIndex';
 import { EntryModal } from '@components/ui/EntryModal';
 import { JournalPicker } from '@components/ui/JournalPicker';
+import { Secret } from '@components/ui/Secret';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -81,7 +82,7 @@ export const App: NextPage = () => {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 1 }}>
-					{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <></>}
+					{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <Secret />}
 				</motion.div>
 				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
 					{showActionWheel ? null : (

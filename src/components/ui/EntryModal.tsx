@@ -200,7 +200,7 @@ export const EntryModal = () => {
 					</div>
 				) : (
 					<div className="flex h-full flex-col items-center justify-center">
-						<h1 className="flex text-center">This is a easter egg. You aren't supposed to see this!</h1>
+						<h1 className="flex text-center">This is a easter egg. You aren&apos;t supposed to see this!</h1>
 					</div>
 				)
 			}
