@@ -23,6 +23,8 @@ import {
 	showJournalModalAtom,
 	showJournalIndexModalAtom,
 	showEntryModalAtom,
+	showJournalPickerAtom,
+	currentPageAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -30,6 +32,7 @@ import { ActionWheel } from '@components/ui/ActionWheel';
 import { AddJournalBox } from '@components/ui/AddJournalBox';
 import { JournalIndex } from '@components/ui/JournalIndex';
 import { EntryModal } from '@components/ui/EntryModal';
+import { JournalPicker } from '@components/ui/JournalPicker';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -37,17 +40,18 @@ export const App: NextPage = () => {
 		refetchInterval: 1000 * 60 * 5, // 5 minutes
 	});
 
-	const [showPage, setShowPage] = React.useState(0);
 	const [showMenu, setShowMenu] = React.useState(false);
 	const [showLoading, setShowLoading] = React.useState(false);
 
 	// Atoms
 	const [, setUser] = useAtom(userInfo);
+	const [showPage] = useAtom(currentPageAtom);
 	const [displayModel] = useAtom(showModal);
 	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
 	const [showAddJounralModal] = useAtom(showJournalModalAtom);
 	const [showJournalIndexModal] = useAtom(showJournalIndexModalAtom);
-	const [showEntryModal,] = useAtom(showEntryModalAtom); 
+	const [showEntryModal] = useAtom(showEntryModalAtom);
+	const [showJournalPickerModal] = useAtom(showJournalPickerAtom);
 
 	const [displayToast] = useAtom(showToastAtom);
 
@@ -66,10 +70,10 @@ export const App: NextPage = () => {
 	}, [userInfoResponse.data]);
 
 	return (
-		<main className="bg-cross-pattern font-spacemono">
+		<main className=" bg-cross-pattern font-spacemono">
 			<AnimatePresence>
 				{showLoading === true ? <FullLoad /> : null}
-				<Navbar key="navigation" pageController={setShowPage} menuController={[showMenu, setShowMenu]} />
+				<Navbar key="navigation" menuController={[showMenu, setShowMenu]} />
 				<motion.div
 					key="content"
 					className="no-select flex min-h-screen flex-col font-spacemono"
@@ -77,15 +81,7 @@ export const App: NextPage = () => {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 1 }}>
-					{showPage === 0 ? (
-						<Notes />
-					) : showPage === 1 ? (
-						<Journal />
-					) : showPage === 2 ? (
-						<Private />
-					) : (
-						<div className="text-2xl font-semibold">You aren&apos;t supposed to be here</div>
-					)}
+					{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <></>}
 				</motion.div>
 				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
 					{showActionWheel ? null : (
@@ -109,8 +105,9 @@ export const App: NextPage = () => {
 					{showAddJounralModal ? <AddJournalBox key="addJournalBoxKey" /> : null}
 					{showJournalIndexModal ? <JournalIndex key="journalIndexKey" /> : null}
 					{showEntryModal ? <EntryModal key="entryModalKey" /> : null}
+					{showJournalPickerModal ? <JournalPicker key="journalPickerKey" /> : null}
 				</AnimatePresence>
-				<Menu key="menu" pageController={setShowPage} menuController={showMenu} />
+				<Menu key="menu" menuController={showMenu} />
 			</AnimatePresence>
 		</main>
 	);

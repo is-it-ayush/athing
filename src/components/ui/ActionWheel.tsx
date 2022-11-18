@@ -1,4 +1,5 @@
 import {
+	currentPageAtom,
 	noteModal,
 	selectedEntryAtom,
 	selectedEntryTypeAtom,
@@ -47,6 +48,8 @@ export const ActionWheel = () => {
 	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
 	const [, setSelectedEntry] = useAtom(selectedEntryAtom);
 
+	const [, setCurrentPage] = useAtom(currentPageAtom);
+
 	return (
 		<motion.div
 			initial={animationVariants.hidden}
@@ -72,6 +75,7 @@ export const ActionWheel = () => {
 					exit={animationComponentVariants.hidden}
 					className="my-2 flex w-fit cursor-pointer flex-row bg-black p-2 text-white"
 					onClick={() => {
+						setCurrentPage(-1);
 						setShowActionWheel(false);
 						setSelectedEntry(null);
 						setSelectedEntryType('edit');

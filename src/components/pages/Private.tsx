@@ -24,6 +24,7 @@ import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { NoteModal } from '@components/ui/NoteModal';
 import { formatDate, handleError } from '@utils/client.util';
 import { Button } from '@components/ui/Button';
+import { JournalBook } from '@components/ui/JournalBook';
 
 export const Private: React.FC = () => {
 	// State
@@ -31,8 +32,7 @@ export const Private: React.FC = () => {
 	const [journals, setJournals] = useState<Journal[]>([]);
 
 	const [selectedNote, setSelectedNote] = useAtom(selectedNoteAtom);
-	const [, setSelectedJournal] = useAtom(selectedJournalAtom);
-	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
+
 	const [, setModalType] = useAtom(noteModal);
 	const [, setShowModal] = useAtom(showModal);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
@@ -192,36 +192,7 @@ export const Private: React.FC = () => {
 							layout="position">
 							<ScrollContainer className="flex flex-row" hideScrollbars={true}>
 								{journals.map((journal) => {
-									return (
-										<motion.li
-											key={journal.id}
-											onClick={() => {
-												setSelectedJournal(journal);
-												setShowJournalIndexModal(true);
-											}}
-											className={`m-5 flex h-[300px] min-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black lg:w-[200px] `}
-											layout
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											exit={{ opacity: 0 }}
-											transition={{ duration: 0.3 }}>
-											<div className="flex flex-col">
-												<div className="my-3 flex flex-col">
-													<h1 className="flex h-[120px] items-center break-words text-xl font-bold text-black">
-														{journal.title.length > 25 ? `${journal.title.substring(0, 25)}...` : journal.title}
-													</h1>
-													<div className="mt-2 w-fit">
-														{journal.isPublic ? (
-															<h1 className=" bg-pink-600 p-2 text-black">Public</h1>
-														) : (
-															<h1 className="bg-black p-2 text-white">Private</h1>
-														)}
-													</div>
-												</div>
-												<h4 className=" text-sm text-gray-600">{formatDate(journal.createdAt)}</h4>
-											</div>
-										</motion.li>
-									);
+									return <JournalBook type="view" journal={journal} key={journal.id} />;
 								})}
 							</ScrollContainer>
 						</motion.ul>

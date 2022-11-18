@@ -9,9 +9,9 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export const entryRouter = router({
     create: protectedProcedure.input(z.object({
-        title: z.string().trim().min(1).max(100),
+        title: z.string().trim().min(10).max(40),
         journalId: z.string(),
-        content: z.string().trim().min(20, 'The Conent should at least contain 20 characters.').max(3001, 'The Content can only contain 3000 characters.'),
+        content: z.string().trim().min(20, 'The content should at least contain 20 characters.').max(6000, 'The content can only contain 6000 characters.'),
     })).mutation(async ({ input, ctx }) => {
         const { journalId, content, title } = input;
 

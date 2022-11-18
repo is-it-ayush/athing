@@ -2,9 +2,13 @@ import { motion } from 'framer-motion';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
 import { setCookie } from 'nookies';
+import { currentPageAtom } from '@utils/store';
+import { useAtom } from 'jotai';
 
-export const Menu = ({ pageController, menuController }: { pageController: React.Dispatch<React.SetStateAction<number>>; menuController: boolean }) => {
+export const Menu = ({ menuController }: { menuController: boolean }) => {
 	const router = useRouter();
+
+	const [, setShowPage] = useAtom(currentPageAtom);
 
 	return menuController ? (
 		<motion.div className="fixed top-[50%] flex min-h-fit w-screen translate-y-[-50%] flex-col items-center justify-center bg-black p-5 font-spacemono text-white">
@@ -12,7 +16,7 @@ export const Menu = ({ pageController, menuController }: { pageController: React
 				<button
 					className="flex flex-row items-center justify-center"
 					onClick={() => {
-						pageController(0);
+						setShowPage(0);
 					}}>
 					<li className="px-5 hover:underline">Notes</li>
 					<RiArrowRightSLine />
@@ -20,7 +24,7 @@ export const Menu = ({ pageController, menuController }: { pageController: React
 				<button
 					className="flex flex-row items-center justify-center"
 					onClick={() => {
-						pageController(1);
+						setShowPage(1);
 					}}>
 					<li className="px-5 hover:underline">Journals</li>
 					<RiArrowRightSLine />
@@ -28,7 +32,7 @@ export const Menu = ({ pageController, menuController }: { pageController: React
 				<button
 					className="flex flex-row items-center justify-center"
 					onClick={() => {
-						pageController(2);
+						setShowPage(2);
 					}}>
 					<li className="px-5 hover:underline">Private</li>
 					<RiArrowRightSLine />

@@ -42,5 +42,10 @@ export type JournalEntryOnlyTitle = {
     title: string;
 }[];
 
+export type JournalBookProps = {
+    journal: Journal;
+    type: 'select' | 'view';
+}
+
 
 export type ToastIntent = 'success' | 'error' | 'warning' | 'info';

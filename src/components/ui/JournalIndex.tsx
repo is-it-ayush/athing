@@ -1,5 +1,12 @@
+import { Entry } from '@prisma/client';
 import { JournalEntryOnlyTitle } from '@utils/client.typing';
-import { selectedJournalAtom, showJournalIndexModalAtom } from '@utils/store';
+import {
+	selectedEntryTypeAtom,
+	selectedJournalAtom,
+	showJournalIndexModalAtom,
+	selectedEntryIdAtom,
+	showEntryModalAtom,
+} from '@utils/store';
 import { trpc } from '@utils/trpc';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
@@ -18,9 +25,12 @@ const JournalIndexAnimation = {
 
 export const JournalIndex = () => {
 	// Atoms
-	const [selectedJournal] = useAtom(selectedJournalAtom);
+	const [selectedJournal, setSelectedJournal] = useAtom(selectedJournalAtom);
 	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 	const [entries, setEntries] = useState<JournalEntryOnlyTitle>([]);
+	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
+	const [, setSelectedEntryId] = useAtom(selectedEntryIdAtom);
+	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
 
 	//TRPC
 	const getJournalEntryTitles = trpc.entry.getAll.useQuery({
@@ -33,11 +43,9 @@ export const JournalIndex = () => {
 		}
 	}, [getJournalEntryTitles.data]);
 
-	console.log(`entries`, entries);
-
 	return (
 		<motion.div
-			className="fixed top-0 left-0 flex min-h-screen w-screen items-center justify-center bg-black font-spacemono"
+			className="fixed top-0 left-0 flex h-full w-screen items-center justify-center bg-black font-spacemono"
 			initial={JournalIndexAnimation.hidden}
 			animate={JournalIndexAnimation.visible}
 			exit={JournalIndexAnimation.hidden}
@@ -48,6 +56,7 @@ export const JournalIndex = () => {
 				<Button
 					type="button"
 					onClick={() => {
+						setSelectedJournal(null);
 						setShowJournalIndexModal(false);
 					}}
 					width="fit"
@@ -59,9 +68,16 @@ export const JournalIndex = () => {
 				{entries.length > 0 ? (
 					entries.map((entry, i) => {
 						return (
-							<div key={entry.id} className="flex my-2">
-								<h1>
-									Chapter ${i.toString().toUpperCase()}:{' '}
+							<div
+								key={entry.id}
+								className="my-1 flex cursor-pointer"
+								onClick={() => {
+									setSelectedEntryType('view');
+									setSelectedEntryId(entry.id);
+									setShowEntryModal(true);
+								}}>
+								<h1 className="underline">
+									Chapter {(i + 1).toString().toUpperCase()}.){' '}
 									{entry.title.length > 20 ? entry.title.slice(0, 20) + '...' : entry.title}
 								</h1>
 							</div>

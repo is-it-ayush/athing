@@ -5,17 +5,19 @@ import React from 'react';
 // Icons
 import { RiCloseLine } from 'react-icons/ri';
 import { CgOptions, CgMenuRight } from 'react-icons/cg';
+import { useAtom } from 'jotai';
+import { currentPageAtom } from '@utils/store';
 
 export function Navbar({
-	pageController,
 	menuController,
 }: {
-	pageController: React.Dispatch<React.SetStateAction<number>>;
 	menuController: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 }) {
 	const res = trpc.user.me.useQuery(void 0, {
 		staleTime: 1000 * 60 * 10,
 	});
+
+	const [, setShowPage] = useAtom(currentPageAtom);
 
 	return (
 		<motion.div
@@ -30,21 +32,21 @@ export function Navbar({
 					<button
 						className="duration-400 flex px-5 hover:font-semibold"
 						onClick={() => {
-							pageController(0);
+							setShowPage(0);
 						}}>
 						<h1>Notes</h1>
 					</button>
 					<button
 						className="duration-400 flex px-5 hover:font-semibold"
 						onClick={() => {
-							pageController(1);
+							setShowPage(1);
 						}}>
 						<h1>Journals</h1>
 					</button>
 					<button
 						className="duration-400 flex px-5 hover:font-semibold"
 						onClick={() => {
-							pageController(2);
+							setShowPage(2);
 						}}>
 						<h1>Private</h1>
 					</button>

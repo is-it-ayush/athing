@@ -9,6 +9,10 @@ export const userInfo = atom<User>({
     username: ''
 });
 
+// Current Page
+export const lastPageAtom = atom<number>(0);
+export const currentPageAtom = atom<number>(0);
+
 // These is for the notes modal.
 export const noteModal = atom<string | null>('edit');
 export const showModal = atom<boolean>(false);
@@ -30,4 +34,8 @@ export const selectedJournalAtom = atom<Journal | null>(null);
 // This is for the Entry Modal
 export const showEntryModalAtom = atom<boolean>(false);
 export const selectedEntryAtom = atom<Entry | null>(null);
+export const selectedEntryIdAtom = atom<string>('');
 export const selectedEntryTypeAtom = atom<'edit' | 'view' | null>(null);
+
+// This is for the Journal Picker Modal
+export const showJournalPickerAtom = atom<boolean>(false);
