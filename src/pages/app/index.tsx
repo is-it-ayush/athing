@@ -15,10 +15,21 @@ import { Button } from '@components/ui/Button';
 import { IoAdd } from 'react-icons/io5';
 
 // Atoms
-import { userInfo, noteModal, showModal, selectedNoteAtom, showToastAtom, showActionWheelAtom } from '@utils/store';
+import {
+	userInfo,
+	showModal,
+	showToastAtom,
+	showActionWheelAtom,
+	showJournalModalAtom,
+	showJournalIndexModalAtom,
+	showEntryModalAtom,
+} from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
 import { ActionWheel } from '@components/ui/ActionWheel';
+import { AddJournalBox } from '@components/ui/AddJournalBox';
+import { JournalIndex } from '@components/ui/JournalIndex';
+import { EntryModal } from '@components/ui/EntryModal';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -34,6 +45,9 @@ export const App: NextPage = () => {
 	const [, setUser] = useAtom(userInfo);
 	const [displayModel] = useAtom(showModal);
 	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
+	const [showAddJounralModal] = useAtom(showJournalModalAtom);
+	const [showJournalIndexModal] = useAtom(showJournalIndexModalAtom);
+	const [showEntryModal,] = useAtom(showEntryModalAtom); 
 
 	const [displayToast] = useAtom(showToastAtom);
 
@@ -92,6 +106,9 @@ export const App: NextPage = () => {
 					{displayModel ? <NoteModal key="modalKey" /> : null}
 					{displayToast ? <Toast key="toastKey" /> : null}
 					{showActionWheel ? <ActionWheel key="actionWheelKey" /> : null}
+					{showAddJounralModal ? <AddJournalBox key="addJournalBoxKey" /> : null}
+					{showJournalIndexModal ? <JournalIndex key="journalIndexKey" /> : null}
+					{showEntryModal ? <EntryModal key="entryModalKey" /> : null}
 				</AnimatePresence>
 				<Menu key="menu" pageController={setShowPage} menuController={showMenu} />
 			</AnimatePresence>

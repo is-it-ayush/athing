@@ -4,14 +4,16 @@ import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import type { Entry } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 
 export const entryRouter = router({
     create: protectedProcedure.input(z.object({
+        title: z.string().trim().min(1).max(100),
         journalId: z.string(),
         content: z.string().trim().min(20, 'The Conent should at least contain 20 characters.').max(3001, 'The Content can only contain 3000 characters.'),
     })).mutation(async ({ input, ctx }) => {
-        const { journalId, content } = input;
+        const { journalId, content, title } = input;
 
         console.log(`Creating a new entry with jorunalId: ${journalId} and content: ${content.length}`);
 
@@ -19,10 +21,12 @@ export const entryRouter = router({
 
             const entry = await ctx.prisma.entry.create({
                 data: {
-                    text: content,
                     journalId,
+                    text: content,
+                    title,
                 }
-            });
+            }) as Entry;
+
 
             if (!entry) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create entry.', });
@@ -43,8 +47,7 @@ export const entryRouter = router({
         }
 
     }),
-
-    get: protectedProcedure.input(z.object(
+    getOne: protectedProcedure.input(z.object(
         {
             entryId: z.string(),
         }
@@ -72,7 +75,6 @@ export const entryRouter = router({
         }
 
     }),
-
     update: protectedProcedure.input(z.object({
         entryId: z.string(),
         content: z.string().trim().min(20, 'The Conent should at least contain 20 characters.').max(3001, 'The Content can only contain 3000 characters.'),
@@ -111,7 +113,6 @@ export const entryRouter = router({
         }
 
     }),
-
     delete: protectedProcedure.input(z.object({
         id: z.string(),
     })).mutation(async ({ input, ctx }) => {
@@ -125,7 +126,7 @@ export const entryRouter = router({
                 where: {
                     id,
                 }
-            });
+            }) as Entry;
 
             if (!entry) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to delete entry.', });
@@ -148,6 +149,43 @@ export const entryRouter = router({
     }
 
     ),
+    getAll: protectedProcedure.input(z.object({
+        journalId: z.string(),
+    })).query(async ({ input, ctx }) => {
+        const { journalId } = input;
+
+        if (journalId.length < 1) {
+            return [];
+        }
+
+        try {
+            const journal = await ctx.prisma.journal.findUnique({
+                where: {
+                    id: journalId,
+                },
+                include: {
+                    entries: {
+                        select: {
+                            id: true,
+                            title: true,
+                            createdAt: true,
+                        },
+                        orderBy: {
+                            createdAt: "desc",
+                        }
+                    }
+                }
+            });
+
+            return journal?.entries ? journal.entries : [];
+        }
+        catch (err: PrismaClientKnownRequestError | any) {
+            if (err.code === 'P2025' || err.code === 'P2018') {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested journal was not found!', });
+            }
+            throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+        }
+    })
 })
 
 // --todo-- This needs a middleware to ensure the user is the owner of the journal

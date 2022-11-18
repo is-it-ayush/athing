@@ -1,8 +1,17 @@
-import { noteModal, selectedNoteAtom, showActionWheelAtom, showModal } from '@utils/store';
+import {
+	noteModal,
+	selectedEntryAtom,
+	selectedEntryTypeAtom,
+	selectedNoteAtom,
+	showActionWheelAtom,
+	showEntryModalAtom,
+	showJournalModalAtom,
+	showModal,
+} from '@utils/store';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import { BiBook } from 'react-icons/bi';
-import { IoAdd, IoClose } from 'react-icons/io5';
+import { BiBook, BiPencil } from 'react-icons/bi';
+import { IoClose } from 'react-icons/io5';
 import { Button } from './Button';
 import { TbNotes } from 'react-icons/tb';
 
@@ -32,6 +41,11 @@ export const ActionWheel = () => {
 	const [, setSelectedNoteAtom] = useAtom(selectedNoteAtom);
 	const [, setNoteModalType] = useAtom(noteModal);
 	const [, setDisplayModal] = useAtom(showModal);
+	const [, setShowAddJournalModal] = useAtom(showJournalModalAtom);
+
+	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
+	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
+	const [, setSelectedEntry] = useAtom(selectedEntryAtom);
 
 	return (
 		<motion.div
@@ -47,9 +61,24 @@ export const ActionWheel = () => {
 					className="my-2 flex w-fit cursor-pointer flex-row bg-black p-2 text-white"
 					onClick={() => {
 						setShowActionWheel(false);
+						setShowAddJournalModal(true);
 					}}>
 					<BiBook className="h-6 w-6" />
 					<h1 className="mx-2">Add Journal</h1>
+				</motion.div>
+				<motion.div
+					initial={animationComponentVariants.hidden}
+					animate={animationComponentVariants.visible}
+					exit={animationComponentVariants.hidden}
+					className="my-2 flex w-fit cursor-pointer flex-row bg-black p-2 text-white"
+					onClick={() => {
+						setShowActionWheel(false);
+						setSelectedEntry(null);
+						setSelectedEntryType('edit');
+						setShowEntryModal(true);
+					}}>
+					<BiPencil className="h-6 w-6" />
+					<h1 className="mx-2">Add Entry</h1>
 				</motion.div>
 				<motion.div
 					initial={animationComponentVariants.hidden}

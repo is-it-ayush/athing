@@ -204,36 +204,4 @@ export const journalRouter = router({
             throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
         }
     }),
-    // This will get you a single journal.
-    getEntriesByJournalId: protectedProcedure.input(z.object(
-        {
-            id: z.string(),
-        }
-    )).query(async ({ input, ctx }) => {
-
-        const { id } = input;
-
-        try {
-
-            const journal = await ctx.prisma.journal.findUnique({
-                where: {
-                    id,
-                },
-                include: {
-                    entries: true,
-                },
-            }) as Journal;
-
-            return journal;
-        }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
-        }
-
-    }),
 });

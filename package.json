@@ -5,10 +5,10 @@
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
-		"inspect": "set NODE_OPTIONS='--inspect' next dev",
 		"postinstall": "prisma generate",
 		"lint": "next lint",
-		"start": "next start"
+		"start": "next start",
+		"migrate:postgres": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.5.0",

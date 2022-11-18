@@ -1,4 +1,4 @@
-import type { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
+import { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
 
 export const loadZxcvbn = async () => {
@@ -20,14 +20,8 @@ export const loadZxcvbn = async () => {
 
 export const handleError = async (err: TRPCClientError<AppRouter> | TRPCClientErrorLike<AppRouter>) => {
     let message: string;
-    if (err instanceof Object) {
-        const parsedError = JSON.parse(err.message);
-        message = parsedError[0].message ?? 'Something went wrong!';
-    }
-    else {
-        message = 'Something went wrong!';
-    }
-    return message;
+    // --todo-- add a better error handling system
+    return 'Something went wrong!'
 };
 
 export const formatDate = (date: Date | null) => {
@@ -39,6 +33,7 @@ export const formatDate = (date: Date | null) => {
         minute: 'numeric',
     }).format(new Date(date)) : 'Sometime Ago'
 }
+
 
 
 /**

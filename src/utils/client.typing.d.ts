@@ -1,3 +1,4 @@
+import { Entry, Journal } from "@prisma/client";
 
 export type Note = {
     text: string;
@@ -35,6 +36,11 @@ export type User = {
     id: string;
     username: string;
 }
+
+export type JournalEntryOnlyTitle = {
+    id: string;
+    title: string;
+}[];
 
 
 export type ToastIntent = 'success' | 'error' | 'warning' | 'info';

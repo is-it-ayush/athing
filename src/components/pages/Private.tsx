@@ -11,6 +11,8 @@ import {
 	toastMessageAtom,
 	userInfo,
 	showModal,
+	selectedJournalAtom,
+	showJournalIndexModalAtom,
 } from '@utils/store';
 import React from 'react';
 import ScrollContainer from 'react-indiana-drag-scroll';
@@ -28,9 +30,9 @@ export const Private: React.FC = () => {
 	const [notes, setNotes] = useState<Post[]>([]);
 	const [journals, setJournals] = useState<Journal[]>([]);
 
-	const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
-
 	const [selectedNote, setSelectedNote] = useAtom(selectedNoteAtom);
+	const [, setSelectedJournal] = useAtom(selectedJournalAtom);
+	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 	const [, setModalType] = useAtom(noteModal);
 	const [, setShowModal] = useAtom(showModal);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
@@ -181,40 +183,55 @@ export const Private: React.FC = () => {
 					)}
 				</div>
 			</div>
-			<div className="mt-10 flex flex-col">
+			<div className="mt-5 flex flex-col">
 				<h1 className="flex text-xl font-semibold">Your Journals</h1>
-				<div className="flex w-full flex-row items-center justify-center">
-					<div>
-						{journals.length > 0 ? (
-							<motion.ul className="no-select flex flex-grow flex-row overflow-x-auto" layout="position">
-								<ScrollContainer className="flex flex-row" hideScrollbars={true}>
-									{journals.map((journal) => {
-										return (
-											<motion.li
-												key={journal.id}
-												className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
-												layout
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												exit={{ opacity: 0 }}
-												transition={{ duration: 0.3 }}>
-												<div className="flex flex-col">
-													<h1 className="flex text-xl">{journal.title}</h1>
-													<h4 className=" text-sm text-gray-600">{formatDate(journal.createdAt)}</h4>
+				<div>
+					{journals.length > 0 ? (
+						<motion.ul
+							className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto overflow-y-hidden"
+							layout="position">
+							<ScrollContainer className="flex flex-row" hideScrollbars={true}>
+								{journals.map((journal) => {
+									return (
+										<motion.li
+											key={journal.id}
+											onClick={() => {
+												setSelectedJournal(journal);
+												setShowJournalIndexModal(true);
+											}}
+											className={`m-5 flex h-[300px] min-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black lg:w-[200px] `}
+											layout
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											exit={{ opacity: 0 }}
+											transition={{ duration: 0.3 }}>
+											<div className="flex flex-col">
+												<div className="my-3 flex flex-col">
+													<h1 className="flex h-[120px] items-center break-words text-xl font-bold text-black">
+														{journal.title.length > 25 ? `${journal.title.substring(0, 25)}...` : journal.title}
+													</h1>
+													<div className="mt-2 w-fit">
+														{journal.isPublic ? (
+															<h1 className=" bg-pink-600 p-2 text-black">Public</h1>
+														) : (
+															<h1 className="bg-black p-2 text-white">Private</h1>
+														)}
+													</div>
 												</div>
-											</motion.li>
-										);
-									})}
-								</ScrollContainer>
-							</motion.ul>
-						) : (
-							<div className="mt-10 flex w-full flex-col items-center justify-center">
-								<h1 className="w-full text-center text-xl font-semibold text-gray-400">
-									It&apos;s all empty. Wanna create one?
-								</h1>
-							</div>
-						)}
-					</div>
+												<h4 className=" text-sm text-gray-600">{formatDate(journal.createdAt)}</h4>
+											</div>
+										</motion.li>
+									);
+								})}
+							</ScrollContainer>
+						</motion.ul>
+					) : (
+						<div className="mt-10 flex w-full flex-col items-center justify-center">
+							<h1 className="w-full text-center text-xl font-semibold text-gray-400">
+								It&apos;s all empty. Wanna create one?
+							</h1>
+						</div>
+					)}
 				</div>
 			</div>
 		</motion.div>
