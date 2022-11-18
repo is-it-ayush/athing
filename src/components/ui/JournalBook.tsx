@@ -2,6 +2,7 @@ import { type Journal } from '@prisma/client';
 import { JournalBookProps } from '@utils/client.typing';
 import { formatDate } from '@utils/client.util';
 import {
+	currentPageAtom,
 	selectedJournalAtom,
 	showJournalIndexModalAtom,
 	showJournalPickerAtom,
@@ -15,6 +16,7 @@ import { useAtom } from 'jotai';
 export const JournalBook = ({ journal, type }: JournalBookProps) => {
 	const [, setSelectedJournal] = useAtom(selectedJournalAtom);
 	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
+	const [, setCurrentPage] = useAtom(currentPageAtom);
 
 	const [, setShowJournalPickerModal] = useAtom(showJournalPickerAtom);
 
@@ -29,6 +31,7 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			onClick={() => {
 				setSelectedJournal(journal);
 				if (type === 'view') {
+					setCurrentPage(-1);
 					setShowJournalIndexModal(true);
 				} else if (type === 'select') {
 					// Scroll to top smoothly

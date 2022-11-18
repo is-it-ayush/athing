@@ -6,6 +6,7 @@ import {
 	showJournalIndexModalAtom,
 	selectedEntryIdAtom,
 	showEntryModalAtom,
+	currentPageAtom,
 } from '@utils/store';
 import { trpc } from '@utils/trpc';
 import { motion } from 'framer-motion';
@@ -31,6 +32,7 @@ export const JournalIndex = () => {
 	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
 	const [, setSelectedEntryId] = useAtom(selectedEntryIdAtom);
 	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
+	const [, setCurrentPage] = useAtom(currentPageAtom);
 
 	//TRPC
 	const getJournalEntryTitles = trpc.entry.getAll.useQuery({
@@ -45,7 +47,7 @@ export const JournalIndex = () => {
 
 	return (
 		<motion.div
-			className="fixed top-0 left-0 flex h-full w-screen items-center justify-center bg-black font-spacemono"
+			className="absolute top-0 left-0 flex min-h-screen w-screen items-center justify-center bg-black font-spacemono"
 			initial={JournalIndexAnimation.hidden}
 			animate={JournalIndexAnimation.visible}
 			exit={JournalIndexAnimation.hidden}
@@ -56,8 +58,9 @@ export const JournalIndex = () => {
 				<Button
 					type="button"
 					onClick={() => {
-						setSelectedJournal(null);
+						setCurrentPage(2);
 						setShowJournalIndexModal(false);
+						setSelectedJournal(null);
 					}}
 					width="fit"
 					styles="opposite">

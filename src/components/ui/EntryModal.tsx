@@ -14,10 +14,10 @@ import { trpc } from '@utils/trpc';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { IoClose, IoSave } from 'react-icons/io5';
+import { IoClose } from 'react-icons/io5';
 import { RiSaveLine } from 'react-icons/ri';
 import TextareaAutosize from 'react-textarea-autosize';
-import { formatDate } from '@utils/client.util';
+import { FiEdit3 } from 'react-icons/fi';
 import React from 'react';
 import { CgArrowsExchangeAlt } from 'react-icons/cg';
 
@@ -32,12 +32,13 @@ const EntryModalAnimations = {
 
 export const EntryModal = () => {
 	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
-	const [entryType] = useAtom(selectedEntryTypeAtom);
+	const [entryType, setEntryType] = useAtom(selectedEntryTypeAtom);
 	const [selectedEntry, setSelectedEntry] = useAtom(selectedEntryAtom);
-	const [selectedEntryId, setSelectedEntryId] = useAtom(selectedEntryIdAtom);
+	const [selectedEntryId] = useAtom(selectedEntryIdAtom);
 	const [selectedJournal, setSelectedJournal] = useAtom(selectedJournalAtom);
 	const [, setShowJournalPickerModal] = useAtom(showJournalPickerAtom);
 	const [, setCurrentPage] = useAtom(currentPageAtom);
+	const [hasSwitched, setHasSwitched] = useState(false);
 
 	// Local Component State
 	const [text, setText] = useState('');
@@ -46,10 +47,12 @@ export const EntryModal = () => {
 
 	// tRPC
 	const createEntryMutation = trpc.entry.create.useMutation();
+	const updateEntryMutation = trpc.entry.update.useMutation();
 	// This is supposed to never error because this will always be updated before EntryModal is opened.
 	const fetchEntryById = trpc.entry.getOne.useQuery({
 		entryId: selectedEntryId,
 	});
+	const utils = trpc.useContext();
 
 	React.useEffect(() => {
 		if (fetchEntryById.data) {
@@ -77,15 +80,50 @@ export const EntryModal = () => {
 			});
 			if (res.result) {
 				setDisplayToast(true);
+				setCurrentPage(0);
 				setToastIntent('success');
 				setToastMessage('The entry has been added to the journal.');
-				setCurrentPage(0);
 				setShowEntryModal(false);
 			}
 		} catch (err) {
 			// --todo-- create client side error handling.
 			setToastIntent('error');
 			setToastMessage('There was an error creating your entry.');
+			setDisplayToast(true);
+		}
+	}
+
+	async function handleUpdateEntry() {
+		try {
+			const res = await updateEntryMutation.mutateAsync({
+				entryId: selectedEntryId,
+				content: text,
+				title: title,
+			});
+			if (res.result) {
+				utils.entry.getAll.invalidate();
+				setDisplayToast(true);
+				setToastIntent('success');
+				setToastMessage('The entry has been updated.');
+				setShowEntryModal(false);
+			}
+		} catch (err) {
+			// --todo-- create client side error handling.
+			setToastIntent('error');
+			setToastMessage('There was an error updating your entry.');
+			setDisplayToast(true);
+		}
+	}
+
+	async function switchToEdit() {
+		if (selectedEntry) {
+			setHasSwitched(true);
+			setText(selectedEntry.text);
+			setTitle(selectedEntry.title);
+			setEntryType('edit');
+		} else {
+			setToastIntent('error');
+			setToastMessage('There was an error switching to edit mode.');
 			setDisplayToast(true);
 		}
 	}
@@ -104,39 +142,52 @@ export const EntryModal = () => {
 					className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
 					type="button"
 					onClick={() => {
-						setCurrentPage(0);
 						if (entryType === 'edit') {
+							setCurrentPage(0);
 							setSelectedJournal(null);
 						}
 						setShowEntryModal(false);
 					}}>
 					<IoClose className="h-6 w-6" />
 				</button>
+				{entryType === 'edit' && !hasSwitched ? (
+					<button
+						className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
+						type="button"
+						onClick={() => {
+							setShowJournalPickerModal(true);
+						}}>
+						<CgArrowsExchangeAlt className="h-6 w-6" />
+					</button>
+				) : null}
 				{entryType === 'edit' ? (
-					<>
-						<button
-							className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
-							type="button"
-							onClick={() => {
-								if (journalId.length < 1) {
-									setDisplayToast(true);
-									setToastIntent('error');
-									setToastMessage('No Journal has been selected!');
+					<button
+						className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
+						type="button"
+						onClick={() => {
+							if (journalId.length < 1) {
+								setDisplayToast(true);
+								setToastIntent('error');
+								setToastMessage('No Journal has been selected!');
+							} else {
+								if (hasSwitched) {
+									handleUpdateEntry();
 								} else {
 									handleCreateEntry();
 								}
-							}}>
-							<RiSaveLine className="h-6 w-6" />
-						</button>
-						<button
-							className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
-							type="button"
-							onClick={() => {
-								setShowJournalPickerModal(true);
-							}}>
-							<CgArrowsExchangeAlt className="h-6 w-6" />
-						</button>
-					</>
+							}
+						}}>
+						<RiSaveLine className="h-6 w-6" />
+					</button>
+				) : entryType === 'view' ? (
+					<button
+						className="flex flex-col items-center rounded-full border-2 border-gray-200 p-4"
+						type="button"
+						onClick={() => {
+							switchToEdit();
+						}}>
+						<FiEdit3 className="h-6 w-6" />
+					</button>
 				) : null}
 			</div>
 			<div className="my-2 flex text-start">

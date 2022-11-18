@@ -76,10 +76,11 @@ export const entryRouter = router({
 
     }),
     update: protectedProcedure.input(z.object({
+        title: z.string().trim().min(10).max(40),
         entryId: z.string(),
-        content: z.string().trim().min(20, 'The Conent should at least contain 20 characters.').max(3001, 'The Content can only contain 3000 characters.'),
+        content: z.string().trim().min(20, 'The content should at least contain 20 characters.').max(6000, 'The content can only contain 6000 characters.'),
     })).mutation(async ({ input, ctx }) => {
-        const { entryId, content } = input;
+        const { entryId, content, title } = input;
 
         console.log(`Updating entry with id: ${entryId} and content: ${content.length}`);
 
@@ -91,6 +92,7 @@ export const entryRouter = router({
                 },
                 data: {
                     text: content,
+                    title: title,
                 }
             });
 
