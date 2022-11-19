@@ -1,8 +1,6 @@
-import { type Journal } from '@prisma/client';
 import { JournalBookProps } from '@utils/client.typing';
 import { formatDate } from '@utils/client.util';
 import {
-	currentPageAtom,
 	selectedJournalAtom,
 	showJournalIndexModalAtom,
 	showJournalPickerAtom,
@@ -16,7 +14,6 @@ import { useAtom } from 'jotai';
 export const JournalBook = ({ journal, type }: JournalBookProps) => {
 	const [, setSelectedJournal] = useAtom(selectedJournalAtom);
 	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
-	const [, setCurrentPage] = useAtom(currentPageAtom);
 
 	const [, setShowJournalPickerModal] = useAtom(showJournalPickerAtom);
 
@@ -31,7 +28,6 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			onClick={() => {
 				setSelectedJournal(journal);
 				if (type === 'view') {
-					setCurrentPage(-1);
 					setShowJournalIndexModal(true);
 				} else if (type === 'select') {
 					// Scroll to top smoothly
@@ -53,14 +49,14 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
 				<div className="my-3 flex flex-col">
-					<h1 className="flex h-[120px] items-center break-all text-xl font-bold text-black">
+					<h1 className="flex h-[120px] items-center text-ellipsis break-words text-xl font-bold text-black">
 						{journal.title.length > 25 ? `${journal.title.substring(0, 25)}...` : journal.title}
 					</h1>
-					<div className="mt-2 w-fit">
+					<div className="mt-2 w-fit text-white">
 						{journal.isPublic ? (
-							<h1 className=" bg-pink-600 p-2 text-black">Public</h1>
+							<h1 className=" bg-pink-600 p-2">Public</h1>
 						) : (
-							<h1 className="bg-black p-2 text-white">Private</h1>
+							<h1 className="bg-black p-2">Private</h1>
 						)}
 					</div>
 				</div>

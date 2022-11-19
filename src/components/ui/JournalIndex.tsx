@@ -1,23 +1,24 @@
-import { Entry } from '@prisma/client';
-import { JournalEntryOnlyTitle } from '@utils/client.typing';
+import { ComponentAnimations } from '@utils/client.util';
 import {
 	selectedEntryTypeAtom,
 	selectedJournalAtom,
 	showJournalIndexModalAtom,
 	selectedEntryIdAtom,
 	showEntryModalAtom,
-	currentPageAtom,
 	showToastAtom,
 	toastIntentAtom,
 	toastMessageAtom,
+	allowPagesDisplayAtom,
+	userInfo,
 } from '@utils/store';
 import { trpc } from '@utils/trpc';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
-import { IoClose, IoTrash } from 'react-icons/io5';
+import { IoClose } from 'react-icons/io5';
 import { Button } from './Button';
+import { Loading } from './Loading';
 
 const JournalIndexAnimation = {
 	hidden: {
@@ -31,11 +32,13 @@ const JournalIndexAnimation = {
 export const JournalIndex = () => {
 	// Atoms
 	const [selectedJournal, setSelectedJournal] = useAtom(selectedJournalAtom);
+	const [user] = useAtom(userInfo);
 	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
 	const [, setSelectedEntryId] = useAtom(selectedEntryIdAtom);
 	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
-	const [, setCurrentPage] = useAtom(currentPageAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
+
 	const [shownOnceWarning, setShownOnceWarning] = useState(false);
 
 	// Toast
@@ -78,27 +81,27 @@ export const JournalIndex = () => {
 				duration: 0.5,
 			}}>
 			<div className="absolute top-5 right-5 flex flex-row gap-5">
+				{user.id === selectedJournal?.userId ? (
+					<Button
+						type="button"
+						onClick={() => {
+							if (!shownOnceWarning) {
+								setShownOnceWarning(true);
+								setDisplayToast(true);
+								setToastIntent('warning');
+								setToastMessage('This action cannot be undone.');
+							} else {
+								handleDeleteJournalMutation();
+							}
+						}}
+						width="fit"
+						styles="opposite">
+						<BiTrash className="h-6 w-6" />
+					</Button>
+				) : null}
 				<Button
 					type="button"
 					onClick={() => {
-						if (!shownOnceWarning) {
-							setCurrentPage(2);
-							setShownOnceWarning(true);
-							setDisplayToast(true);
-							setToastIntent('warning');
-							setToastMessage('This action cannot be undone.');
-						} else {
-							handleDeleteJournalMutation();
-						}
-					}}
-					width="fit"
-					styles="opposite">
-					<BiTrash className="h-6 w-6" />
-				</Button>
-				<Button
-					type="button"
-					onClick={() => {
-						setCurrentPage(2);
 						setShowJournalIndexModal(false);
 						setSelectedJournal(null);
 					}}
@@ -108,35 +111,55 @@ export const JournalIndex = () => {
 				</Button>
 			</div>
 			<div className="flex flex-col items-center text-white">
-				{entriesList.data ? (
-					entriesList.data.length > 0 ? (
-						entriesList.data.map((entry, i) => {
-							return (
-								<div
-									key={entry.id}
-									className="my-1 flex cursor-pointer"
-									onClick={() => {
-										setSelectedEntryType('view');
-										setSelectedEntryId(entry.id);
-										setShowEntryModal(true);
-									}}>
-									<h1 className="underline">
-										Chapter {(i + 1).toString().toUpperCase()}.){' '}
-										{entry.title.length > 20 ? entry.title.slice(0, 15) + '...' : entry.title}
-									</h1>
-								</div>
-							);
-						})
-					) : (
-						<div>
-							<p>No entries found</p>
-						</div>
-					)
-				) : (
-					<div>
-						<p>Connection Error!</p>
-					</div>
-				)}
+				<AnimatePresence>
+					<motion.div
+						key="journal-index-key"
+						initial={ComponentAnimations.hidden}
+						animate={ComponentAnimations.visible}
+						exit={ComponentAnimations.hidden}
+						transition={ComponentAnimations.transitions}>
+						{entriesList.data ? (
+							entriesList.data.length > 0 ? (
+								entriesList.data.map((entry, i) => {
+									return (
+										<div
+											key={entry.id}
+											className="my-1 flex cursor-pointer"
+											onClick={() => {
+												setSelectedEntryType('view');
+												setSelectedEntryId(entry.id);
+												setAllowPagesDisplay(false);
+												setShowEntryModal(true);
+											}}>
+											<h1 className="underline">
+												Chapter {(i + 1).toString().toUpperCase()}.){' '}
+												{entry.title.length > 20 ? entry.title.slice(0, 15) + '...' : entry.title}
+											</h1>
+										</div>
+									);
+								})
+							) : (
+								<motion.div
+									key="journal-index-not-found-key"
+									initial={ComponentAnimations.hidden}
+									animate={ComponentAnimations.visible}
+									exit={ComponentAnimations.hidden}
+									transition={ComponentAnimations.transitions}>
+									<h1 className="">This Journal is empty!!</h1>
+								</motion.div>
+							)
+						) : (
+							<motion.div
+								key="journal-index-loading-key"
+								initial={ComponentAnimations.hidden}
+								animate={ComponentAnimations.visible}
+								exit={ComponentAnimations.hidden}
+								transition={ComponentAnimations.transitions}>
+								<Loading styles="opposite" />
+							</motion.div>
+						)}
+					</motion.div>
+				</AnimatePresence>
 			</div>
 		</motion.div>
 	);

@@ -1,7 +1,6 @@
 import {
-	currentPageAtom,
+	allowPagesDisplayAtom,
 	noteModal,
-	selectedEntryAtom,
 	selectedEntryTypeAtom,
 	selectedNoteAtom,
 	showActionWheelAtom,
@@ -38,6 +37,7 @@ const animationComponentVariants = {
 
 export const ActionWheel = () => {
 	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 
 	const [, setSelectedNoteAtom] = useAtom(selectedNoteAtom);
 	const [, setNoteModalType] = useAtom(noteModal);
@@ -46,9 +46,7 @@ export const ActionWheel = () => {
 
 	const [, setShowEntryModal] = useAtom(showEntryModalAtom);
 	const [, setSelectedEntryType] = useAtom(selectedEntryTypeAtom);
-	const [, setSelectedEntry] = useAtom(selectedEntryAtom);
 
-	const [, setCurrentPage] = useAtom(currentPageAtom);
 
 	return (
 		<motion.div
@@ -75,10 +73,9 @@ export const ActionWheel = () => {
 					exit={animationComponentVariants.hidden}
 					className="my-2 flex w-fit cursor-pointer flex-row bg-black p-2 text-white"
 					onClick={() => {
-						setCurrentPage(-1);
 						setShowActionWheel(false);
-						setSelectedEntry(null);
 						setSelectedEntryType('edit');
+						setAllowPagesDisplay(false);
 						setShowEntryModal(true);
 					}}>
 					<BiPencil className="h-6 w-6" />

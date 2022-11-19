@@ -3,12 +3,13 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"build": "next build",
+		"build": "prisma migrate -- next build",
 		"dev": "next dev",
 		"postinstall": "prisma generate",
 		"lint": "next lint",
 		"start": "next start",
-		"migrate:postgres": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init"
+		"dev:migrate:postgres": "dotenv -e .env.development -- npx prisma migrate dev --name postgres-init",
+		"dev:studio": "dotenv -e .env.development -- npx prisma studio"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.5.0",

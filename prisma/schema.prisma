@@ -50,6 +50,7 @@ model Journal {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
   userId    String
+  styling   Int       @default(0)
   isPublic  Boolean   @default(false)
   user      User      @relation(fields: [userId], references: [id])
   entries   Entry[]
@@ -61,6 +62,7 @@ model Entry {
   text      String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  authorId  String
   journalId String
   journal   Journal   @relation(fields: [journalId], references: [id], onDelete: Cascade)
 }

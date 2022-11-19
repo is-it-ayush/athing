@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import type { Entry } from "@prisma/client";
+import type { Entry, Journal } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 
@@ -24,6 +24,7 @@ export const entryRouter = router({
                     journalId,
                     text: content,
                     title,
+                    authorId: ctx.user
                 }
             }) as Entry;
 
@@ -63,6 +64,19 @@ export const entryRouter = router({
                 },
             }) as Entry;
 
+            // We still need to fetch the journal because we don't want unauthorized access to private journal entries.
+            const journal = await ctx.prisma.journal.findUnique({
+                where: {
+                    id: entry.journalId,
+                },
+            }) as Journal;
+
+            if (!journal.isPublic) {
+                if (entry?.authorId !== ctx.user) {
+                    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
+                }
+            }
+
             return entry;
         }
         catch (err: TRPCError | any) {
@@ -82,11 +96,19 @@ export const entryRouter = router({
     })).mutation(async ({ input, ctx }) => {
         const { entryId, content, title } = input;
 
-        console.log(`Updating entry with id: ${entryId} and content: ${content.length}`);
-
         try {
 
-            const entry = await ctx.prisma.entry.update({
+            const entry = await ctx.prisma.entry.findUnique({
+                where: {
+                    id: entryId,
+                }
+            })
+
+            if (entry?.authorId !== ctx.user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
+            }
+
+            await ctx.prisma.entry.update({
                 where: {
                     id: entryId,
                 },
@@ -96,12 +118,9 @@ export const entryRouter = router({
                 }
             });
 
-            if (!entry) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to update entry.', });
-            }
+
 
             return {
-                id: entry.id,
                 result: true,
             };
         }
@@ -120,22 +139,25 @@ export const entryRouter = router({
     })).mutation(async ({ input, ctx }) => {
         const { id } = input;
 
-        console.log(`Deleting entry with id: ${id}`);
-
         try {
 
             const entry = await ctx.prisma.entry.delete({
                 where: {
                     id,
                 }
-            }) as Entry;
+            })
 
-            if (!entry) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to delete entry.', });
+            if (entry?.authorId !== ctx.user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
             }
 
+            await ctx.prisma.entry.delete({
+                where: {
+                    id,
+                }
+            }) as Entry;
+
             return {
-                id: entry.id,
                 result: true,
             };
         }
@@ -179,12 +201,15 @@ export const entryRouter = router({
                 }
             });
 
+            if (!journal?.isPublic) {
+                if (journal?.userId !== ctx.session) {
+                    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
+                }
+            }
+
             return journal?.entries ? journal.entries : [];
         }
         catch (err: PrismaClientKnownRequestError | any) {
-            if (err.code === 'P2025' || err.code === 'P2018') {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested journal was not found!', });
-            }
             throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
         }
     })

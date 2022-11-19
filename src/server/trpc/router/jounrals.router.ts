@@ -13,11 +13,8 @@ export const journalRouter = router({
     })).mutation(async ({ input, ctx }) => {
         const { title, isPrivate } = input;
 
-        console.log(`Creating a new journal with title: ${title.length} and isPrivate: ${isPrivate}`);
-
         try {
-
-            const journal = await ctx.prisma.journal.create({
+            await ctx.prisma.journal.create({
                 data: {
                     title,
                     userId: ctx.session as string,
@@ -25,12 +22,7 @@ export const journalRouter = router({
                 }
             });
 
-            if (!journal) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create journal.', });
-            }
-
             return {
-                id: journal.id,
                 result: true,
             };
         }
@@ -47,16 +39,24 @@ export const journalRouter = router({
     // Update a single journal
     update: protectedProcedure.input(z.object({
         id: z.string(),
-        title: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        title: z.string().trim().min(20, 'The Title should at least contain 20 characters.').max(50, 'The Title can only contain 50 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { id, title, isPrivate } = input;
 
-        console.log(`Updating journal with id: ${id} and title: ${title.length} and isPrivate: ${isPrivate}`);
-
         try {
 
-            const journal = await ctx.prisma.journal.update({
+            const j = await ctx.prisma.journal.findUnique({
+                where: {
+                    id,
+                },
+            })
+
+            if (j?.userId !== ctx.user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
+            }
+
+            await ctx.prisma.journal.update({
                 where: {
                     id,
                 },
@@ -66,12 +66,7 @@ export const journalRouter = router({
                 }
             }) as Journal;
 
-            if (!journal) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to update journal.', });
-            }
-
             return {
-                id: journal.id,
                 result: true,
             };
         }
@@ -94,22 +89,25 @@ export const journalRouter = router({
     })).mutation(async ({ input, ctx }) => {
         const { id } = input;
 
-        console.log(`Deleting journal with id: ${id}`);
-
         try {
 
-            const journal = await ctx.prisma.journal.delete({
+            const j = await ctx.prisma.journal.findUnique({
+                where: {
+                    id,
+                },
+            })
+
+            if (j?.userId !== ctx.user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not authorized.', });
+            }
+
+            await ctx.prisma.journal.delete({
                 where: {
                     id,
                 }
             });
 
-            if (!journal) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to delete journal.', });
-            }
-
             return {
-                id: journal.id,
                 result: true,
             };
         }
@@ -145,11 +143,8 @@ export const journalRouter = router({
                 where: {
                     isPublic: true,
                 },
-                include: {
-                    entries: true,
-                },
                 orderBy: {
-                    createdAt: "desc",
+                    updatedAt: "desc",
                 },
                 take: 3,
                 skip: cursor ? 1 : 0,
@@ -174,8 +169,8 @@ export const journalRouter = router({
         const { id } = input;
 
         try {
-
-            if (ctx.session !== id) {
+            
+            if (ctx.user !== id) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: "You're not authorized.", });
             }
 

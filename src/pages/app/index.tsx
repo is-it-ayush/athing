@@ -25,6 +25,7 @@ import {
 	showEntryModalAtom,
 	showJournalPickerAtom,
 	currentPageAtom,
+	allowPagesDisplayAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -47,13 +48,14 @@ export const App: NextPage = () => {
 	// Atoms
 	const [, setUser] = useAtom(userInfo);
 	const [showPage] = useAtom(currentPageAtom);
+	const [allowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 	const [displayModel] = useAtom(showModal);
 	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
 	const [showAddJounralModal] = useAtom(showJournalModalAtom);
 	const [showJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 	const [showEntryModal] = useAtom(showEntryModalAtom);
-	const [showJournalPickerModal] = useAtom(showJournalPickerAtom);
 
+	const [showJournalPickerModal] = useAtom(showJournalPickerAtom);
 	const [displayToast] = useAtom(showToastAtom);
 
 	React.useEffect(() => {
@@ -73,34 +75,38 @@ export const App: NextPage = () => {
 	return (
 		<main className=" bg-cross-pattern font-spacemono">
 			<AnimatePresence>
-				{showLoading === true ? <FullLoad /> : null}
-				<Navbar key="navigation" menuController={[showMenu, setShowMenu]} />
-				<motion.div
-					key="content"
-					className="no-select flex min-h-screen flex-col font-spacemono"
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
-					transition={{ duration: 1 }}>
-					<AnimatePresence>
-						{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : null}
-					</AnimatePresence>
-				</motion.div>
-				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
-					{showActionWheel ? null : (
-						<Button
-							type="button"
-							onClick={() => {
-								setShowActionWheel(true);
-								// --todo-- make this have more options such as for journals too.
-							}}
-							flex="row"
-							width="fit"
-							styles="opposite">
-							<IoAdd className="h-6 w-6" />
-						</Button>
-					)}
-				</div>
+				{showLoading === true ? <FullLoad key="full-screen-load" /> : null}
+				{allowPagesDisplay ? (
+					<>
+						<Navbar key="navigation" menuController={[showMenu, setShowMenu]} />
+						<motion.div
+							key="content"
+							className="no-select flex min-h-screen flex-col font-spacemono"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 1 }}>
+							<AnimatePresence>
+								{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : null}
+							</AnimatePresence>
+						</motion.div>
+						<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
+							{showActionWheel ? null : (
+								<Button
+									type="button"
+									onClick={() => {
+										setShowActionWheel(true);
+										// --todo-- make this have more options such as for journals too.
+									}}
+									flex="row"
+									width="fit"
+									styles="opposite">
+									<IoAdd className="h-6 w-6" />
+								</Button>
+							)}
+						</div>
+					</>
+				) : null}
 				<AnimatePresence key="modalAnimation">
 					{displayModel ? <NoteModal key="modalKey" /> : null}
 					{displayToast ? <Toast key="toastKey" /> : null}
