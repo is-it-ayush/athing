@@ -50,6 +50,7 @@ export const JournalIndex = () => {
 	const entriesList = trpc.entry.getAll.useQuery({
 		journalId: selectedJournal?.id ? selectedJournal.id : '',
 	});
+	const utils = trpc.useContext();
 
 	const deleteJournal = trpc.journals.delete.useMutation();
 
@@ -60,6 +61,7 @@ export const JournalIndex = () => {
 			});
 			if (res.result) {
 				setShowJournalIndexModal(false);
+				utils.journals.getJournalsByUserId.refetch();
 				setDisplayToast(true);
 				setToastIntent('success');
 				setToastMessage('The Journal has been deleted.');
