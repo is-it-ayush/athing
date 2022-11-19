@@ -6,6 +6,8 @@ import { comparePassword, generateUsername, hashPassword } from "../../../utils/
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
+
+
 export const userRouter = router({
     login: publicProcedure.input(z.object(
         {
@@ -112,6 +114,8 @@ export const userRouter = router({
             if (!createUser) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create account.', });
             }
+
+            // Create the first note and the first journal.
 
             return {
                 username: createUser.username

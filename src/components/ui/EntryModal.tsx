@@ -44,6 +44,7 @@ export const EntryModal = () => {
 	const [text, setText] = useState('');
 	const [title, setTitle] = useState('');
 	const [journalId, setJournalId] = useState('');
+	const [shownOnceWarning, setShownOnceWarning] = useState(false);
 
 	// tRPC
 	const createEntryMutation = trpc.entry.create.useMutation();
@@ -121,6 +122,10 @@ export const EntryModal = () => {
 			setText(selectedEntry.text);
 			setTitle(selectedEntry.title);
 			setEntryType('edit');
+
+			setToastIntent('success');
+			setToastMessage('You are now in edit mode.');
+			setDisplayToast(true);
 		} else {
 			setToastIntent('error');
 			setToastMessage('There was an error switching to edit mode.');
@@ -143,10 +148,21 @@ export const EntryModal = () => {
 					type="button"
 					onClick={() => {
 						if (entryType === 'edit') {
-							setCurrentPage(0);
-							setSelectedJournal(null);
+							if (selectedEntry?.text !== text || selectedEntry?.title !== title) {
+								if (!shownOnceWarning) {
+									setToastIntent('warning');
+									setToastMessage('You have unsaved changes. Are you sure you want to leave?');
+									setDisplayToast(true);
+									setShownOnceWarning(true);
+								} else {
+									setShowEntryModal(false);
+								}
+							} else {
+								setShowEntryModal(false);
+							}
+						} else {
+							setShowEntryModal(false);
 						}
-						setShowEntryModal(false);
 					}}>
 					<IoClose className="h-6 w-6" />
 				</button>

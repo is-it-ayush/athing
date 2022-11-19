@@ -82,7 +82,9 @@ export const App: NextPage = () => {
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 1 }}>
-					{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <Secret />}
+					<AnimatePresence>
+						{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : null}
+					</AnimatePresence>
 				</motion.div>
 				<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">
 					{showActionWheel ? null : (

@@ -31,8 +31,7 @@ export const Private: React.FC = () => {
 	const [notes, setNotes] = useState<Post[]>([]);
 	const [journals, setJournals] = useState<Journal[]>([]);
 
-	const [selectedNote, setSelectedNote] = useAtom(selectedNoteAtom);
-
+	const [, setSelectedNote] = useAtom(selectedNoteAtom);
 	const [, setModalType] = useAtom(noteModal);
 	const [, setShowModal] = useAtom(showModal);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
@@ -114,7 +113,7 @@ export const Private: React.FC = () => {
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
 											exit={{ opacity: 0 }}
-											transition={{ duration: 0.3 }}>
+											transition={{ duration: 0.5 }}>
 											<motion.div className="my-3 flex flex-col">
 												{note.isPublished ? (
 													<div className="flex flex-row text-pink-600">
@@ -188,7 +187,7 @@ export const Private: React.FC = () => {
 				<div>
 					{journals.length > 0 ? (
 						<motion.ul
-							className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto overflow-y-hidden"
+							className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
 							layout="position">
 							<ScrollContainer className="flex flex-row" hideScrollbars={true}>
 								{journals.map((journal) => {

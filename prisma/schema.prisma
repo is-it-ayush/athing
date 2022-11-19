@@ -62,7 +62,7 @@ model Entry {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
   journalId String
-  journal   Journal   @relation(fields: [journalId], references: [id])
+  journal   Journal   @relation(fields: [journalId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

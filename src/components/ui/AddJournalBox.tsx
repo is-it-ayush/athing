@@ -66,7 +66,15 @@ export const AddJournalBox = () => {
 					<h1 className="my-2 text-sm text-white opacity-60">Title</h1>
 					<TextareaAutosize
 						value={titleText}
-						onChange={(e) => setTitleText(e.target.value)}
+						onChange={(e) => {
+							if (e.target.value.length < 50) {
+								setTitleText(e.target.value);
+							} else {
+								setToastIntent('error');
+								setToastMessage('Hey! Title can only contain 50 characters.');
+								setShowToast(true);
+							}
+						}}
 						className="h-[180px] w-[150px] resize-none overflow-hidden border-0 bg-black p-0 text-2xl text-white placeholder-white placeholder:opacity-20 focus:border-0 focus:outline-none focus:ring-0"
 						placeholder="Write your amazing title..."
 						maxRows={7}

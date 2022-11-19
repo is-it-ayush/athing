@@ -42,13 +42,10 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 					setShowJournalPickerModal(false);
 					setDisplayToast(true);
 					setToastIntent('info');
-					setToastMessage(journal.title.substring(0, 20) + '... has been selected.');
+					setToastMessage('The journal has been selected.');
 				}
 			}}
-			className={
-				`m-5 flex h-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black ` +
-				(type === 'select' ? 'w-[200px]' : 'min-w-[200px]')
-			}
+			className={`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black`}
 			layout
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
@@ -56,7 +53,7 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
 				<div className="my-3 flex flex-col">
-					<h1 className="flex h-[120px] items-center break-words text-xl font-bold text-black">
+					<h1 className="flex h-[120px] items-center break-all text-xl font-bold text-black">
 						{journal.title.length > 25 ? `${journal.title.substring(0, 25)}...` : journal.title}
 					</h1>
 					<div className="mt-2 w-fit">

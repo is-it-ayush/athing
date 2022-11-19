@@ -10,13 +10,6 @@ export const Secret = () => {
 	const [pageLoad, setPageLoad] = useState(false);
 	const [rng, setRng] = useState(0);
 
-	React.useEffect(() => {
-		if (!pageLoad) {
-			generateRandomChance().then((v) => setRng(v));
-			setPageLoad(true);
-		}
-	});
-
 	return (
 		<motion.div
 			className="mt-[60px] flex w-screen flex-col overflow-hidden p-10 font-spacemono"
@@ -25,7 +18,7 @@ export const Secret = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}>
 			{rng < 10 ? (
-				<div className="flex h-screen flex-col items-center justify-center">
+				<div className="flex flex-col items-center justify-center">
 					<h1 className="flex text-center text-xl font-bold">
 						WAIT WHAT? you aren&apos;t supposed to be here. I don&apos;t do easter eggs. Or Do I?. :(
 					</h1>
