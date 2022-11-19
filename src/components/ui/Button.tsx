@@ -7,6 +7,7 @@ const ButtonStyles = cva(
 			styles: {
 				default: 'bg-white text-black border-gray-200 hover:bg-black hover:text-white hover:border-black',
 				opposite: 'bg-black text-white border-black hover:bg-white hover:text-black hover:border-white',
+				exotic: 'bg-black text-white border-black-500 hover:bg-pink-600 hover:text-white hover:border-pink-600',
 			},
 			letterSpaced: {
 				default: 'tracking-normal',

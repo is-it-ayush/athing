@@ -4,7 +4,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 
 // Atoms
 import { showJournalModalAtom, showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
-import { Button } from './Button';
 import React, { useState } from 'react';
 import { trpc } from '@utils/trpc';
 import { handleError } from '@utils/client.util';

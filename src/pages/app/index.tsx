@@ -26,6 +26,7 @@ import {
 	showJournalPickerAtom,
 	currentPageAtom,
 	allowPagesDisplayAtom,
+	showFeedbackModalAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -35,6 +36,7 @@ import { JournalIndex } from '@components/ui/JournalIndex';
 import { EntryModal } from '@components/ui/EntryModal';
 import { JournalPicker } from '@components/ui/JournalPicker';
 import { Secret } from '@components/ui/Secret';
+import { FeedbackModal } from '@components/ui/FeedbackModal';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -54,9 +56,9 @@ export const App: NextPage = () => {
 	const [showAddJounralModal] = useAtom(showJournalModalAtom);
 	const [showJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 	const [showEntryModal] = useAtom(showEntryModalAtom);
-
 	const [showJournalPickerModal] = useAtom(showJournalPickerAtom);
 	const [displayToast] = useAtom(showToastAtom);
+	const [showFeedback] = useAtom(showFeedbackModalAtom);
 
 	React.useEffect(() => {
 		if (userInfoResponse.isLoading) {
@@ -114,6 +116,7 @@ export const App: NextPage = () => {
 				{showJournalIndexModal ? <JournalIndex key="journalIndexKey" /> : null}
 				{showEntryModal ? <EntryModal key="entryModalKey" /> : null}
 				{showJournalPickerModal ? <JournalPicker key="journalPickerKey" /> : null}
+				{showFeedback ? <FeedbackModal key="feedbackModalKey" /> : null}
 			</AnimatePresence>
 			<Menu key="menu" menuController={showMenu} />
 		</main>

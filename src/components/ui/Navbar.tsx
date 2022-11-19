@@ -6,7 +6,8 @@ import React from 'react';
 import { RiCloseLine } from 'react-icons/ri';
 import { CgOptions, CgMenuRight } from 'react-icons/cg';
 import { useAtom } from 'jotai';
-import { currentPageAtom } from '@utils/store';
+import { currentPageAtom, showFeedbackModalAtom } from '@utils/store';
+import { BiUserVoice } from 'react-icons/bi';
 
 export function Navbar({
 	menuController,
@@ -18,6 +19,7 @@ export function Navbar({
 	});
 
 	const [, setShowPage] = useAtom(currentPageAtom);
+	const [showFeedback, setShowFeedback] = useAtom(showFeedbackModalAtom);
 
 	return (
 		<motion.div
@@ -51,12 +53,19 @@ export function Navbar({
 						<h1>Private</h1>
 					</button>
 				</div>
-				<div
-					className="flex flex-col rounded-full p-2 transition-colors duration-300 hover:cursor-pointer hover:bg-gray-200"
-					onClick={() => {
-						menuController[1](!menuController[0]);
-					}}>
-					{menuController[0] === false ? <CgMenuRight className="h-8 w-8" /> : <RiCloseLine className="h-8 w-8" />}
+				<div className="flex flex-row gap-5">
+					<div
+						className="flex cursor-pointer flex-col rounded-full p-2 transition duration-300 hover:bg-gray-200"
+						onClick={() => setShowFeedback(true)}>
+						<BiUserVoice className="h-6 w-6" />
+					</div>
+					<div
+						className="flex flex-col rounded-full p-2 transition-colors duration-300 hover:cursor-pointer hover:bg-gray-200"
+						onClick={() => {
+							menuController[1](!menuController[0]);
+						}}>
+						{menuController[0] === false ? <CgMenuRight className="h-6 w-6" /> : <RiCloseLine className="h-6 w-6" />}
+					</div>
 				</div>
 			</div>
 		</motion.div>

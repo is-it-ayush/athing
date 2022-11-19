@@ -43,7 +43,7 @@ export const Journal: React.FC = () => {
 			transition={{ duration: 0.3 }}>
 			<div className="fixed bottom-10 left-10 flex">
 				<button
-					className="flex flex-col items-center rounded-md bg-black p-4 text-white hover:bg-gray-800"
+					className="flex flex-col items-center border-2 bg-black p-3 text-white hover:bg-white hover:text-black duration-200"
 					type="button"
 					onClick={() => {
 						journalQuery.fetchNextPage();

@@ -176,5 +176,35 @@ export const userRouter = router({
 
             // --todo-- add error logging to sentry
         }
-    })
+    }),
+    feedback: protectedProcedure.input(z.object(
+        {
+            text: z.string().min(20, 'Feedback must be at least 20 character long.').max(1000, 'Feedback must be at most 1000 characters long.'),
+        }
+    )).mutation(async ({ input, ctx }) => {
+
+        const { text } = input;
+
+        try {
+
+
+            await ctx.prisma.feedback.create({
+                data: {
+                    text,
+                    authorId: ctx.user,
+                },
+            });
+
+            return {
+                result: true
+            };
+        }
+        catch (err: TRPCError | any) {
+            throw new TRPCError({
+                code: err.code || 'INTERNAL_SERVER_ERROR',
+            });
+
+            // --todo-- add error logging to sentry
+        }
+    }),
 });

@@ -38,3 +38,6 @@ export const selectedEntryTypeAtom = atom<'edit' | 'view' | null>(null);
 
 // This is for the Journal Picker Modal
 export const showJournalPickerAtom = atom<boolean>(false);
+
+// This is for the FeedbackModal
+export const showFeedbackModalAtom = atom<boolean>(false);

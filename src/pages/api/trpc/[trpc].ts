@@ -12,6 +12,7 @@ export default createNextApiHandler({
     env.NODE_ENV === "development"
       ? ({ error, type, path, input, ctx, req }) => {
         console.log("Error in", type, "at", path, "with input", input);
+        console.log(error);
       }
       : ({ error, type, path, input, ctx, req }) => {
         console.error('Error:', error);
