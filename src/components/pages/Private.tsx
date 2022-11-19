@@ -91,7 +91,7 @@ export const Private: React.FC = () => {
 
 	return (
 		<motion.div
-			className="mt-[30px] flex h-screen w-screen flex-col justify-center overflow-hidden p-10"
+			className="flex h-screen w-screen flex-col justify-center overflow-hidden p-10"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -108,7 +108,7 @@ export const Private: React.FC = () => {
 										return (
 											<motion.li
 												key={note.id}
-												className={`m-5 flex min-h-[200px] min-w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
+												className={`mx-5 mt-5 flex min-h-[200px] min-w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
 												layout
 												initial={{ opacity: 0 }}
 												animate={{ opacity: 1 }}
@@ -195,6 +195,7 @@ export const Private: React.FC = () => {
 			</div>
 			<div className="mt-5 flex flex-col">
 				<h1 className="flex text-xl font-semibold">Journals</h1>
+
 				<div>
 					<AnimatePresence>
 						{journals.length > 0 ? (

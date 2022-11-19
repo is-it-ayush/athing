@@ -47,6 +47,8 @@ export const EntryModal = () => {
 	const [, setShowJournalPickerModal] = useAtom(showJournalPickerAtom);
 	const [switched, setSwitched] = useState(false);
 
+	const [hasShownExitWarning, setHasShownExitWarning] = useState(false);
+
 	// Toast
 	const [, setDisplayToast] = useAtom(showToastAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
@@ -57,6 +59,7 @@ export const EntryModal = () => {
 	const [title, setTitle] = useState('');
 
 	//TRPC
+	const utils = trpc.useContext();
 	const createEntryMutation = trpc.entry.create.useMutation();
 	const updateEntryMutation = trpc.entry.update.useMutation();
 	const getEntryDetailsQuery = trpc.entry.getOne.useQuery(
@@ -80,6 +83,10 @@ export const EntryModal = () => {
 				title,
 				content: text,
 			});
+			utils.entry.getAll.refetch();
+			setToastIntent('success');
+			setToastMessage('The entry was updated successfully!');
+			setDisplayToast(true);
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
 				setToastIntent('error');
@@ -101,6 +108,14 @@ export const EntryModal = () => {
 	 * Reset's the global variables and closes the modal.
 	 */
 	async function handleCloseModal() {
+		if (entryType === 'edit' && hasShownExitWarning === false) {
+			setHasShownExitWarning(true);
+			setToastIntent('warning');
+			setToastMessage('Are you sure you want to exit? Your changes will not be saved.');
+			setDisplayToast(true);
+			return;
+		}
+
 		setAllowPagesDisplay(true);
 		setShowEntryModal(false);
 		if (!showJournalIndexModal) {

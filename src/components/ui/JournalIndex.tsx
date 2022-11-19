@@ -68,6 +68,8 @@ export const JournalIndex = () => {
 			setDisplayToast(true);
 			setToastIntent('error');
 			setToastMessage('There was an error deleting the journal.');
+		} finally {
+			setAllowPagesDisplay(true);
 		}
 	}
 
@@ -102,6 +104,7 @@ export const JournalIndex = () => {
 				<Button
 					type="button"
 					onClick={() => {
+						setAllowPagesDisplay(true);
 						setShowJournalIndexModal(false);
 						setSelectedJournal(null);
 					}}

@@ -51,7 +51,12 @@ export const generateUsername = async (): Promise<string> => {
     return `u_${randomId}`;
 }
 
-
+/**
+ * This will act as a middleware and fetch the user from the cookie and store it in the request context.
+ * @param opts : The req (NextApiRequest).
+ * @param prisma : The prisma (PrismaClient) objects
+ * @returns null | string - The user id string or null
+ */
 export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
 
     console.log(`getSession called!`);
@@ -87,4 +92,18 @@ export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaCl
     catch (err) {
         return null;
     }
+}
+
+/**
+ * Convert the string to Pascal Case.
+ * @param {string} str - The string to convert
+ * @returns {string} - The converted string
+ */
+
+export const formatString = (str: string): string => {
+    let newStr = str.replace(/\w\S*/g, (txt) => {
+        return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+    });
+    newStr = newStr.replace(/\s{2,}/g, " ");
+    return newStr;
 }

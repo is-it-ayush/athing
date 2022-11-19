@@ -24,13 +24,6 @@ export const AddJournalBox = () => {
 	const utils = trpc.useContext();
 
 	async function handleCreateJournal() {
-		if (titleText.includes('  ')) {
-			setToastIntent('error');
-			setToastMessage('Hey! Journal Title cannot contain double spaces.');
-			setShowToast(true);
-			return;
-		}
-
 		try {
 			const res = await createJournalMutation.mutateAsync({
 				title: titleText,

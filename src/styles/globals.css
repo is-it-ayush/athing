@@ -26,6 +26,11 @@
 	}
 }
 
+.no-scrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none; /* IE and Edge */
+}
+
 .no-scrollbar::-webkit-scrollbar {
 	display: none;
 }

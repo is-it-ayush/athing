@@ -1,6 +1,7 @@
 import { JournalBookProps } from '@utils/client.typing';
 import { formatDate } from '@utils/client.util';
 import {
+	allowPagesDisplayAtom,
 	selectedJournalAtom,
 	showJournalIndexModalAtom,
 	showJournalPickerAtom,
@@ -16,6 +17,7 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 	const [, setShowJournalIndexModal] = useAtom(showJournalIndexModalAtom);
 
 	const [, setShowJournalPickerModal] = useAtom(showJournalPickerAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 
 	// Toast
 	const [, setDisplayToast] = useAtom(showToastAtom);
@@ -28,6 +30,7 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			onClick={() => {
 				setSelectedJournal(journal);
 				if (type === 'view') {
+					setAllowPagesDisplay(false);
 					setShowJournalIndexModal(true);
 				} else if (type === 'select') {
 					// Scroll to top smoothly

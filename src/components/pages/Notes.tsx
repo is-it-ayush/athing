@@ -19,6 +19,7 @@ import {
 	selectedNoteAtom,
 	noteModal,
 	showModal,
+	allowPagesDisplayAtom,
 } from '@utils/store';
 
 export const Notes: React.FC = () => {
@@ -34,6 +35,7 @@ export const Notes: React.FC = () => {
 	const [, setShowToast] = useAtom(showToastAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
 	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 
 	const notesQuery = trpc.post.get.useInfiniteQuery(
 		{
@@ -80,7 +82,7 @@ export const Notes: React.FC = () => {
 
 	return (
 		<motion.div
-			className="mt-[60px] flex flex-col p-10"
+			className="no-scrollbar mt-[60px] flex flex-col p-10"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -113,6 +115,7 @@ export const Notes: React.FC = () => {
 										<button
 											className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
 											onClick={() => {
+												setAllowPagesDisplay(false);
 												setSelectedNote(note);
 												setModalType('parse');
 												setDisplayModal(true);
@@ -124,6 +127,7 @@ export const Notes: React.FC = () => {
 												<button
 													className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
 													onClick={() => {
+														setAllowPagesDisplay(false);
 														setSelectedNote(note);
 														setModalType('edit');
 														setDisplayModal(true);

@@ -4,19 +4,23 @@ import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { type Journal } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { formatString } from "@utils/server.util";
 
 export const journalRouter = router({
     // This will create a new journal.
     create: protectedProcedure.input(z.object({
-        title: z.string().trim().min(20, 'The Title should at least contain 20 characters.').max(50, 'The Title can only contain 50 characters.'),
+        title: z.string().trim().min(10, 'The Title should at least contain 10 characters.').max(50, 'The Title can only contain 50 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { title, isPrivate } = input;
 
+        // Formats the title.
+        const formattedTitle = formatString(title);
+
         try {
             await ctx.prisma.journal.create({
                 data: {
-                    title,
+                    title: formattedTitle,
                     userId: ctx.session as string,
                     isPublic: !isPrivate,
                 }
@@ -39,10 +43,12 @@ export const journalRouter = router({
     // Update a single journal
     update: protectedProcedure.input(z.object({
         id: z.string(),
-        title: z.string().trim().min(20, 'The Title should at least contain 20 characters.').max(50, 'The Title can only contain 50 characters.'),
+        title: z.string().trim().min(10, 'The Title should at least contain 10 characters.').max(50, 'The Title can only contain 50 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { id, title, isPrivate } = input;
+
+        const formattedTitle = formatString(title);
 
         try {
 
@@ -61,7 +67,7 @@ export const journalRouter = router({
                     id,
                 },
                 data: {
-                    title,
+                    title: formattedTitle,
                     isPublic: !isPrivate,
                 }
             }) as Journal;
@@ -143,15 +149,23 @@ export const journalRouter = router({
                 where: {
                     isPublic: true,
                 },
+                include: {
+                    _count: {
+                        select: {
+                            entries: true,
+                        }
+                    }
+                },
                 orderBy: {
                     updatedAt: "desc",
                 },
                 take: 3,
                 skip: cursor ? 1 : 0,
                 cursor: cursor ? { id: cursor } : undefined,
-            }) as Journal[];
+            });
+            const filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
 
-            return journals;
+            return filterdJournals;
         }
         catch (err: TRPCError | any) {
 
@@ -169,7 +183,7 @@ export const journalRouter = router({
         const { id } = input;
 
         try {
-            
+
             if (ctx.user !== id) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: "You're not authorized.", });
             }

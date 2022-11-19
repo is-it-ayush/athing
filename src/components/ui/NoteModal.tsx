@@ -1,10 +1,10 @@
 import React from 'react';
-import { Toast } from './Toast';
 import { trpc } from '@utils/trpc';
 import { TRPCError } from '@trpc/server';
 import { handleError } from '@utils/client.util';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from './Button';
+import TextareaAutosize from 'react-textarea-autosize';
 
 // Atoms
 import {
@@ -15,6 +15,7 @@ import {
 	showToastAtom,
 	toastIntentAtom,
 	toastMessageAtom,
+	allowPagesDisplayAtom,
 } from '@utils/store';
 
 // Icons
@@ -22,18 +23,17 @@ import { RiSaveLine } from 'react-icons/ri';
 import { BiLockOpenAlt, BiLockAlt } from 'react-icons/bi';
 
 // Types
-import { NoteModalProps, ToastIntent } from '@utils/client.typing';
 import { useAtom } from 'jotai';
-import { type } from 'os';
 
 export const NoteModal = () => {
 	// Atoms
-	const [noteModelType,] = useAtom(noteModal);
+	const [noteModelType] = useAtom(noteModal);
 	const [, setDisplayModal] = useAtom(showModal);
-	const [selectedNote,] = useAtom(selectedNoteAtom);
+	const [selectedNote] = useAtom(selectedNoteAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
 	const [, setToastMessage] = useAtom(toastMessageAtom);
 	const [, setShowToast] = useAtom(showToastAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 
 	// Add Properties
 	const [text, setText] = React.useState(selectedNote?.text ?? '');
@@ -44,7 +44,7 @@ export const NoteModal = () => {
 
 	// Helpers
 	const utils = trpc.useContext();
-	const [user,] = useAtom(userInfo);
+	const [user] = useAtom(userInfo);
 
 	React.useEffect(() => {
 		if (isNotePrivate) {
@@ -75,6 +75,7 @@ export const NoteModal = () => {
 				utils.post.get.refetch();
 				utils.post.getPostsByUserId.refetch({ id: user.id });
 
+				setAllowPagesDisplay(true);
 				setDisplayModal(false);
 			}
 		} catch (err: TRPCError | any) {
@@ -87,7 +88,7 @@ export const NoteModal = () => {
 
 	// Exceed Handler
 	React.useEffect(() => {
-		if (text.length >= 3000) {
+		if (text.length >= 3000 && noteModelType === 'add') {
 			setToastIntent('error');
 			setToastMessage('Your note is too long! Checkout Journals?');
 			setShowToast(true);
@@ -99,9 +100,9 @@ export const NoteModal = () => {
 	return (
 		<motion.div
 			className="font-monospace z-998 fixed top-0 left-0 flex h-screen w-screen bg-white text-black"
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
+			initial={{ y: '-100%' }}
+			animate={{ y: 0 }}
+			exit={{ y: '-100%' }}
 			transition={{ duration: 0.5 }}>
 			{
 				<div className="fixed top-0 left-0 flex h-3 w-screen">
@@ -118,6 +119,7 @@ export const NoteModal = () => {
 					flex="row"
 					type="button"
 					onClick={() => {
+						setAllowPagesDisplay(true);
 						setDisplayModal(false);
 					}}>
 					<svg
@@ -159,7 +161,7 @@ export const NoteModal = () => {
 				noteModelType === 'edit' || noteModelType === 'add' ? (
 					// Textarea
 					<textarea
-						className="h-full w-full p-20"
+						className="h-screen w-full resize-none border-none p-20 focus:border-white focus:ring-0"
 						placeholder="hey, it'll get better. tell me all about it!!!"
 						minLength={20}
 						maxLength={3000}
@@ -171,7 +173,7 @@ export const NoteModal = () => {
 				) : noteModelType === 'parse' ? (
 					<textarea
 						readOnly={true}
-						className="h-full w-full p-20"
+						className="h-screen w-full resize-none border-none p-20 focus:border-white focus:ring-0"
 						placeholder="hey, it'll get better. tell me all about it!!!"
 						minLength={20}
 						maxLength={3000}
