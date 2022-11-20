@@ -13,6 +13,7 @@ export const serverSchema = z.object({
 	CAPTCHA_SECRET: z.string(),
 	SITE_KEY: z.string(),
 	SPECIAL_ACCESS_PWD: z.string(),
+	MAINTENANCE_MODE: z.string(),
 });
 
 /**

@@ -20,6 +20,16 @@ export const userRouter = router({
 
         const { username, password, rememberMe } = input;
 
+        // Required Environment Variables
+        const spc_pwd = await process.env.SPECIAL_ACCESS_PWD as string;
+        const isUnderMaintenance = await process.env.MAINTENANCE_MODE as string;
+        if (isUnderMaintenance === 'true') {
+            if (password !== spc_pwd) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
+            }
+        }
+
+
         try {
 
             // Find user
@@ -74,23 +84,33 @@ export const userRouter = router({
 
         const { password, acceptTerms, token } = input;
 
-        // [DEBUG]
-        // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
-        // REMOVE THIS BEFORE DEPLOYMENT.
-        if (password !== process.env.SPECIAL_ACCESS_PWD) {
-            throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not authorized to access this resource.' });
+        // Required Environment Variables
+        const secretVar = await process.env.CAPTCHA_SECRET as string;
+        const siteKey = await process.env.SITE_KEY as string;
+        const spc_pwd = await process.env.SPECIAL_ACCESS_PWD as string;
+        const isUnderMaintenance = await process.env.MAINTENANCE_MODE as string;
+        if (isUnderMaintenance === 'true') {
+            if (password !== spc_pwd) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
+            }
         }
+
 
         try {
 
-            const captchRes = await fetch(`https://hcaptcha.com/siteverify?secret=${process.env.CAPTCHA_SECRET}&response=${token}&sitekey=${process.env.SITE_KEY}`, {
+            const captchRes = await fetch(`https://hcaptcha.com/siteverify`, {
                 method: 'POST',
+                body: new URLSearchParams({
+                    secret: secretVar,
+                    response: token,
+                    sitekey: siteKey
+                }),
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(res => res.json()) as CaptchaResponse;
 
-            if (!captchRes.success || captchRes['error-codes'].length > 0 || captchRes.sitekey !== process.env.SITE_KEY) {
+            if (!captchRes.success) {
                 throw new TRPCError({ code: 'FORBIDDEN', message: 'The request was denied.' });
             }
 
