@@ -32,7 +32,7 @@ export const AddJournalBox = () => {
 				setToastIntent('success');
 				setToastMessage('Your journal has been created!');
 				setShowToast(true);
-				utils.journals.getJournalsByUserId.invalidate();
+				utils.journals.getJournalsByUserId.refetch();
 			}
 			setShowAddJournalModal(false);
 		} catch (err) {
