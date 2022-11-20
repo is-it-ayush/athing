@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import { CaptchaResponse } from "@utils/server.typing";
 
 
 
@@ -76,12 +77,22 @@ export const userRouter = router({
         // [DEBUG]
         // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
         // REMOVE THIS BEFORE DEPLOYMENT.
-        console.log(token);
-        if (password !== 'sheisbeautiful@1001') {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        if (password !== process.env.SPECIAL_ACCESS_PWD) {
+            throw new TRPCError({ code: 'FORBIDDEN', message: 'You are not authorized to access this resource.' });
         }
 
         try {
+
+            const captchRes = await fetch(`https://hcaptcha.com/siteverify?secret=${process.env.CAPTCHA_SECRET}&response=${token}&sitekey=${process.env.SITE_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                }
+            }).then(res => res.json()) as CaptchaResponse;
+
+            if (!captchRes.success || captchRes['error-codes'].length > 0 || captchRes.sitekey !== process.env.SITE_KEY) {
+                throw new TRPCError({ code: 'FORBIDDEN', message: 'The request was denied.' });
+            }
 
             // Generate a username
             let username: string;
