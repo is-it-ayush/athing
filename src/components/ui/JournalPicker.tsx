@@ -43,7 +43,7 @@ export const JournalPicker = () => {
 
 	return (
 		<motion.div
-			className="absolute top-0 left-0 flex min-h-screen w-screen items-center justify-center bg-white"
+			className="absolute top-0 left-0 flex min-h-screen z-[997] w-screen items-center justify-center bg-white"
 			initial={JournalPickerAnimations.hidden}
 			animate={JournalPickerAnimations.visible}
 			exit={JournalPickerAnimations.hidden}
