@@ -77,7 +77,7 @@ export const JournalIndex = () => {
 
 	return (
 		<motion.div
-			className="absolute top-0 left-0 flex min-h-screen w-screen items-center justify-center bg-black font-spacemono"
+			className="absolute top-0 left-0 z-[997] flex min-h-screen w-screen items-center justify-center bg-black font-spacemono"
 			initial={JournalIndexAnimation.hidden}
 			animate={JournalIndexAnimation.visible}
 			exit={JournalIndexAnimation.hidden}
