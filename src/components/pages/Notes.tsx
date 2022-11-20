@@ -154,7 +154,7 @@ export const Notes: React.FC = () => {
 							{Array.from({ length: 10 }).map((_, index) => {
 								return (
 									<motion.div
-										className="mx-5 mt-5 flex min-h-[200px] min-w-[300px] animate-pulse cursor-pointer snap-center flex-col justify-evenly border-none bg-white p-5"
+										className="mx-5 mt-5 flex min-h-[200px] min-w-[300px] animate-pulse snap-center flex-col justify-evenly border-none bg-white p-5"
 										initial={{ opacity: 0 }}
 										animate={{ opacity: 1 }}
 										exit={{ opacity: 0 }}>

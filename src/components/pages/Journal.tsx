@@ -43,7 +43,7 @@ export const Journal: React.FC = () => {
 			transition={{ duration: 0.3 }}>
 			<div className="fixed bottom-10 left-10 flex">
 				<button
-					className="flex flex-col items-center border-2 bg-black p-3 text-white hover:bg-white hover:text-black duration-200"
+					className="flex flex-col items-center border-2 bg-black p-3 text-white duration-200 hover:bg-white hover:text-black"
 					type="button"
 					onClick={() => {
 						journalQuery.fetchNextPage();
@@ -60,28 +60,47 @@ export const Journal: React.FC = () => {
 			</div>
 			<motion.ul className="flex h-full flex-col items-center justify-center lg:flex-row">
 				<AnimatePresence exitBeforeEnter>
-					{journalQuery.data?.pages[len]?.map((journal) => {
-						return (
-							<motion.li
-								key={journal.id}
-								onClick={() => handleOpenJournal(journal)}
-								className="flex flex-col items-center justify-center"
-								initial={{ x: '100vw' }}
-								animate={{ x: 0 }}
-								exit={{ x: '-100vw' }}
-								transition={{ duration: 0.5 }}>
-								<div className="m-5 flex h-[400px] max-w-[200px] cursor-pointer flex-col items-center justify-center border-2 bg-white bg-diamonds-pattern p-5 text-start hover:border-black">
-									<h1 className="my-2 flex h-[250px] items-center text-ellipsis break-all text-3xl font-bold">
-										{journal.title}
-									</h1>
-									<h1 className="flex font-semibold">Updated At</h1>
-									<p className="my-2 flex bg-pink-600 p-1 text-center text-sm text-white">
-										{formatDate(journal.updatedAt, 'dateAndTime')}
-									</p>
-								</div>
-							</motion.li>
-						);
-					})}
+					{journalQuery.status === 'success' ? (
+						journalQuery.data?.pages[len]?.map((journal) => {
+							return (
+								<motion.li
+									key={journal.id}
+									onClick={() => handleOpenJournal(journal)}
+									className="flex flex-col items-center justify-center"
+									initial={{ x: '100vw' }}
+									animate={{ x: 0 }}
+									exit={{ x: '-100vw' }}
+									transition={{ duration: 0.5 }}>
+									<div className="m-5 flex h-[400px] max-w-[200px] cursor-pointer flex-col items-center justify-center border-2 bg-white bg-diamonds-pattern p-5 text-start hover:border-black">
+										<h1 className="my-2 flex h-[250px] items-center text-ellipsis break-all text-3xl font-bold">
+											{journal.title}
+										</h1>
+										<h1 className="flex font-semibold">Updated At</h1>
+										<p className="my-2 flex bg-pink-600 p-1 text-center text-sm text-white">
+											{formatDate(journal.updatedAt, 'dateAndTime')}
+										</p>
+									</div>
+								</motion.li>
+							);
+						})
+					) : (
+						<motion.ul className="flex h-full flex-col items-center justify-center lg:flex-row">
+							{[...Array(3)].map((_, i) => {
+								return (
+									<motion.li
+										key={i}
+										className="flex flex-col items-center justify-center"
+										initial={{ x: '100vw' }}
+										animate={{ x: 0 }}
+										exit={{ x: '-100vw' }}
+										transition={{ duration: 0.5 }}>
+										<div className="m-5 flex h-[300px] min-w-[150px] animate-pulse flex-col items-center justify-center border-none bg-gray-200 p-5 text-start"></div>
+										<div className="m-5 flex h-[100px] min-w-[150px] animate-pulse flex-col items-center justify-center border-none bg-gray-200 p-5 text-start"></div>
+									</motion.li>
+								);
+							})}
+						</motion.ul>
+					)}
 				</AnimatePresence>
 			</motion.ul>
 		</motion.div>
