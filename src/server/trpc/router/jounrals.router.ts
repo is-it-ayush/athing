@@ -165,7 +165,7 @@ export const journalRouter = router({
             });
 
 
-            let filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
+            const filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
             return filterdJournals;
         }
         catch (err: TRPCError | any) {
