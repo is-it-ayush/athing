@@ -28,6 +28,15 @@ export const entryRouter = router({
                 }
             }) as Entry;
 
+            // Update the jounral updatedAt field.
+            await ctx.prisma.journal.update({
+                where: {
+                    id: journalId,
+                },
+                data: {
+                    updatedAt: new Date(),
+                }
+            });
 
             if (!entry) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create entry.', });
@@ -118,6 +127,19 @@ export const entryRouter = router({
                 }
             });
 
+            /**
+             * Update the journal's updatedAt field.
+             * This is a hacky solution as I couldn't get prisma to query the results.
+             */
+            await ctx.prisma.journal.update({
+                where: {
+                    id: entry.journalId,
+                },
+                data: {
+                    updatedAt: new Date(),
+                }
+            });
+
 
 
             return {
@@ -195,7 +217,7 @@ export const entryRouter = router({
                             createdAt: true,
                         },
                         orderBy: {
-                            createdAt: "desc",
+                            createdAt: "asc",
                         }
                     }
                 }

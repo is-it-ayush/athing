@@ -11,7 +11,7 @@ export const Journal: React.FC = () => {
 	const [len, setLen] = useState(0);
 
 	// TRPC
-	const journalQuery = trpc.journals.getRandom.useInfiniteQuery(
+	const journalQuery = trpc.journals.getLatest.useInfiniteQuery(
 		{
 			limit: 3,
 		},

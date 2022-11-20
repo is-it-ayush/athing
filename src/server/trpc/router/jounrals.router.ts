@@ -135,7 +135,7 @@ export const journalRouter = router({
     }
     ),
     // This will get you 3 random journals.
-    getRandom: protectedProcedure.input(z.object(
+    getLatest: protectedProcedure.input(z.object(
         {
             cursor: z.string().optional(),
         }
@@ -154,7 +154,7 @@ export const journalRouter = router({
                         select: {
                             entries: true,
                         }
-                    }
+                    },
                 },
                 orderBy: {
                     updatedAt: "desc",
@@ -163,8 +163,9 @@ export const journalRouter = router({
                 skip: cursor ? 1 : 0,
                 cursor: cursor ? { id: cursor } : undefined,
             });
-            const filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
 
+
+            let filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
             return filterdJournals;
         }
         catch (err: TRPCError | any) {
