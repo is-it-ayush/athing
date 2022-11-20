@@ -67,14 +67,16 @@ export const userRouter = router({
         {
             password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
             acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
+            token: z.string()
         }
     )).mutation(async ({ input, ctx }) => {
 
-        const { password, acceptTerms } = input;
+        const { password, acceptTerms, token } = input;
 
         // [DEBUG]
         // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
         // REMOVE THIS BEFORE DEPLOYMENT.
+        console.log(token);
         if (password !== 'sheisbeautiful@1001') {
             throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
         }

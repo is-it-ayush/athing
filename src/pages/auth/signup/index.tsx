@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { type NextPage } from 'next';
 import { trpc } from '@utils/trpc';
 import { handleError, loadZxcvbn } from '@utils/client.util';
@@ -6,6 +6,8 @@ import { zxcvbn, zxcvbnOptions, type ZxcvbnResult } from '@zxcvbn-ts/core';
 import { z } from 'zod';
 import { useFormik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
+
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -26,6 +28,7 @@ const SignupPage: NextPage = () => {
 	const [pwdStrength, setPwdStrength] = React.useState<ZxcvbnResult>(zxcvbn(''));
 	const [showPage, setShowPage] = React.useState(0);
 	const router = useRouter();
+	const captchaRef = useRef(null);
 
 	// Required Toast State
 	const [displayToast, setDisplayToast] = useAtom(showToastAtom);
@@ -47,12 +50,14 @@ const SignupPage: NextPage = () => {
 		acceptTerms: z.boolean().refine((v) => v, {
 			message: 'You must accept the terms and conditions',
 		}),
+		token: z.string(),
 	});
 
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched, setFieldValue } = useFormik({
 		initialValues: {
 			password: '',
 			acceptTerms: false,
+			token: '',
 		},
 		validationSchema: toFormikValidationSchema(signupSchema),
 		onSubmit: async (values, actions) => {
@@ -61,6 +66,7 @@ const SignupPage: NextPage = () => {
 				const res = await mutation.mutateAsync({
 					password: values.password,
 					acceptTerms: values.acceptTerms,
+					token: values.token,
 				});
 				setShowPage(1);
 			} catch (err: TRPCError | any) {
@@ -71,6 +77,18 @@ const SignupPage: NextPage = () => {
 			}
 		},
 	});
+
+	const onCaptchError = () => {
+		setToastIntent('error');
+		setToastMessage('There was an error with the captcha! Please Refresh the page and try again.');
+		setDisplayToast(true);
+	};
+
+	const onCaptchaExpire = () => {
+		setToastIntent('error');
+		setToastMessage('The captcha has expired! Please Refresh the page and try again.');
+		setDisplayToast(true);
+	};
 
 	React.useEffect(() => {
 		if (!pageLoad) {
@@ -141,6 +159,15 @@ const SignupPage: NextPage = () => {
 							checked={values.acceptTerms}
 							onChange={handleChange}
 							onBlur={handleBlur}
+						/>
+						<HCaptcha
+							sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''}
+							onVerify={(token) => {
+								setFieldValue('token', token);
+							}}
+							onError={onCaptchError}
+							onExpire={onCaptchaExpire}
+							ref={captchaRef}
 						/>
 						<Button
 							letterSpaced={true}
