@@ -12,6 +12,7 @@
 		"dev:studio": "dotenv -e .env.development -- npx prisma studio"
 	},
 	"dependencies": {
+		"@hcaptcha/react-hcaptcha": "^1.4.4",
 		"@prisma/client": "^4.5.0",
 		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/typography": "^0.5.8",
@@ -43,6 +44,7 @@
 		"zod-formik-adapter": "^1.1.1"
 	},
 	"devDependencies": {
+		"@tanstack/react-query-devtools": "^4.16.1",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie": "^0.5.1",
 		"@types/jsonwebtoken": "^8.5.9",

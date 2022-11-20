@@ -88,66 +88,87 @@ export const Notes: React.FC = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}>
 			<motion.ul className="no-scroll flex flex-row flex-wrap justify-center lg:flex-row" layout="position">
-				<AnimatePresence>
-					{notesQuery.data?.pages.map((page) => {
-						return page.map((note) => {
-							return (
-								<motion.li
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									transition={{
-										layout: {
-											type: 'tween',
-											duration: 0.3,
-										},
-									}}
-									key={note.id}
-									className={`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black lg:m-5 lg:p-5`}>
-									<div className="my-3 flex flex-col">
-										<h1 className="text-xl font-bold">{note.User?.username}</h1>
-										<h1 className="flex text-sm text-gray-700">{formatDate(note.at)}</h1>
-									</div>
-									<h6 className="whitespace-normal break-all">
-										{note.text.length > 25 ? `${note.text.substring(0, 25)}...` : note.text}
-									</h6>
-									<div className="mt-2 flex w-full flex-row justify-start">
-										<button
-											className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
-											onClick={() => {
-												setAllowPagesDisplay(false);
-												setSelectedNote(note);
-												setModalType('parse');
-												setDisplayModal(true);
-											}}>
-											<BiBookOpen className="h-6 w-6" />
-										</button>
-										{note.userId === user?.id ? (
-											<>
-												<button
-													className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
-													onClick={() => {
-														setAllowPagesDisplay(false);
-														setSelectedNote(note);
-														setModalType('edit');
-														setDisplayModal(true);
-													}}>
-													<BiEdit className="h-6 w-6" />
-												</button>
-												<button
-													className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
-													onClick={() => {
-														handleNoteDelete(note.id);
-													}}>
-													<MdOutlineDeleteOutline className="h-6 w-6" />
-												</button>
-											</>
-										) : null}
-									</div>
-								</motion.li>
-							);
-						});
-					})}
+				<AnimatePresence exitBeforeEnter>
+					{notesQuery.status === 'success' ? (
+						notesQuery.data.pages.map((page) => {
+							return page.map((note) => {
+								return (
+									<motion.li
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{
+											layout: {
+												type: 'tween',
+												duration: 0.3,
+											},
+										}}
+										key={note.id}
+										className={`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black lg:m-5 lg:p-5`}>
+										<div className="my-3 flex flex-col">
+											<h1 className="text-xl font-bold">{note.User?.username}</h1>
+											<h1 className="flex text-sm text-gray-700">{formatDate(note.at)}</h1>
+										</div>
+										<h6 className="whitespace-normal break-all">
+											{note.text.length > 25 ? `${note.text.substring(0, 25)}...` : note.text}
+										</h6>
+										<div className="mt-2 flex w-full flex-row justify-start">
+											<button
+												className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
+												onClick={() => {
+													setAllowPagesDisplay(false);
+													setSelectedNote(note);
+													setModalType('parse');
+													setDisplayModal(true);
+												}}>
+												<BiBookOpen className="h-6 w-6" />
+											</button>
+											{note.userId === user?.id ? (
+												<>
+													<button
+														className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
+														onClick={() => {
+															setAllowPagesDisplay(false);
+															setSelectedNote(note);
+															setModalType('edit');
+															setDisplayModal(true);
+														}}>
+														<BiEdit className="h-6 w-6" />
+													</button>
+													<button
+														className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
+														onClick={() => {
+															handleNoteDelete(note.id);
+														}}>
+														<MdOutlineDeleteOutline className="h-6 w-6" />
+													</button>
+												</>
+											) : null}
+										</div>
+									</motion.li>
+								);
+							});
+						})
+					) : (
+						<motion.ul className="no-scroll flex flex-row flex-wrap justify-center lg:flex-row" layout="position">
+							{Array.from({ length: 10 }).map((_, index) => {
+								return (
+									<motion.div
+										className="mx-5 mt-5 flex min-h-[200px] min-w-[300px] animate-pulse cursor-pointer snap-center flex-col justify-evenly border-none bg-white p-5"
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}>
+										<div className="my-3 flex flex-col">
+											<div className="flex w-full animate-pulse flex-row bg-gray-300 p-3" />
+										</div>
+										<div className="mt-3 flex flex-col">
+											<div className="flex w-full animate-pulse flex-row bg-gray-300 p-10" />
+										</div>
+									</motion.div>
+								);
+							})}
+						</motion.ul>
+					)}
 				</AnimatePresence>
 			</motion.ul>
 		</motion.div>

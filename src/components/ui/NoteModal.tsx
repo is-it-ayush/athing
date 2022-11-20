@@ -114,7 +114,7 @@ export const NoteModal = () => {
 						}}></span>
 				</div>
 			}
-			<div className="fixed bottom-[10%] right-5 flex flex-col lg:top-5">
+			<div className="fixed bottom-[20%] right-5 flex flex-col lg:top-5">
 				<Button
 					flex="row"
 					type="button"

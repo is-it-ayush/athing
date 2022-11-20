@@ -116,7 +116,10 @@ export const EntryModal = () => {
 			return;
 		}
 
-		setAllowPagesDisplay(true);
+		if (!showJournalIndexModal) {
+			setAllowPagesDisplay(true);
+		}
+
 		setShowEntryModal(false);
 		if (!showJournalIndexModal) {
 			setSelectedJournal(null);
@@ -175,7 +178,7 @@ export const EntryModal = () => {
 
 	return (
 		<motion.div
-			className="font-monospace z-998 absolute top-0 left-0 flex min-h-screen  w-screen flex-col items-center overflow-y-auto bg-white p-10 text-black"
+			className="font-monospace z-998 absolute top-0 left-0 z-[997] flex min-h-screen w-screen flex-col items-center overflow-y-auto bg-white p-10 text-black"
 			initial={EntryModalAnimations.hidden}
 			animate={EntryModalAnimations.visible}
 			exit={EntryModalAnimations.hidden}

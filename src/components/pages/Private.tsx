@@ -49,7 +49,6 @@ export const Private: React.FC = () => {
 		},
 		{
 			onError(err) {
-				console.log(`Yo! I think something happened! :)`);
 				setNotes([]);
 			},
 		},
@@ -97,12 +96,10 @@ export const Private: React.FC = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
-				<AnimatePresence>
-					<div>
-						{notes.length > 0 ? (
-							<motion.ul
-								className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
-								layout="position">
+				<AnimatePresence exitBeforeEnter>
+					{allPostsData.status === 'success' ? (
+						notes.length > 0 ? (
+							<ul className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto">
 								<ScrollContainer className=" flex flex-row">
 									{notes.map((note) => {
 										return (
@@ -113,8 +110,8 @@ export const Private: React.FC = () => {
 												initial={{ opacity: 0 }}
 												animate={{ opacity: 1 }}
 												exit={{ opacity: 0 }}
-												transition={{ duration: 0.5 }}>
-												<motion.div className="my-3 flex flex-col">
+												transition={{ duration: 0.3 }}>
+												<div className="my-3 flex flex-col">
 													{note.isPublished ? (
 														<div className="flex flex-row text-pink-600">
 															<BiLockOpenAlt className="mx-2 h-6 w-6 " />
@@ -137,7 +134,7 @@ export const Private: React.FC = () => {
 															  }).format(new Date(note.at))
 															: 'Sometime ago.'}
 													</h1>
-												</motion.div>
+												</div>
 												<h6 className="whitespace-normal break-all	">
 													{note.text.length > 25 ? `${note.text.substring(0, 25)}...` : note.text}
 												</h6>
@@ -172,7 +169,7 @@ export const Private: React.FC = () => {
 										);
 									})}
 								</ScrollContainer>
-							</motion.ul>
+							</ul>
 						) : (
 							<motion.li
 								className={`my-5 flex min-h-[200px] w-[300px] cursor-pointer snap-center flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black `}
@@ -189,43 +186,74 @@ export const Private: React.FC = () => {
 								</motion.div>
 								<h6 className="whitespace-normal break-all">Welcome! Create your first note.</h6>
 							</motion.li>
-						)}
-					</div>
+						)
+					) : (
+						<motion.li
+							className={`my-5 flex min-h-[200px] w-[300px] animate-pulse snap-center flex-col justify-evenly border-2 border-none bg-white p-5`}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.5 }}>
+							<div className="my-3 flex flex-col">
+								<div className="flex w-full animate-pulse flex-row bg-gray-300 p-3" />
+							</div>
+							<div className="mt-3 flex flex-col">
+								<div className="flex w-full animate-pulse flex-row bg-gray-300 p-10" />
+							</div>
+						</motion.li>
+					)}
 				</AnimatePresence>
 			</div>
 			<div className="mt-5 flex flex-col">
 				<h1 className="flex text-xl font-semibold">Journals</h1>
 
 				<div>
-					<AnimatePresence>
-						{journals.length > 0 ? (
-							<motion.ul
-								className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
-								layout="position">
-								<ScrollContainer className="flex flex-row" hideScrollbars={true}>
-									{journals.map((journal) => {
-										return <JournalBook type="view" journal={journal} key={journal.id} />;
-									})}
-								</ScrollContainer>
-							</motion.ul>
+					<AnimatePresence exitBeforeEnter>
+						{journalsQuery.status === 'success' ? (
+							journals.length > 0 ? (
+								<motion.ul
+									className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
+									layout="position">
+									<ScrollContainer className="flex flex-row" hideScrollbars={true}>
+										{journals.map((journal) => {
+											return <JournalBook type="view" journal={journal} key={journal.id} />;
+										})}
+									</ScrollContainer>
+								</motion.ul>
+							) : (
+								<motion.div
+									key="initialJournalKey"
+									className={`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black`}
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+									transition={{ duration: 0.3 }}>
+									<div className="flex flex-col">
+										<div className="my-3 flex flex-col">
+											<h1 className="flex h-[120px] items-center break-all text-xl font-bold text-black">
+												No Journals
+											</h1>
+											<div className="mt-2 w-fit">
+												<h1 className=" bg-pink-600 p-2 text-white">Create One?</h1>
+											</div>
+										</div>
+										<h4 className=" text-sm text-gray-600">Hey! Click the Plus icon.</h4>
+									</div>
+								</motion.div>
+							)
 						) : (
 							<motion.div
-								key="initialJournalKey"
-								className={`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black`}
+								className={`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] animate-pulse cursor-pointer flex-col justify-evenly border-none bg-white p-5`}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								transition={{ duration: 0.3 }}>
+								exit={{ opacity: 0 }}>
 								<div className="flex flex-col">
 									<div className="my-3 flex flex-col">
-										<h1 className="flex h-[120px] items-center break-all text-xl font-bold text-black">
-											Todo: Add a Journal.
-										</h1>
-										<div className="mt-2 w-fit">
-											<h1 className=" bg-pink-600 p-2 text-white">Why!</h1>
-										</div>
+										<div className="flex w-full animate-pulse flex-row bg-gray-300 p-3" />
 									</div>
-									<h4 className=" text-sm text-gray-600">Welp, I could&apos;nt find one.</h4>
+									<div className="mt-3 flex flex-col">
+										<div className="flex w-full animate-pulse flex-row bg-gray-300 p-10" />
+									</div>
 								</div>
 							</motion.div>
 						)}
