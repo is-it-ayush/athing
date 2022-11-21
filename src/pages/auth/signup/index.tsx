@@ -92,6 +92,11 @@ const SignupPage: NextPage = () => {
 	React.useEffect(() => {
 		if (!pageLoad) {
 			loadOptions();
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
 			setPageLoad(true);
 		}
 	}, []);
@@ -102,12 +107,6 @@ const SignupPage: NextPage = () => {
 	}, [values.password]);
 
 	React.useEffect(() => {
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter') {
-				handleSubmit();
-			}
-		});
-
 		// Cleanup: Remove the event listener on unmount.
 		return () => {
 			document.removeEventListener('keydown', (e) => {

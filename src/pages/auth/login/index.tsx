@@ -29,6 +29,7 @@ const LoginPage: NextPage = () => {
 	const [showToast, setShowToast] = useAtom(showToastAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
 	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [pageLoad, setPageLoad] = React.useState(false);
 
 	//TRPC
 	const mutation = trpc.user.login.useMutation();
@@ -100,12 +101,17 @@ const LoginPage: NextPage = () => {
 	});
 
 	React.useEffect(() => {
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter') {
-				handleSubmit();
-			}
-		});
+		if (!pageLoad) {
+			setPageLoad(true);
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
+		}
+	});
 
+	React.useEffect(() => {
 		// Cleanup: Remove the event listener on unmount.
 		return () => {
 			document.removeEventListener('keydown', (e) => {
