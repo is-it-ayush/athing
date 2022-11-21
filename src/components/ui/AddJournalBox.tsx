@@ -7,7 +7,6 @@ import { showJournalModalAtom, showToastAtom, toastIntentAtom, toastMessageAtom 
 import React, { useState } from 'react';
 import { trpc } from '@utils/trpc';
 import { handleError } from '@utils/client.util';
-import { TRPCClientError } from '@trpc/client';
 
 export const AddJournalBox = () => {
 	const [, setShowAddJournalModal] = useAtom(showJournalModalAtom);
@@ -34,12 +33,9 @@ export const AddJournalBox = () => {
 			setShowToast(true);
 			setShowAddJournalModal(false);
 		} catch (err) {
-			let message;
-			if (err instanceof TRPCClientError) {
-				message = await handleError(err);
-			}
+			const message = await handleError(err);
 			setToastIntent('error');
-			setToastMessage(message ? message : 'Something went wrong!');
+			setToastMessage(message);
 			setShowToast(true);
 		}
 	}

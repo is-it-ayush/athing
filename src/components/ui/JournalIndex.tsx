@@ -1,4 +1,4 @@
-import { ComponentAnimations } from '@utils/client.util';
+import { ComponentAnimations, handleError } from '@utils/client.util';
 import {
 	selectedEntryTypeAtom,
 	selectedJournalAtom,
@@ -67,9 +67,10 @@ export const JournalIndex = () => {
 				setToastMessage('The Journal has been deleted.');
 			}
 		} catch (err) {
+			const message = await handleError(err);
 			setDisplayToast(true);
 			setToastIntent('error');
-			setToastMessage('There was an error deleting the journal.');
+			setToastMessage(message);
 		} finally {
 			setAllowPagesDisplay(true);
 		}

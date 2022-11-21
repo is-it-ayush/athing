@@ -23,6 +23,7 @@ import React from 'react';
 import { CgArrowsExchangeAlt } from 'react-icons/cg';
 import { TRPCClientError } from '@trpc/client';
 import type { Entry } from '@prisma/client';
+import { handleError } from '@utils/client.util';
 
 
 const EntryModalAnimations = {
@@ -88,12 +89,11 @@ export const EntryModal = () => {
 			setToastIntent('success');
 			setToastMessage('The entry was updated successfully!');
 			setDisplayToast(true);
-		} catch (error) {
-			if (error instanceof TRPCClientError) {
+		} catch (err) {
+				const message = await handleError(err);
 				setToastIntent('error');
-				setToastMessage(error.message);
+				setToastMessage(message);
 				setDisplayToast(true);
-			}
 		} finally {
 			setSelectedEntryId('');
 			if (!showJournalIndexModal) {
@@ -144,12 +144,11 @@ export const EntryModal = () => {
 				setToastIntent('success');
 				setToastMessage('The entry was successfully created!');
 				setDisplayToast(true);
-			} catch (error) {
-				if (error instanceof TRPCClientError) {
+			} catch (err) {
+					const message = await handleError(err);
 					setToastIntent('error');
-					setToastMessage(error.message);
+					setToastMessage(message);
 					setDisplayToast(true);
-				}
 			} finally {
 				setSelectedEntryId('');
 				if (!showJournalIndexModal) {

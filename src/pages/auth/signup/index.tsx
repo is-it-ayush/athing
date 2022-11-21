@@ -68,8 +68,8 @@ const SignupPage: NextPage = () => {
 					token: values.token,
 				});
 				setShowPage(1);
-			} catch (err: TRPCError | any) {
-				const errorMessage = (await handleError(err)) as string;
+			} catch (err) {
+				const errorMessage = await handleError(err);
 				setToastIntent('error');
 				setToastMessage(errorMessage);
 				setDisplayToast(true);

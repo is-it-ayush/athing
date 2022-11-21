@@ -1,5 +1,6 @@
-import type { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
+import { TRPCClientError } from '@trpc/client';
+import { TRPCError } from '@trpc/server';
 
 export const loadZxcvbn = async () => {
 
@@ -18,8 +19,15 @@ export const loadZxcvbn = async () => {
     };
 };
 
-export const handleError = async (err: TRPCClientError<AppRouter>) => {
-    return 'Something went wrong!'
+export const handleError = async (err: any): Promise<string> => {
+    let message: string;
+    if (err instanceof TRPCClientError) {
+        message = err.shape.message;
+    }
+    else {
+        message = 'An Error Occurred.';
+    }
+    return message;
 };
 
 export const formatDate = (date: Date | null, type?: string) => {
@@ -53,13 +61,6 @@ export const ComponentAnimations = {
         delayChildren: 0.2,
         staggerChildren: 0.1,
     },
-};
-
-export const trpcErrorHandler = (err: TRPCClientError<AppRouter> | TRPCClientErrorLike<AppRouter>) => {
-    if (err.data?.code === 'INTERNAL_SERVER_ERROR') {
-        return 'Something went wrong!';
-    }
-    return err.message;
 };
 
 

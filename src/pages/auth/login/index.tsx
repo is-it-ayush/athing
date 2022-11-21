@@ -43,16 +43,12 @@ const LoginPage: NextPage = () => {
 		}
 
 		try {
-			// [DEBUG] Calculate Time
-			// const start = Date.now();
-
 			const res = await mutation.mutateAsync({
 				username: values.username.trim(),
 				password: values.password.trim(),
 				rememberMe: values.rememberMe,
 			});
 
-			// Set the cookie on the client side.
 			setCookie(null, 'token', res.token, {
 				maxAge: values.rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
 				path: '/',
@@ -69,8 +65,8 @@ const LoginPage: NextPage = () => {
 			}, 1000);
 
 			// Redirect to the app.
-		} catch (err: TRPCError | any) {
-			const errorMessage = (await handleError(err)) as string;
+		} catch (err) {
+			const errorMessage = await handleError(err);
 			setToastIntent('error');
 			setToastMessage(errorMessage);
 			setShowToast(true);
