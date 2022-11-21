@@ -60,7 +60,6 @@ export const generateUsername = async (): Promise<string> => {
  */
 export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
 
-    console.log(`getSession called!`);
     const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
     const session = cookies.token ?? null;
     const secret = await process.env.JWT_SECRET as string

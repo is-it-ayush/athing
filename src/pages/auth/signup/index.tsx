@@ -119,7 +119,6 @@ const SignupPage: NextPage = () => {
 	}, []);
 
 	async function loadOptions(): Promise<void> {
-		console.log(`Loaded options.`);
 		const options = await loadZxcvbn();
 		zxcvbnOptions.setOptions(options);
 		return Promise.resolve();

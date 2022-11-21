@@ -136,7 +136,6 @@ export const EntryModal = () => {
 	async function handleCreateEntryMutation() {
 		if (selectedJournal?.id) {
 			try {
-				console.log(`Up`);
 				await createEntryMutation.mutateAsync({
 					content: text,
 					journalId: selectedJournal.id,

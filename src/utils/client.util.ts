@@ -19,7 +19,6 @@ export const loadZxcvbn = async () => {
 };
 
 export const handleError = async (err: TRPCClientError<AppRouter>) => {
-    console.log(err.message);
     return 'Something went wrong!'
 };
 

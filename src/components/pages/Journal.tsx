@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { trpc } from '@utils/trpc';
 import { formatDate } from '@utils/client.util';
 import { allowPagesDisplayAtom, selectedJournalAtom, showJournalIndexModalAtom } from '@utils/store';

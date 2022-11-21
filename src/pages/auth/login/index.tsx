@@ -69,7 +69,6 @@ const LoginPage: NextPage = () => {
 
 			// Redirect to the app.
 		} catch (err: TRPCError | any) {
-			console.log(err);
 			const errorMessage = (await handleError(err)) as string;
 			setToastIntent('error');
 			setToastMessage(errorMessage);

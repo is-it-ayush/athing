@@ -21,9 +21,6 @@ const t = initTRPC.context<Context>().create({
  */
 const isAuthenticated = t.middleware(async ({ ctx, next }) => {
 
-  console.log(`isAuthenticated middleware called!`);
-
-
   if (!ctx.session) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
@@ -46,9 +43,7 @@ const rateLimit = t.middleware(async ({ ctx, next }) => {
     }
 
     try {
-      const res = await rateLimiter.consume(ci.ip, 2);
-      console.log(`Rate limit remaining: ${res.remainingPoints}`);
-      console.log(res.toJSON(), null, 2);
+      await rateLimiter.consume(ci.ip, 2);
     }
     catch (err) {
       throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: "Too many requests." });

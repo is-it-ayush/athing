@@ -5,10 +5,10 @@ import type { NextApiRequest } from "next";
 
 import { prisma } from "../db/client";
 
-/**
- * Replace this with an object if you want to pass things to createContextInner
- */
-type CreateContextOptions = Record<string, null>;
+// /**
+//  * Replace this with an object if you want to pass things to createContextInner
+//  */
+// type CreateContextOptions = Record<string, null>;
 
 /** Use this helper for:
  * - testing, so we dont have to mock Next.js' req/res
@@ -27,7 +27,6 @@ export const createContextInner = async () => {
  **/
 export const createContext = async (opts: CreateNextContextOptions) => {
 
-  console.log(`createContext called!`);
   const session = await getSession(opts, prisma) as string | null;
   const req = opts.req as NextApiRequest;
 
