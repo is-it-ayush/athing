@@ -31,46 +31,49 @@ export const userRouter = router({
             }
         }
 
+        let user: User;
 
         try {
 
             // Find user
-            const user = await ctx.prisma.user.findUnique({
+            user = await ctx.prisma.user.findUnique({
                 where: {
                     username,
                 },
             }) as User;
 
-            // Doesn't exist; Return.
-            if (!user) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
-            }
-
-            // Exists; compare password
-            const valid: boolean = await comparePassword(password, user.password);
-
-            if (!valid) {
-                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
-            }
-
-            // TODO: Create JWT Cookie
-            const secret = await process.env.JWT_SECRET as string;
-            const token = jwt.sign({
-                id: user.id,
-            }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
-
-
-
-            return {
-                result: true,
-                token: token
-            };
         }
         catch (err) {
 
             throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while logging in.' });
             // --todo-- add error logging.
         }
+
+        // Doesn't exist; Return.
+        if (!user) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
+        }
+
+        // Exists; compare password
+        const valid: boolean = await comparePassword(password, user.password);
+
+        if (!valid) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
+        }
+
+        // TODO: Create JWT Cookie
+        const secret = await process.env.JWT_SECRET as string;
+        const token = jwt.sign({
+            id: user.id,
+        }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
+
+
+
+        return {
+            result: true,
+            token: token
+        };
+
 
     }
     ),
@@ -141,12 +144,6 @@ export const userRouter = router({
                     acceptedTerms: acceptTerms,
                 },
             }) as User;
-
-            if (!createUser) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create account.', });
-            }
-
-            // Create the first note and the first journal.
 
             return {
                 username: createUser.username
