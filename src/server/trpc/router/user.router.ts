@@ -25,7 +25,6 @@ export const userRouter = router({
     )).mutation(async ({ input, ctx }) => {
 
         const { username, password, rememberMe } = input;
-        console.log(ctx.req.headers.forwarded);
 
         if (isUnderMaintenance === 'true') {
             if (password !== spc_pwd) {

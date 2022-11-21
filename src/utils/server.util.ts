@@ -3,7 +3,7 @@ import { type PrismaClient } from '@prisma/client';
 import * as jwt from "jsonwebtoken";
 import { type NextApiRequest } from 'next/types';
 import { nanoid } from 'nanoid';
-import {  } from 'lru-cache';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 /**
  * Hashes a string using bcrypt
@@ -109,39 +109,22 @@ export const formatString = (str: string): string => {
     return newStr;
 }
 
-/**
- * Simple LRU-Cache Rate Limiter
- * @param {string} key - The key to use for the cache
- * @param {number} limit - The limit of requests
- * @param {number} ttl - The time to live for the cache
- * @returns {boolean} - Whether the request is allowed or not
- * @example
- * const isAllowed = rateLimit("key", 5, 60);
- * if (!isAllowed) {
- *    return res.status(429).json(formatResponse("Too many requests", 429));
- * }
- * // Do something
- * return res.status(200).json(formatResponse("Success", 200));
- * 
- * // The above code will allow 5 requests per minute
- * // If the limit is reached, it will return a 429 status code
- *  
- * // If you want to use the same key for multiple routes, you can use the req.url
- * const isAllowed = rateLimit(req.url, 5, 60);
- * if (!isAllowed) {
- *   return res.status(429).json(formatResponse("Too many requests", 429));
- * }
- * // Do something
- * return res.status(200).json(formatResponse("Success", 200));
- * 
- */
+export const rateLimiter = new RateLimiterMemory({
+    points: 10, // 8 requests
+    duration: 60, // per 1 minute by IP 
+});
 
-// export const rateLimit = (key: string, limit: number, ttl: number): boolean => {
-//     const cache = require('memory-cache');
-//     const current = cache.get(key) || 0;
-//     if (current >= limit) {
-//         return false;
-//     }
-//     cache.put(key, current + 1, ttl * 1000);
-//     return true;
-// }
+/**
+ * Extract Client IP from Forwarded Headers.
+ * Since we are using a CDN (Vercel), we need to extract the client IP from the forwarded headers.
+ * @param {NextApiRequest} req - The request object
+ */
+export const getClientInfo = (req: NextApiRequest) => {
+
+    const header = req.headers.forwarded as string;
+    const userInfo = {
+        ip: header.split(';')[0]?.split('=')[1] || null,
+        host: header.split(';')[1]?.split('=')[1] || null,
+    }
+    return userInfo;
+}
