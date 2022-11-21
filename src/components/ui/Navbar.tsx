@@ -1,10 +1,10 @@
 import { trpc } from '@utils/trpc';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React from 'react';
 
 // Icons
 import { RiCloseLine } from 'react-icons/ri';
-import { CgOptions, CgMenuRight } from 'react-icons/cg';
+import { CgMenuRight } from 'react-icons/cg';
 import { useAtom } from 'jotai';
 import { currentPageAtom, showFeedbackModalAtom } from '@utils/store';
 import { BiUserVoice } from 'react-icons/bi';
@@ -19,7 +19,7 @@ export function Navbar({
 	});
 
 	const [, setShowPage] = useAtom(currentPageAtom);
-	const [showFeedback, setShowFeedback] = useAtom(showFeedbackModalAtom);
+	const [, setShowFeedback] = useAtom(showFeedbackModalAtom);
 
 	return (
 		<motion.div

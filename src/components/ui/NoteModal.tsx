@@ -4,7 +4,6 @@ import { TRPCError } from '@trpc/server';
 import { handleError } from '@utils/client.util';
 import { motion } from 'framer-motion';
 import { Button } from './Button';
-import TextareaAutosize from 'react-textarea-autosize';
 
 // Atoms
 import {

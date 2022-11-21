@@ -5,14 +5,13 @@ import { TRPCError } from "@trpc/server";
 import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
-import { CaptchaResponse } from "@utils/server.typing";
+import type { CaptchaResponse } from "@utils/server.typing";
 
 // Variables
 const secretVar = process.env.CAPTCHA_SECRET as string;
 const siteKey = process.env.SITE_KEY as string;
 const spc_pwd = process.env.SPECIAL_ACCESS_PWD as string;
 const isUnderMaintenance = process.env.MAINTENANCE_MODE as string;
-const NODE_ENV = process.env.NODE_ENV as string;
 
 
 export const userRouter = router({
@@ -67,12 +66,10 @@ export const userRouter = router({
                 token: token
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
+        catch (err) {
 
-            // --todo-- add error logging to sentry
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while logging in.' });
+            // --todo-- add error logging.
         }
 
     }
@@ -155,35 +152,11 @@ export const userRouter = router({
                 username: createUser.username
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while signing up.' });
             // --todo-- add error logging to sentry
         }
     }),
-    logout: protectedProcedure.mutation(async () => {
-
-        try {
-
-
-            // --todo-- Invalidate the session.
-
-
-            return {
-                result: true
-            };
-        }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
-        }
-    }
-    ),
     me: protectedProcedure.query(async ({ ctx }) => {
 
         try {
@@ -203,12 +176,9 @@ export const userRouter = router({
                 id: user.id
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred.' });
+            // --todo-- add error logging.
         }
     }),
     feedback: protectedProcedure.input(z.object(
@@ -233,12 +203,9 @@ export const userRouter = router({
                 result: true
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while sending feedback.' });
+            // --todo-- add error logging.
         }
     }),
 });

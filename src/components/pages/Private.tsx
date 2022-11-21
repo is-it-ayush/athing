@@ -1,7 +1,6 @@
-import { Note } from '@utils/client.typing';
+import React from 'react';
 import { trpc } from '@utils/trpc';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
 import { useAtom } from 'jotai';
 import {
 	noteModal,
@@ -11,25 +10,15 @@ import {
 	toastMessageAtom,
 	userInfo,
 	showModal,
-	selectedJournalAtom,
-	showJournalIndexModalAtom,
 } from '@utils/store';
-import React from 'react';
-import ScrollContainer from 'react-indiana-drag-scroll';
-import { Post, type Journal } from '@prisma/client';
 
 // Icons
-import { BiLockOpenAlt, BiLockAlt, BiBookOpen, BiEdit, BiBook, BiPlus } from 'react-icons/bi';
+import { BiLockOpenAlt, BiLockAlt, BiBookOpen, BiEdit } from 'react-icons/bi';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
-import { NoteModal } from '@components/ui/NoteModal';
-import { formatDate, handleError } from '@utils/client.util';
-import { Button } from '@components/ui/Button';
 import { JournalBook } from '@components/ui/JournalBook';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 export const Private: React.FC = () => {
-	// State
-	const [notes, setNotes] = useState<Post[]>([]);
-	const [journals, setJournals] = useState<Journal[]>([]);
 
 	const [, setSelectedNote] = useAtom(selectedNoteAtom);
 	const [, setModalType] = useAtom(noteModal);
@@ -43,38 +32,12 @@ export const Private: React.FC = () => {
 
 	// TRPC
 	const deleteNote = trpc.post.delete.useMutation();
-	const allPostsData = trpc.post.getPostsByUserId.useQuery(
-		{
-			id: user.id,
-		},
-		{
-			onError(err) {
-				setNotes([]);
-			},
-		},
-	);
-	const journalsQuery = trpc.journals.getJournalsByUserId.useQuery(
-		{
-			id: user.id,
-		},
-		{
-			onError(err) {
-				setJournals([]);
-			},
-		},
-	);
-
-	React.useEffect(() => {
-		if (allPostsData.data) {
-			setNotes(allPostsData.data.posts);
-		}
-	}, [allPostsData.data]);
-
-	React.useEffect(() => {
-		if (journalsQuery.data) {
-			setJournals(journalsQuery.data);
-		}
-	}, [journalsQuery.data]);
+	const allPostsData = trpc.post.getPostsByUserId.useQuery({
+		id: user.id,
+	});
+	const journalsQuery = trpc.journals.getJournalsByUserId.useQuery({
+		id: user.id,
+	});
 
 	// --todo-- Extract these functions:
 	async function handleNoteDelete(note_id: string) {
@@ -96,12 +59,12 @@ export const Private: React.FC = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
-				<AnimatePresence mode='wait'>
-					{allPostsData.status === 'success' ? (
-						notes.length > 0 ? (
+				<AnimatePresence mode="wait">
+					{allPostsData.status === 'success' && allPostsData.data !== undefined ? (
+						allPostsData.data.posts.length > 0 ? (
 							<ul className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto">
 								<ScrollContainer className=" flex flex-row">
-									{notes.map((note) => {
+									{allPostsData.data.posts.map((note) => {
 										return (
 											<motion.li
 												key={note.id}
@@ -208,14 +171,14 @@ export const Private: React.FC = () => {
 				<h1 className="flex text-xl font-semibold">Journals</h1>
 
 				<div>
-					<AnimatePresence mode='wait'>
+					<AnimatePresence mode="wait">
 						{journalsQuery.status === 'success' ? (
-							journals.length > 0 ? (
+							journalsQuery.data.length > 0 ? (
 								<motion.ul
 									className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto"
 									layout="position">
 									<ScrollContainer className="flex flex-row" hideScrollbars={true}>
-										{journals.map((journal) => {
+										{journalsQuery.data.map((journal) => {
 											return <JournalBook type="view" journal={journal} key={journal.id} />;
 										})}
 									</ScrollContainer>

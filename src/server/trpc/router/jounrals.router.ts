@@ -30,13 +30,14 @@ export const journalRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while creating journal.' });
+            }
+            // --todo-- add error logging.
         }
 
     }),
@@ -85,6 +86,7 @@ export const journalRouter = router({
             }
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
+                message: 'An error occurred while updating journal.',
             });
         }
 
@@ -127,6 +129,7 @@ export const journalRouter = router({
 
             throw new TRPCError({
                 code: err.code || 'INTERNAL_SERVER_ERROR',
+                message: 'An error occurred while deleting journal.',
             });
 
             // --todo-- add error logging to sentry
@@ -168,13 +171,8 @@ export const journalRouter = router({
             const filterdJournals = journals.filter(j => j._count?.entries > 0) as Journal[];
             return filterdJournals;
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while getting journals.' });
         }
 
     }),
@@ -205,13 +203,13 @@ export const journalRouter = router({
 
             return user?.journals ? user.journals : [];
         }
-        catch (err: PrismaClientKnownRequestError | any) {
+        catch (err) {
             if (err instanceof PrismaClientKnownRequestError) {
                 if (err.code === 'P2021' || err.code === 'P2022') {
                     return [];
                 }
             }
-            throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'An error occurred while getting journals.' });
         }
     }),
 });

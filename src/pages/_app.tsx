@@ -6,7 +6,7 @@ import { trpc } from '../utils/trpc';
 
 import '../styles/globals.css';
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 	return (

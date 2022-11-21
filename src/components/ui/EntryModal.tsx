@@ -22,7 +22,8 @@ import { FiEdit3 } from 'react-icons/fi';
 import React from 'react';
 import { CgArrowsExchangeAlt } from 'react-icons/cg';
 import { TRPCClientError } from '@trpc/client';
-import { Entry } from '@prisma/client';
+import type { Entry } from '@prisma/client';
+
 
 const EntryModalAnimations = {
 	hidden: {

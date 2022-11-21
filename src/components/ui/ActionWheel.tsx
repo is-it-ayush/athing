@@ -36,7 +36,7 @@ const animationComponentVariants = {
 };
 
 export const ActionWheel = () => {
-	const [showActionWheel, setShowActionWheel] = useAtom(showActionWheelAtom);
+	const [, setShowActionWheel] = useAtom(showActionWheelAtom);
 	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 
 	const [, setSelectedNoteAtom] = useAtom(selectedNoteAtom);

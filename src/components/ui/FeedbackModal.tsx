@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { BiMailSend, BiUserVoice } from 'react-icons/bi';
 import { GrFormClose } from 'react-icons/gr';
 import TextareaAutosize from 'react-textarea-autosize';
-import { Button } from './Button';
 
 const FeedbackModalAnimations = {
 	hidden: {
@@ -21,7 +20,7 @@ const FeedbackModalAnimations = {
 };
 
 export const FeedbackModal = () => {
-	const [showFeedback, setShowFeedback] = useAtom(showFeedbackModalAtom);
+	const [, setShowFeedback] = useAtom(showFeedbackModalAtom);
 	const [text, setText] = useState('');
 
 	//TRPC
@@ -41,16 +40,16 @@ export const FeedbackModal = () => {
 		}
 
 		try {
-			const res = await feedback.mutateAsync({
+			await feedback.mutateAsync({
 				text,
 			});
 			setToastIntent('success');
-			setToastMessage('You have been heard!');
+			setToastMessage('Thank You! You voice is now heard.');
 			setDisplayToast(true);
 			setShowFeedback(false);
 		} catch (e) {
 			setToastIntent('error');
-			setToastMessage('Something went wrong!');
+			setToastMessage('There was an error sending your feedback.');
 			setDisplayToast(true);
 		}
 	}

@@ -15,10 +15,7 @@ export const entryRouter = router({
     })).mutation(async ({ input, ctx }) => {
         const { journalId, content, title } = input;
 
-        console.log(`Creating a new entry with jorunalId: ${journalId} and content: ${content.length}`);
-
         try {
-
             const entry = await ctx.prisma.entry.create({
                 data: {
                     journalId,
@@ -47,13 +44,14 @@ export const entryRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while creating entry.' });
+            }
+            // --todo-- add error logging.
         }
 
     }),
@@ -88,13 +86,14 @@ export const entryRouter = router({
 
             return entry;
         }
-        catch (err: TRPCError | any) {
+        catch (err) {
 
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while fetching entry.', });
+            }
         }
 
     }),
@@ -146,13 +145,13 @@ export const entryRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'An error occurred while updating the entry.', });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Unable to update entry.', });
+            }
         }
 
     }),
@@ -183,18 +182,22 @@ export const entryRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
+        catch (err) {
 
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: err.message,
+                });
+            }
+            else {
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'An error occurred while deleting the entry.',
+                });
+            }
         }
-
-    }
-
-    ),
+    }),
     getAll: protectedProcedure.input(z.object({
         journalId: z.string(),
     })).query(async ({ input, ctx }) => {
@@ -231,8 +234,19 @@ export const entryRouter = router({
 
             return journal?.entries ? journal.entries : [];
         }
-        catch (err: PrismaClientKnownRequestError | any) {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: err.message,
+                });
+            }
+            else {
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: "An error occurred while fetching the entries.",
+                });
+            }
         }
     })
 })

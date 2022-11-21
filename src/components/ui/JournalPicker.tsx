@@ -1,4 +1,4 @@
-import { Journal } from '@prisma/client';
+import type { Journal } from '@prisma/client';
 import { showJournalPickerAtom, userInfo } from '@utils/store';
 import { trpc } from '@utils/trpc';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ export const JournalPicker = () => {
 			id: user.id,
 		},
 		{
-			onError(err) {
+			onError() {
 				setJournals([]);
 			},
 		},
@@ -43,7 +43,7 @@ export const JournalPicker = () => {
 
 	return (
 		<motion.div
-			className="absolute top-0 left-0 flex min-h-screen z-[998] w-screen items-center justify-center bg-white"
+			className="absolute top-0 left-0 z-[998] flex min-h-screen w-screen items-center justify-center bg-white"
 			initial={JournalPickerAnimations.hidden}
 			animate={JournalPickerAnimations.visible}
 			exit={JournalPickerAnimations.hidden}
@@ -63,7 +63,7 @@ export const JournalPicker = () => {
 			</div>
 			<div className="flex flex-col flex-wrap p-10 lg:flex-row">
 				{journals?.length > 0 ? (
-					journals.map((journal, i) => {
+					journals.map((journal) => {
 						return <JournalBook type="select" journal={journal} key={journal.id} />;
 					})
 				) : (

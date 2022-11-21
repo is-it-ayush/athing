@@ -24,16 +24,14 @@ export const AddJournalBox = () => {
 
 	async function handleCreateJournal() {
 		try {
-			const res = await createJournalMutation.mutateAsync({
+			await createJournalMutation.mutateAsync({
 				title: titleText,
 				isPrivate,
 			});
-			if (res.result) {
-				setToastIntent('success');
-				setToastMessage('Your journal has been created!');
-				setShowToast(true);
-				utils.journals.getJournalsByUserId.refetch();
-			}
+			utils.journals.getJournalsByUserId.refetch();
+			setToastIntent('success');
+			setToastMessage('Your new journal has been created!');
+			setShowToast(true);
 			setShowAddJournalModal(false);
 		} catch (err) {
 			let message;

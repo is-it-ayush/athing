@@ -1,8 +1,8 @@
-import { Entry, Journal } from '@prisma/client';
+import { type Journal } from '@prisma/client';
 import { atom } from 'jotai';
 
 // Types
-import { type Note, NoteModalProps, type ShortNote, type ToastIntent, type User, type JournalEntryOnlyTitle } from './client.typing';
+import { type Note, type ShortNote, type ToastIntent, type User } from './client.typing';
 
 export const userInfo = atom<User>({
     id: '',

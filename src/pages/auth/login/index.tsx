@@ -90,7 +90,7 @@ const LoginPage: NextPage = () => {
 	});
 
 	// Formik hook for form validation and control.
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
 		initialValues: {
 			username: params.get('username') || '',
 			password: '',
@@ -115,7 +115,7 @@ const LoginPage: NextPage = () => {
 				}
 			});
 		};
-	}, []);
+	});
 
 	return (
 		<main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">

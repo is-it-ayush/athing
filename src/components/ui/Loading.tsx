@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 const LoadingStyles = cva(
 	'h-4 w-screen animate-pulse-slow bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))]',

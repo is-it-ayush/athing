@@ -3,7 +3,6 @@ import { getClientInfo, rateLimiter } from "@utils/server.util";
 import superjson from "superjson";
 import { type Context } from "./context";
 
-const VERCEL_URL = process.env.VERCEL_URL as string;
 const NODE_ENV = process.env.NODE_ENV as string;
 
 const t = initTRPC.context<Context>().create({
@@ -42,7 +41,7 @@ const rateLimit = t.middleware(async ({ ctx, next }) => {
   if (NODE_ENV === "production") {
     const ci = getClientInfo(ctx.req);
 
-    if (!ci.ip || !ci.host || ci.host !== VERCEL_URL) {
+    if (!ci.ip || !ci.host) {
       throw new TRPCError({ code: 'FORBIDDEN', message: "The request is denied." });
     }
 

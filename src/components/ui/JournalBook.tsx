@@ -1,4 +1,4 @@
-import { JournalBookProps } from '@utils/client.typing';
+import type { JournalBookProps } from '@utils/client.typing';
 import { formatDate } from '@utils/client.util';
 import {
 	allowPagesDisplayAtom,
@@ -52,7 +52,7 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
 				<div className="my-3 flex flex-col">
-					<h1 className="flex h-[120px] items-center text-ellipsis break-words text-xl font-bold text-black">
+					<h1 className="flex h-[120px] items-center overflow-hidden text-ellipsis break-words text-xl font-bold text-black">
 						{journal.title.length > 25 ? `${journal.title.substring(0, 25)}...` : journal.title}
 					</h1>
 					<div className="mt-2 w-fit text-white">

@@ -1,4 +1,4 @@
-import { Entry, Journal } from "@prisma/client";
+import type { Journal } from "@prisma/client";
 
 export type Note = {
     text: string;

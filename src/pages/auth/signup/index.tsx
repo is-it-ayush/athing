@@ -8,7 +8,6 @@ import { useFormik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 
-
 // Components
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
@@ -17,7 +16,7 @@ import { Loading } from '@components/ui/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@components/ui/Toast';
-import { TRPCError } from '@trpc/server';
+import { type TRPCError } from '@trpc/server';
 
 // PNG
 import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
@@ -53,7 +52,7 @@ const SignupPage: NextPage = () => {
 		token: z.string(),
 	});
 
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched, setFieldValue } = useFormik({
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, setFieldValue } = useFormik({
 		initialValues: {
 			password: '',
 			acceptTerms: false,
@@ -63,7 +62,7 @@ const SignupPage: NextPage = () => {
 		onSubmit: async (values, actions) => {
 			try {
 				actions.setSubmitting(true);
-				const res = await mutation.mutateAsync({
+				await mutation.mutateAsync({
 					password: values.password,
 					acceptTerms: values.acceptTerms,
 					token: values.token,

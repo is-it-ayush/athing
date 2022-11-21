@@ -15,7 +15,7 @@ type CreateContextOptions = Record<string, null>;
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
-export const createContextInner = async (opts: CreateContextOptions) => {
+export const createContextInner = async () => {
   return {
     prisma,
   };

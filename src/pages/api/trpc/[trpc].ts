@@ -10,11 +10,11 @@ export default createNextApiHandler({
   createContext,
   onError:
     env.NODE_ENV === "development"
-      ? ({ error, type, path, input, ctx, req }) => {
+      ? ({ error, type, path, input }) => {
         console.log("Error in", type, "at", path, "with input", input);
         console.log(error);
       }
-      : ({ error, type, path, input, ctx, req }) => {
+      : ({ error }) => {
         console.error('Error:', error);
         if (error.code === 'INTERNAL_SERVER_ERROR') {
           // --todo-- add error logging to sentry/axiom :)

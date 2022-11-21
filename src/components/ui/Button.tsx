@@ -1,4 +1,4 @@
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 const ButtonStyles = cva(
 	'flex p-3 my-2 border-2 border-gray-400 text-center justify-center items-center duration-200 disabled:opacity-50 disabled:cursor-not-allowed',

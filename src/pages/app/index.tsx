@@ -2,7 +2,7 @@ import { Menu } from '@components/ui/Menu';
 import { Navbar } from '@components/ui/Navbar';
 import { trpc } from '@utils/trpc';
 import { AnimatePresence, motion } from 'framer-motion';
-import { NextPage } from 'next/types';
+import type { NextPage } from 'next/types';
 import React from 'react';
 import { Journal } from '@components/pages/Journal';
 import { Notes } from '@components/pages/Notes';
@@ -88,7 +88,7 @@ export const App: NextPage = () => {
 						exit={{ opacity: 0 }}
 						transition={{ duration: 1 }}>
 						<AnimatePresence>
-							{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : null}
+							{showPage === 0 ? <Notes /> : showPage === 1 ? <Journal /> : showPage === 2 ? <Private /> : <Secret />}
 						</AnimatePresence>
 					</motion.div>
 					<div key="actionButton" className="fixed bottom-10 right-10 flex flex-col">

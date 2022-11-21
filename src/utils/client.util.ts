@@ -1,4 +1,4 @@
-import { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
+import type { TRPCClientErrorLike, TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
 
 export const loadZxcvbn = async () => {
@@ -18,9 +18,8 @@ export const loadZxcvbn = async () => {
     };
 };
 
-export const handleError = async (err: TRPCClientError<AppRouter> | TRPCClientErrorLike<AppRouter>) => {
-    let message: string;
-    // --todo-- add a better error handling system
+export const handleError = async (err: TRPCClientError<AppRouter>) => {
+    console.log(err.message);
     return 'Something went wrong!'
 };
 
