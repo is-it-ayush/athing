@@ -3,6 +3,7 @@ import { type PrismaClient } from '@prisma/client';
 import * as jwt from "jsonwebtoken";
 import { type NextApiRequest } from 'next/types';
 import { nanoid } from 'nanoid';
+import {  } from 'lru-cache';
 
 /**
  * Hashes a string using bcrypt
@@ -107,3 +108,40 @@ export const formatString = (str: string): string => {
     newStr = newStr.replace(/\s{2,}/g, " ");
     return newStr;
 }
+
+/**
+ * Simple LRU-Cache Rate Limiter
+ * @param {string} key - The key to use for the cache
+ * @param {number} limit - The limit of requests
+ * @param {number} ttl - The time to live for the cache
+ * @returns {boolean} - Whether the request is allowed or not
+ * @example
+ * const isAllowed = rateLimit("key", 5, 60);
+ * if (!isAllowed) {
+ *    return res.status(429).json(formatResponse("Too many requests", 429));
+ * }
+ * // Do something
+ * return res.status(200).json(formatResponse("Success", 200));
+ * 
+ * // The above code will allow 5 requests per minute
+ * // If the limit is reached, it will return a 429 status code
+ *  
+ * // If you want to use the same key for multiple routes, you can use the req.url
+ * const isAllowed = rateLimit(req.url, 5, 60);
+ * if (!isAllowed) {
+ *   return res.status(429).json(formatResponse("Too many requests", 429));
+ * }
+ * // Do something
+ * return res.status(200).json(formatResponse("Success", 200));
+ * 
+ */
+
+// export const rateLimit = (key: string, limit: number, ttl: number): boolean => {
+//     const cache = require('memory-cache');
+//     const current = cache.get(key) || 0;
+//     if (current >= limit) {
+//         return false;
+//     }
+//     cache.put(key, current + 1, ttl * 1000);
+//     return true;
+// }

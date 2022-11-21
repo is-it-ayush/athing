@@ -7,6 +7,12 @@ import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { CaptchaResponse } from "@utils/server.typing";
 
+// Variables
+const secretVar = process.env.CAPTCHA_SECRET as string;
+const siteKey = process.env.SITE_KEY as string;
+const spc_pwd = process.env.SPECIAL_ACCESS_PWD as string;
+const isUnderMaintenance = process.env.MAINTENANCE_MODE as string;
+const NODE_ENV = process.env.NODE_ENV as string;
 
 
 export const userRouter = router({
@@ -19,10 +25,8 @@ export const userRouter = router({
     )).mutation(async ({ input, ctx }) => {
 
         const { username, password, rememberMe } = input;
+        console.log(ctx.req.headers.forwarded);
 
-        // Required Environment Variables
-        const spc_pwd = await process.env.SPECIAL_ACCESS_PWD as string;
-        const isUnderMaintenance = await process.env.MAINTENANCE_MODE as string;
         if (isUnderMaintenance === 'true') {
             if (password !== spc_pwd) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
@@ -84,11 +88,6 @@ export const userRouter = router({
 
         const { password, acceptTerms, token } = input;
 
-        // Required Environment Variables
-        const secretVar = await process.env.CAPTCHA_SECRET as string;
-        const siteKey = await process.env.SITE_KEY as string;
-        const spc_pwd = await process.env.SPECIAL_ACCESS_PWD as string;
-        const isUnderMaintenance = await process.env.MAINTENANCE_MODE as string;
         if (isUnderMaintenance === 'true') {
             if (password !== spc_pwd) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
@@ -117,8 +116,11 @@ export const userRouter = router({
             // Generate a username
             let username: string;
 
-            // Ensure username is unique (This is a very inefficient way of doing this).
-            // --todo-- find a better way to do this
+            /**
+             * Generate a username
+             * It'll loop very-very rarely, but it'll never error out.
+             * So, it's fine. Since, I'm using nanoid, it's very unlikely to have a collision.
+             */
             while (true) {
                 username = await generateUsername();
                 const user = await ctx.prisma.user.findUnique({

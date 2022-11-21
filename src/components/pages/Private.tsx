@@ -96,7 +96,7 @@ export const Private: React.FC = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}>
 			<div className="flex flex-col">
-				<AnimatePresence exitBeforeEnter>
+				<AnimatePresence mode='wait'>
 					{allPostsData.status === 'success' ? (
 						notes.length > 0 ? (
 							<ul className="no-select no-scrollbar flex flex-grow snap-x snap-mandatory flex-row overflow-x-auto">
@@ -208,7 +208,7 @@ export const Private: React.FC = () => {
 				<h1 className="flex text-xl font-semibold">Journals</h1>
 
 				<div>
-					<AnimatePresence exitBeforeEnter>
+					<AnimatePresence mode='wait'>
 						{journalsQuery.status === 'success' ? (
 							journals.length > 0 ? (
 								<motion.ul

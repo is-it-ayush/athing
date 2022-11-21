@@ -59,7 +59,7 @@ export const Journal: React.FC = () => {
 				</button>
 			</div>
 			<motion.ul className="flex h-full flex-col items-center justify-center lg:flex-row">
-				<AnimatePresence exitBeforeEnter>
+				<AnimatePresence mode='wait'>
 					{journalQuery.status === 'success' ? (
 						journalQuery.data?.pages[len]?.map((journal) => {
 							return (

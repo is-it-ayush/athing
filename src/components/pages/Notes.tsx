@@ -88,7 +88,7 @@ export const Notes: React.FC = () => {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}>
 			<motion.ul className="no-scroll flex flex-row flex-wrap justify-center lg:flex-row" layout="position">
-				<AnimatePresence exitBeforeEnter>
+				<AnimatePresence mode='wait'>
 					{notesQuery.status === 'success' ? (
 						notesQuery.data.pages.map((page) => {
 							return page.map((note) => {

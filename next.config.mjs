@@ -5,13 +5,7 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
-// Content Security Policy
-const ContentSecurityPolicy = `
-  default-src 'self';
-  script-src 'self';
-  style-src 'self';
-  font-src 'self' fonts.google.com;  
-`;
+
 
 // Cool Security Headers.
 const securityHeaders = [
