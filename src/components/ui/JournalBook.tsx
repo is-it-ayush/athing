@@ -9,6 +9,7 @@ import {
 	toastIntentAtom,
 	toastMessageAtom,
 } from '@utils/store';
+import getTheme from '@utils/ThemeConfig';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 
@@ -44,7 +45,10 @@ export const JournalBook = ({ journal, type }: JournalBookProps) => {
 					setToastMessage('The journal has been selected.');
 				}
 			}}
-			className={`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white bg-overlapcrc-pattern p-5 transition-all hover:border-black`}
+			className={
+				`m-5 flex min-h-[300px] min-w-[200px] max-w-[200px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black ` +
+				getTheme(journal.styling)
+			}
 			layout
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}

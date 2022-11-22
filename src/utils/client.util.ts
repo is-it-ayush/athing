@@ -1,6 +1,7 @@
 import { type AppRouter } from '@server/trpc/router/_app';
 import { TRPCClientError } from '@trpc/client';
 import { TRPCError } from '@trpc/server';
+import { ZodError } from 'zod';
 
 export const loadZxcvbn = async () => {
 
@@ -22,7 +23,14 @@ export const loadZxcvbn = async () => {
 export const handleError = async (err: any): Promise<string> => {
     let message: string;
     if (err instanceof TRPCClientError) {
-        message = err.shape.message;
+
+        try {
+            const parsed = JSON.parse(err.shape.message);
+            message = parsed[0].message;
+        }
+        catch {
+            message = err.shape.message;
+        }
     }
     else {
         message = 'An Error Occurred.';

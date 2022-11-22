@@ -27,6 +27,7 @@ import {
 	currentPageAtom,
 	allowPagesDisplayAtom,
 	showFeedbackModalAtom,
+	showCustomizationModalAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -37,6 +38,7 @@ import { EntryModal } from '@components/ui/EntryModal';
 import { JournalPicker } from '@components/ui/JournalPicker';
 import { Secret } from '@components/ui/Secret';
 import { FeedbackModal } from '@components/ui/FeedbackModal';
+import { Customization } from '@components/ui/Customization';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -59,6 +61,7 @@ export const App: NextPage = () => {
 	const [showJournalPickerModal] = useAtom(showJournalPickerAtom);
 	const [displayToast] = useAtom(showToastAtom);
 	const [showFeedback] = useAtom(showFeedbackModalAtom);
+	const [showCustomizationModal] = useAtom(showCustomizationModalAtom);
 
 	React.useEffect(() => {
 		if (userInfoResponse.isLoading) {
@@ -117,6 +120,7 @@ export const App: NextPage = () => {
 				{showEntryModal ? <EntryModal key="entryModalKey" /> : null}
 				{showJournalPickerModal ? <JournalPicker key="journalPickerKey" /> : null}
 				{showFeedback ? <FeedbackModal key="feedbackModalKey" /> : null}
+				{showCustomizationModal ? <Customization key="customizationModalKey" /> : null}
 			</AnimatePresence>
 			<Menu key="menu" menuController={showMenu} />
 		</main>
