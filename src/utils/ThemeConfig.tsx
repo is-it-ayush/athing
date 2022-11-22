@@ -1,4 +1,4 @@
-const THEME_CONFIG = {
+export const THEME_CONFIG = {
 	0: 'bg-overlapcrc-pattern',
 	1: 'bg-cross-pattern',
 	2: 'bg-triangle-pattern',

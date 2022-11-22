@@ -5,14 +5,18 @@ import { TRPCError } from "@trpc/server";
 import { type Journal } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { formatString } from "@utils/server.util";
+import { THEME_CONFIG } from "@utils/ThemeConfig";
+
+const len = Object.keys(THEME_CONFIG).length;
 
 export const journalRouter = router({
     // This will create a new journal.
     create: protectedProcedure.input(z.object({
-        title: z.string().trim().min(10, 'The Title should at least contain 10 characters.').max(50, 'The Title can only contain 50 characters.'),
+        title: z.string().trim().min(10, 'The title should at least contain 10 characters.').max(50, 'The title can only contain 50 characters.'),
         isPrivate: z.boolean(),
+        themeId: z.number().int().min(0, 'The theme ID should be a positive integer.').max(len, `The theme ID should be less than ${len}.`)
     })).mutation(async ({ input, ctx }) => {
-        const { title, isPrivate } = input;
+        const { title, isPrivate, themeId } = input;
 
         // Formats the title.
         const formattedTitle = formatString(title);
@@ -23,6 +27,7 @@ export const journalRouter = router({
                     title: formattedTitle,
                     userId: ctx.session as string,
                     isPublic: !isPrivate,
+                    styling: themeId
                 }
             });
 
@@ -44,7 +49,7 @@ export const journalRouter = router({
     // Update a single journal
     update: protectedProcedure.input(z.object({
         id: z.string(),
-        title: z.string().trim().min(10, 'The Title should at least contain 10 characters.').max(50, 'The Title can only contain 50 characters.'),
+        title: z.string().trim().min(10, 'The title should at least contain 10 characters.').max(50, 'The title can only contain 50 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { id, title, isPrivate } = input;

@@ -8,7 +8,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export const postRouter = router({
     create: protectedProcedure.input(z.object({
-        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        text: z.string().trim().min(20, 'The note should at least contain 20 characters.').max(3001, 'The note can only contain 3000 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { text, isPrivate } = input;
@@ -171,7 +171,7 @@ export const postRouter = router({
     }),
     edit: protectedProcedure.input(z.object({
         id: z.string().trim(),
-        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        text: z.string().trim().min(20, 'The mote should at least contain 20 characters.').max(3001, 'The mote can only contain 3000 characters.'),
         isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
         const { id, text, isPrivate } = input;

@@ -3,16 +3,28 @@ import { useAtom } from 'jotai';
 import TextareaAutosize from 'react-textarea-autosize';
 
 // Atoms
-import { showJournalModalAtom, showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
+import {
+	showJournalModalAtom,
+	showToastAtom,
+	toastIntentAtom,
+	toastMessageAtom,
+	showCustomizationModalAtom,
+	allowPagesDisplayAtom,
+	selectedCustomizationAtom,
+} from '@utils/store';
 import React, { useState } from 'react';
 import { trpc } from '@utils/trpc';
 import { handleError } from '@utils/client.util';
+import { IoClose } from 'react-icons/io5';
 
 export const AddJournalBox = () => {
 	const [, setShowAddJournalModal] = useAtom(showJournalModalAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
 	const [, setToastMessage] = useAtom(toastMessageAtom);
 	const [, setShowToast] = useAtom(showToastAtom);
+	const [, setShowCustomizationModal] = useAtom(showCustomizationModalAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
+	const [selectedTheme, setSelectedTheme] = useAtom(selectedCustomizationAtom);
 
 	const [isPrivate, setIsPrivate] = useState(false);
 	const [titleText, setTitleText] = useState('');
@@ -26,8 +38,10 @@ export const AddJournalBox = () => {
 			await createJournalMutation.mutateAsync({
 				title: titleText,
 				isPrivate,
+				themeId: selectedTheme,
 			});
 			utils.journals.getJournalsByUserId.refetch();
+			setSelectedTheme(0);
 			setToastIntent('success');
 			setToastMessage('Your new journal has been created!');
 			setShowToast(true);
@@ -68,6 +82,15 @@ export const AddJournalBox = () => {
 						minLength={10}
 					/>
 				</div>
+				<div className="absolute left-[0%] top-[0%] -translate-x-[50%] -translate-y-[50%] flex-col">
+					<button
+						className="flex flex-col items-center rounded-full border-2 border-gray-600 bg-white p-4"
+						onClick={() => {
+							setShowAddJournalModal(false);
+						}}>
+						<IoClose />
+					</button>
+				</div>
 				<div className="absolute -bottom-5 left-[50%] flex -translate-x-[50%] flex-row gap-5">
 					<button
 						className="border-2 border-gray-300 bg-white px-5 py-2 text-black transition-colors duration-200 hover:border-white hover:bg-black hover:text-white"
@@ -89,9 +112,10 @@ export const AddJournalBox = () => {
 					<button
 						className="border-2 border-gray-300 bg-white px-5 py-2 text-black duration-200 hover:border-white hover:bg-black hover:text-white"
 						onClick={() => {
-							setShowAddJournalModal(false);
+							setAllowPagesDisplay(false);
+							setShowCustomizationModal(true);
 						}}>
-						Cancel
+						Theme
 					</button>
 				</div>
 			</div>

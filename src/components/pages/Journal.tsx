@@ -6,6 +6,7 @@ import { allowPagesDisplayAtom, selectedJournalAtom, showJournalIndexModalAtom }
 import { useAtom } from 'jotai';
 import { type Journal as JournalType } from '@prisma/client';
 import { TiArrowShuffle } from 'react-icons/ti';
+import getTheme from '@utils/ThemeConfig';
 
 export const Journal: React.FC = () => {
 	const [len, setLen] = useState(0);
@@ -59,7 +60,7 @@ export const Journal: React.FC = () => {
 				</button>
 			</div>
 			<motion.ul className="flex h-full flex-col items-center justify-center lg:flex-row">
-				<AnimatePresence mode='wait'>
+				<AnimatePresence mode="wait">
 					{journalQuery.status === 'success' ? (
 						journalQuery.data?.pages[len]?.map((journal) => {
 							return (
@@ -71,7 +72,11 @@ export const Journal: React.FC = () => {
 									animate={{ x: 0 }}
 									exit={{ x: '-100vw' }}
 									transition={{ duration: 0.5 }}>
-									<div className="m-5 flex h-[400px] max-w-[200px] cursor-pointer flex-col items-center justify-center border-2 bg-white bg-diamonds-pattern p-5 text-start hover:border-black">
+									<div
+										className={
+											`m-5 flex h-[400px] max-w-[200px] cursor-pointer flex-col items-center justify-center border-2 bg-white p-5 text-start hover:border-black ` +
+											getTheme(journal.styling)
+										}>
 										<h1 className="my-2 flex h-[250px] items-center text-ellipsis break-all text-3xl font-bold">
 											{journal.title}
 										</h1>

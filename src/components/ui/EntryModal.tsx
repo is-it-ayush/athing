@@ -25,7 +25,6 @@ import { TRPCClientError } from '@trpc/client';
 import type { Entry } from '@prisma/client';
 import { handleError } from '@utils/client.util';
 
-
 const EntryModalAnimations = {
 	hidden: {
 		x: '-100%',
@@ -90,10 +89,10 @@ export const EntryModal = () => {
 			setToastMessage('The entry was updated successfully!');
 			setDisplayToast(true);
 		} catch (err) {
-				const message = await handleError(err);
-				setToastIntent('error');
-				setToastMessage(message);
-				setDisplayToast(true);
+			const message = await handleError(err);
+			setToastIntent('error');
+			setToastMessage(message);
+			setDisplayToast(true);
 		} finally {
 			setSelectedEntryId('');
 			if (!showJournalIndexModal) {
@@ -144,18 +143,17 @@ export const EntryModal = () => {
 				setToastIntent('success');
 				setToastMessage('The entry was successfully created!');
 				setDisplayToast(true);
-			} catch (err) {
-					const message = await handleError(err);
-					setToastIntent('error');
-					setToastMessage(message);
-					setDisplayToast(true);
-			} finally {
 				setSelectedEntryId('');
 				if (!showJournalIndexModal) {
 					setSelectedJournal(null);
 				}
 				setAllowPagesDisplay(true);
 				setShowEntryModal(false);
+			} catch (err) {
+				const message = await handleError(err);
+				setToastIntent('error');
+				setToastMessage(message);
+				setDisplayToast(true);
 			}
 		} else {
 			setToastIntent('error');

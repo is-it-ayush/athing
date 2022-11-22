@@ -44,3 +44,4 @@ export const showFeedbackModalAtom = atom<boolean>(false);
 
 // This is for the Customization Modal
 export const showCustomizationModalAtom = atom<boolean>(false);
+export const selectedCustomizationAtom = atom<number>(0);

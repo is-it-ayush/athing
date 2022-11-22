@@ -1,6 +1,15 @@
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
-import { showCustomizationModalAtom } from '@utils/store';
+import {
+	allowPagesDisplayAtom,
+	selectedCustomizationAtom,
+	showCustomizationModalAtom,
+	showToastAtom,
+	toastIntentAtom,
+	toastMessageAtom,
+} from '@utils/store';
+import { Button } from './Button';
+import getTheme, { THEME_CONFIG } from '@utils/ThemeConfig';
 
 const CustomizationAnimations = {
 	hidden: {
@@ -10,29 +19,69 @@ const CustomizationAnimations = {
 		y: 0,
 	},
 	transition: {
-		duration: 0.5,
+		duration: 0.2,
 	},
 };
+const length = Object.keys(THEME_CONFIG).length;
 
 export const Customization = () => {
 	const [, setShowCustomizationModal] = useAtom(showCustomizationModalAtom);
+	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
+	const [selectedTheme, setSelectedTheme] = useAtom(selectedCustomizationAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setShowToast] = useAtom(showToastAtom);
+
+	async function handleClose() {
+		setAllowPagesDisplay(true);
+		setShowCustomizationModal(false);
+	}
+
+	async function handleThemeSelect(i: number) {
+		setSelectedTheme(i);
+		setToastIntent('success');
+		setToastMessage('Your theme has been updated!');
+		setShowToast(true);
+		handleClose();
+	}
 
 	return (
 		<motion.div
-			className="absolute flex min-h-screen w-screen flex-col bg-white"
+			className="absolute top-0 left-0 z-[998] flex min-h-screen w-screen flex-col bg-white p-10"
 			initial={CustomizationAnimations.hidden}
 			animate={CustomizationAnimations.visible}
 			exit={CustomizationAnimations.hidden}
 			transition={CustomizationAnimations.transition}>
-			<div className="fixed top-5 right-5 cursor-pointer" onClick={() => setShowCustomizationModal(false)}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					className="h-6 w-6"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor">
-					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-				</svg>
+			<div className="absolute right-5 top-5 flex">
+				<Button
+					styles="opposite"
+					width="fit"
+					onClick={() => {
+						handleClose();
+					}}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</Button>
+			</div>
+			<div className="mt-[60px] flex flex-col flex-wrap items-center justify-center gap-10 lg:flex-row">
+				{[...Array(length)].map((_, i) => (
+					<div
+						key={i}
+						className={
+							`flex h-[150px] w-[300px] cursor-pointer flex-col border-2 hover:border-black ` +
+							(selectedTheme === i ? 'border-black ' : 'border-gray-300 ') +
+							getTheme(i)
+						}
+						onClick={() => {
+							handleThemeSelect(i);
+						}}></div>
+				))}
 			</div>
 		</motion.div>
 	);

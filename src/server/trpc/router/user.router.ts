@@ -65,7 +65,7 @@ export const userRouter = router({
         const secret = await process.env.JWT_SECRET as string;
         const token = jwt.sign({
             id: user.id,
-        }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
+        }, secret, { expiresIn: rememberMe ? '7d' : '1d' }) as string;
 
 
 
