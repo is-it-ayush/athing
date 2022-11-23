@@ -33,7 +33,7 @@ export const Toast = () => {
 	return (
 		<motion.div
 			className={
-				'fixed left-0 bottom-0 z-[999] flex w-full flex-row items-center justify-center bg-black text-white lg:w-fit'
+				'fixed left-0 bottom-0 z-[1000] flex w-full flex-row items-center justify-center bg-black text-white lg:w-fit'
 			}
 			initial={{ y: 100 }}
 			animate={{ y: 0 }}

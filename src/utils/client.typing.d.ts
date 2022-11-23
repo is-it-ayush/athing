@@ -35,6 +35,7 @@ export type TypeMutationResponseData = {
 export type User = {
     id: string;
     username: string;
+    styling: number;
 }
 
 export type JournalEntryOnlyTitle = {

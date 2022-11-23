@@ -4,6 +4,7 @@ import {
 	allowPagesDisplayAtom,
 	selectedCustomizationAtom,
 	showCustomizationModalAtom,
+	showSettingsModalAtom,
 	showToastAtom,
 	toastIntentAtom,
 	toastMessageAtom,
@@ -26,6 +27,7 @@ const length = Object.keys(THEME_CONFIG).length;
 
 export const Customization = () => {
 	const [, setShowCustomizationModal] = useAtom(showCustomizationModalAtom);
+	const [showSettingsModal] = useAtom(showSettingsModalAtom);
 	const [, setAllowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 	const [selectedTheme, setSelectedTheme] = useAtom(selectedCustomizationAtom);
 	const [, setToastIntent] = useAtom(toastIntentAtom);
@@ -33,21 +35,25 @@ export const Customization = () => {
 	const [, setShowToast] = useAtom(showToastAtom);
 
 	async function handleClose() {
-		setAllowPagesDisplay(true);
+		// Special Case Wrap: If the user is in the settings modal.
+		// We want to close the customization modal and still NOT* display pages.
+		if (!showSettingsModal) {
+			setAllowPagesDisplay(true);
+		}
 		setShowCustomizationModal(false);
 	}
 
 	async function handleThemeSelect(i: number) {
 		setSelectedTheme(i);
 		setToastIntent('success');
-		setToastMessage('Your theme has been updated!');
+		setToastMessage('You theme has been selected!');
 		setShowToast(true);
 		handleClose();
 	}
 
 	return (
 		<motion.div
-			className="absolute top-0 left-0 z-[998] flex min-h-screen w-screen flex-col bg-white p-10"
+			className="absolute top-0 left-0 z-[999] flex min-h-screen w-screen flex-col bg-white p-10"
 			initial={CustomizationAnimations.hidden}
 			animate={CustomizationAnimations.visible}
 			exit={CustomizationAnimations.hidden}

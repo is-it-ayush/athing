@@ -6,6 +6,7 @@ import { comparePassword, generateUsername, hashPassword } from "../../../utils/
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import type { CaptchaResponse } from "@utils/server.typing";
+import { THEME_CONFIG } from "@utils/ThemeConfig";
 
 // Variables
 const secretVar = process.env.CAPTCHA_SECRET as string;
@@ -13,6 +14,7 @@ const siteKey = process.env.SITE_KEY as string;
 const spc_pwd = process.env.SPECIAL_ACCESS_PWD as string;
 const isUnderMaintenance = process.env.MAINTENANCE_MODE as string;
 
+const len = Object.keys(THEME_CONFIG).length;
 
 export const userRouter = router({
     login: publicProcedure.input(z.object(
@@ -77,12 +79,11 @@ export const userRouter = router({
 
     }
     ),
-    signup: publicProcedure.input(z.object(
-        {
-            password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
-            acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
-            token: z.string()
-        }
+    signup: publicProcedure.input(z.object({
+        password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
+        acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
+        token: z.string()
+    }
     )).mutation(async ({ input, ctx }) => {
 
         const { password, acceptTerms, token } = input;
@@ -154,6 +155,51 @@ export const userRouter = router({
             // --todo-- add error logging to sentry
         }
     }),
+    update: protectedProcedure.input(z.object(
+        {
+            styling: z.number().min(0, 'Invalid styling option.').max(len, 'Invalid styling option.'),
+        }
+    )).mutation(async ({ input, ctx }) => {
+
+        const { styling } = input;
+
+        try {
+
+            const user = await ctx.prisma.user.update({
+                where: {
+                    id: ctx.user,
+                },
+                data: {
+                    styling: styling
+                }
+            }) as User;
+
+            return {
+                result: true
+            };
+        }
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while updating your account.' });
+            // --todo-- add error logging to sentry
+        }
+    }),
+    delete: protectedProcedure.mutation(async ({ ctx }) => {
+        try {
+            const user = await ctx.prisma.user.delete({
+                where: {
+                    id: ctx.user,
+                },
+            }) as User;
+
+            return {
+                result: true
+            };
+        }
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while deleting your account.' });
+            // --todo-- add error logging to sentry
+        }
+    }),
     me: protectedProcedure.query(async ({ ctx }) => {
 
         try {
@@ -170,7 +216,8 @@ export const userRouter = router({
 
             return {
                 username: user.username,
-                id: user.id
+                id: user.id,
+                styling: user.styling
             };
         }
         catch (err) {

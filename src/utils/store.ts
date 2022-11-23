@@ -6,8 +6,12 @@ import { type Note, type ShortNote, type ToastIntent, type User } from './client
 
 export const userInfo = atom<User>({
     id: '',
-    username: ''
+    username: '',
+    styling: 0,
 });
+
+// Menu
+export const menuOpenAtom = atom<boolean>(false);
 
 // Current Page
 export const allowPagesDisplayAtom = atom<boolean>(true);
@@ -42,6 +46,10 @@ export const showJournalPickerAtom = atom<boolean>(false);
 // This is for the FeedbackModal
 export const showFeedbackModalAtom = atom<boolean>(false);
 
-// This is for the Customization Modal
+// This is for the Customization Modal. This is a universal modal and can be used to customize anything with the number prop.
+// Be sure to reset it to 0 when you are done.
 export const showCustomizationModalAtom = atom<boolean>(false);
 export const selectedCustomizationAtom = atom<number>(0);
+
+// This is for the Settings Modal
+export const showSettingsModalAtom = atom<boolean>(false);

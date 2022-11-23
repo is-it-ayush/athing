@@ -28,6 +28,7 @@ import {
 	allowPagesDisplayAtom,
 	showFeedbackModalAtom,
 	showCustomizationModalAtom,
+	showSettingsModalAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -39,6 +40,8 @@ import { JournalPicker } from '@components/ui/JournalPicker';
 import { Secret } from '@components/ui/Secret';
 import { FeedbackModal } from '@components/ui/FeedbackModal';
 import { Customization } from '@components/ui/Customization';
+import { Settings } from '@components/ui/Settings';
+import getTheme from '@utils/ThemeConfig';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -46,11 +49,8 @@ export const App: NextPage = () => {
 		refetchInterval: 1000 * 60 * 5, // 5 minutes
 	});
 
-	const [showMenu, setShowMenu] = React.useState(false);
-	const [showLoading, setShowLoading] = React.useState(false);
-
 	// Atoms
-	const [, setUser] = useAtom(userInfo);
+	const [user, setUser] = useAtom(userInfo);
 	const [showPage] = useAtom(currentPageAtom);
 	const [allowPagesDisplay] = useAtom(allowPagesDisplayAtom);
 	const [displayModel] = useAtom(showModal);
@@ -62,14 +62,7 @@ export const App: NextPage = () => {
 	const [displayToast] = useAtom(showToastAtom);
 	const [showFeedback] = useAtom(showFeedbackModalAtom);
 	const [showCustomizationModal] = useAtom(showCustomizationModalAtom);
-
-	React.useEffect(() => {
-		if (userInfoResponse.isLoading) {
-			setShowLoading(true);
-		} else {
-			setShowLoading(false);
-		}
-	}, [userInfoResponse.isLoading]);
+	const [showSettingsModal] = useAtom(showSettingsModalAtom);
 
 	React.useEffect(() => {
 		if (userInfoResponse.data) {
@@ -78,11 +71,10 @@ export const App: NextPage = () => {
 	}, [userInfoResponse.data]);
 
 	return (
-		<main className="no-scrollbar bg-cross-pattern font-spacemono">
-			{showLoading === true ? <FullLoad key="full-screen-load" /> : null}
+		<main className={`no-scrollbar font-spacemono ` + getTheme(user.styling)}>
 			{allowPagesDisplay ? (
 				<>
-					<Navbar key="navigation" menuController={[showMenu, setShowMenu]} />
+					<Navbar key="navigation" />
 					<motion.div
 						key="content"
 						className="no-select flex min-h-screen flex-col font-spacemono"
@@ -121,8 +113,9 @@ export const App: NextPage = () => {
 				{showJournalPickerModal ? <JournalPicker key="journalPickerKey" /> : null}
 				{showFeedback ? <FeedbackModal key="feedbackModalKey" /> : null}
 				{showCustomizationModal ? <Customization key="customizationModalKey" /> : null}
+				{showSettingsModal ? <Settings key="settingsModalKey" /> : null}
 			</AnimatePresence>
-			<Menu key="menu" menuController={showMenu} />
+			<Menu key="menu" />
 		</main>
 	);
 };

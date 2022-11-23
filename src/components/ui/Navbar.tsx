@@ -6,20 +6,17 @@ import React from 'react';
 import { RiCloseLine } from 'react-icons/ri';
 import { CgMenuRight } from 'react-icons/cg';
 import { useAtom } from 'jotai';
-import { currentPageAtom, showFeedbackModalAtom } from '@utils/store';
+import { currentPageAtom, menuOpenAtom, showFeedbackModalAtom } from '@utils/store';
 import { BiUserVoice } from 'react-icons/bi';
 
-export function Navbar({
-	menuController,
-}: {
-	menuController: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-}) {
+export function Navbar() {
 	const res = trpc.user.me.useQuery(void 0, {
 		staleTime: 1000 * 60 * 10,
 	});
 
 	const [, setShowPage] = useAtom(currentPageAtom);
 	const [, setShowFeedback] = useAtom(showFeedbackModalAtom);
+	const [menuOpen, setMenuOpen] = useAtom(menuOpenAtom);
 
 	return (
 		<motion.div
@@ -62,9 +59,9 @@ export function Navbar({
 					<div
 						className="flex flex-col rounded-full p-2 transition-colors duration-300 hover:cursor-pointer hover:bg-gray-200"
 						onClick={() => {
-							menuController[1](!menuController[0]);
+							setMenuOpen(!menuOpen);
 						}}>
-						{menuController[0] === false ? <CgMenuRight className="h-6 w-6" /> : <RiCloseLine className="h-6 w-6" />}
+						{!menuOpen ? <CgMenuRight className="h-6 w-6" /> : <RiCloseLine className="h-6 w-6" />}
 					</div>
 				</div>
 			</div>

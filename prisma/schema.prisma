@@ -13,7 +13,8 @@ model User {
   username      String    @unique
   password      String
   email         String?
-  avatarId      Int?      @default(0)
+  avatarId      Int      @default(0)
+  styling       Int      @default(0)
   isBlacklisted Boolean   @default(false)
   acceptedRules Boolean   @default(false)
   acceptedTerms Boolean   @default(false)
