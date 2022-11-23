@@ -44,6 +44,7 @@ import { Customization } from '@components/ui/Customization';
 import { Settings } from '@components/ui/Settings';
 import getTheme from '@utils/ThemeConfig';
 import { Confirm } from '@components/ui/Confirm';
+import { NextSeo } from 'next-seo';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
