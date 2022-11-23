@@ -42,7 +42,7 @@ import { Secret } from '@components/ui/Secret';
 import { FeedbackModal } from '@components/ui/FeedbackModal';
 import { Customization } from '@components/ui/Customization';
 import { Settings } from '@components/ui/Settings';
-import getTheme from '@utils/ThemeConfig';
+import getTheme from '@utils/PatternController';
 import { Confirm } from '@components/ui/Confirm';
 import { NextSeo } from 'next-seo';
 

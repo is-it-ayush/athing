@@ -9,7 +9,7 @@ import {
 	toastIntentAtom,
 	toastMessageAtom,
 } from '@utils/store';
-import getTheme from '@utils/ThemeConfig';
+import getTheme from '@utils/PatternController';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 

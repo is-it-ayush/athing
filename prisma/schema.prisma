@@ -14,7 +14,6 @@ model User {
   password      String
   email         String?
   createdAt     DateTime  @default(now())
-  avatarId      Int      @default(0)
   styling       Int      @default(0)
   isBlacklisted Boolean   @default(false)
   acceptedRules Boolean   @default(false)

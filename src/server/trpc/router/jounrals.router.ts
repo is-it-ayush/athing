@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { type Journal } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { formatString } from "@utils/server.util";
-import { THEME_CONFIG } from "@utils/ThemeConfig";
+import { THEME_CONFIG } from "@utils/PatternController";
 
 const len = Object.keys(THEME_CONFIG).length;
 

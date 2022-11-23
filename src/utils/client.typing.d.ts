@@ -9,7 +9,6 @@ export type Note = {
     userId: string | null;
     User: {
         username: string;
-        avatarId: number | null;
     } | null;
 };
 

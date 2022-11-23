@@ -6,7 +6,7 @@ import { allowPagesDisplayAtom, selectedJournalAtom, showJournalIndexModalAtom }
 import { useAtom } from 'jotai';
 import { type Journal as JournalType } from '@prisma/client';
 import { TiArrowShuffle } from 'react-icons/ti';
-import getTheme from '@utils/ThemeConfig';
+import getTheme from '@utils/PatternController';
 
 export const Journal: React.FC = () => {
 	const [len, setLen] = useState(0);

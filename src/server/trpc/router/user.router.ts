@@ -6,7 +6,7 @@ import { comparePassword, generateUsername, hashPassword } from "../../../utils/
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import type { CaptchaResponse } from "@utils/server.typing";
-import { THEME_CONFIG } from "@utils/ThemeConfig";
+import { THEME_CONFIG } from "@utils/PatternController";
 
 // Variables
 const secretVar = process.env.CAPTCHA_SECRET as string;

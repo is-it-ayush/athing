@@ -10,7 +10,7 @@ import {
 	toastMessageAtom,
 } from '@utils/store';
 import { Button } from './Button';
-import getTheme, { THEME_CONFIG } from '@utils/ThemeConfig';
+import getTheme, { THEME_CONFIG } from '@utils/PatternController';
 
 const CustomizationAnimations = {
 	hidden: {

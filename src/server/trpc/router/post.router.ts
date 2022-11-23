@@ -61,7 +61,6 @@ export const postRouter = router({
                     User: {
                         select: {
                             username: true,
-                            avatarId: true,
                         }
                     },
                 },
