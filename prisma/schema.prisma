@@ -13,6 +13,7 @@ model User {
   username      String    @unique
   password      String
   email         String?
+  createdAt     DateTime  @default(now())
   avatarId      Int      @default(0)
   styling       Int      @default(0)
   isBlacklisted Boolean   @default(false)
@@ -32,7 +33,7 @@ model Post {
   updatedAt   DateTime? @updatedAt
   userId      String?
   isPublished Boolean   @default(true)
-  User        User?     @relation(fields: [userId], references: [id])
+  User        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Comment     Comment[]
 }
 
@@ -43,7 +44,7 @@ model Comment {
   postsId String
   userId  String
   post    Post      @relation(fields: [postsId], references: [id])
-  author  User      @relation(fields: [userId], references: [id])
+  author  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Journal {
@@ -54,7 +55,7 @@ model Journal {
   userId    String
   styling   Int       @default(0)
   isPublic  Boolean   @default(false)
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   entries   Entry[]
 }
 
@@ -74,8 +75,8 @@ model Feedback {
   text      String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String?
+  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
 }
 
 enum Role {

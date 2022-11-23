@@ -29,6 +29,7 @@ import {
 	showFeedbackModalAtom,
 	showCustomizationModalAtom,
 	showSettingsModalAtom,
+	showConfirmDialogAtom,
 } from '@utils/store';
 import { NoteModal } from '@components/ui/NoteModal';
 import { Toast } from '@components/ui/Toast';
@@ -42,6 +43,7 @@ import { FeedbackModal } from '@components/ui/FeedbackModal';
 import { Customization } from '@components/ui/Customization';
 import { Settings } from '@components/ui/Settings';
 import getTheme from '@utils/ThemeConfig';
+import { Confirm } from '@components/ui/Confirm';
 
 export const App: NextPage = () => {
 	const userInfoResponse = trpc.user.me.useQuery(void 0, {
@@ -63,6 +65,7 @@ export const App: NextPage = () => {
 	const [showFeedback] = useAtom(showFeedbackModalAtom);
 	const [showCustomizationModal] = useAtom(showCustomizationModalAtom);
 	const [showSettingsModal] = useAtom(showSettingsModalAtom);
+	const [showConfirmDialog] = useAtom(showConfirmDialogAtom);
 
 	React.useEffect(() => {
 		if (userInfoResponse.data) {
@@ -114,6 +117,7 @@ export const App: NextPage = () => {
 				{showFeedback ? <FeedbackModal key="feedbackModalKey" /> : null}
 				{showCustomizationModal ? <Customization key="customizationModalKey" /> : null}
 				{showSettingsModal ? <Settings key="settingsModalKey" /> : null}
+				{showConfirmDialog ? <Confirm key="confirmDialogKey" /> : null}
 			</AnimatePresence>
 			<Menu key="menu" />
 		</main>

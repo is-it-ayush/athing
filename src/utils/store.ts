@@ -53,3 +53,11 @@ export const selectedCustomizationAtom = atom<number>(0);
 
 // This is for the Settings Modal
 export const showSettingsModalAtom = atom<boolean>(false);
+
+// This is for the Confirm Dialog Modal
+export const showConfirmDialogAtom = atom<boolean>(false);
+export const confirmDialogMessageAtom = atom<string>('');
+export const confirmDialogStateAtom = atom<boolean>(false);
+
+
+// --todo-- maybe i could refactor this into a single global primitive that could be reused. (ignore this comment)

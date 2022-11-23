@@ -6,6 +6,9 @@ import {
 	showToastAtom,
 	toastIntentAtom,
 	toastMessageAtom,
+	showConfirmDialogAtom,
+	confirmDialogStateAtom,
+	confirmDialogMessageAtom,
 } from '@utils/store';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
@@ -15,6 +18,7 @@ import { trpc } from '@utils/trpc';
 import { handleError } from '@utils/client.util';
 import { IoSave } from 'react-icons/io5';
 import React from 'react';
+import { setCookie } from 'nookies';
 
 const SettingsAnimations = {
 	hidden: {
@@ -38,19 +42,58 @@ export const Settings = () => {
 	const [, setToastMessage] = useAtom(toastMessageAtom);
 	const router = useRouter();
 
+	const [, setShowConfirmDialog] = useAtom(showConfirmDialogAtom);
+	const [confirmDialogState, setConfirmDialogState] = useAtom(confirmDialogStateAtom);
+	const [, setConfirmDialogMessage] = useAtom(confirmDialogMessageAtom);
+
 	const [hasSwitchedTheme, setHasSwitchedTheme] = React.useState(false);
 
 	// tRPC
 	const updateThemeMutation = trpc.user.update.useMutation();
+	const deleteAccountMutation = trpc.user.delete.useMutation();
 	const utils = trpc.useContext();
 
 	async function handleClose() {
 		setAllowPagesDisplay(true);
+		setConfirmDialogState(false);
 		setSelectedCustomization(0);
 		setShowSettingsModal(false);
 	}
 
-	async function handleDelete() {}
+	async function handleDelete() {
+		if (!confirmDialogState) {
+			setConfirmDialogMessage(
+				'You will lose all your data and will not be able to recover it. You will be logged out.',
+			);
+			setShowConfirmDialog(true);
+			return;
+		} else {
+			setShowConfirmDialog(false);
+			deleteHelper();
+		}
+	}
+
+	async function deleteHelper() {
+		try {
+			await deleteAccountMutation.mutateAsync({});
+
+			// Logout
+			setToastIntent('success');
+			setToastMessage("You've successfully deleted your account.");
+			setDisplayToast(true);
+
+			setCookie(null, 'token', '', {
+				maxAge: -1,
+				path: '/',
+			});
+			router.refresh();
+		} catch (err) {
+			const message = await handleError(err);
+			setToastIntent('error');
+			setToastMessage(message);
+			setDisplayToast(true);
+		}
+	}
 
 	async function handleThemeSwitch() {
 		try {
@@ -147,7 +190,7 @@ export const Settings = () => {
 							onClick={() => {
 								handleDelete();
 							}}>
-							Delete Account
+							{confirmDialogState ? 'Okay! Bye Bye.' : 'Delete Account'}
 						</Button>
 					</div>
 				</div>

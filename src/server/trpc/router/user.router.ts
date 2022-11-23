@@ -183,19 +183,20 @@ export const userRouter = router({
             // --todo-- add error logging to sentry
         }
     }),
-    delete: protectedProcedure.mutation(async ({ ctx }) => {
+    delete: protectedProcedure.input(z.object({})).mutation(async ({ ctx }) => {
         try {
-            const user = await ctx.prisma.user.delete({
+            console.log(`Deleting User: ${ctx.user}`);
+            await ctx.prisma.user.delete({
                 where: {
                     id: ctx.user,
                 },
-            }) as User;
-
+            });
             return {
                 result: true
             };
         }
         catch (err) {
+            console.log(err)
             throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while deleting your account.' });
             // --todo-- add error logging to sentry
         }
