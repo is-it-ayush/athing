@@ -33,11 +33,10 @@ const Home: NextPage = () => {
 	return (
 		<AnimatePresence>
 			<motion.div
-				className={`flex h-screen w-screen flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-black ${getColor()} p-10 font-spacemono text-white `}
+				className={`flex h-screen w-screen flex-col items-center justify-center bg-clouds-pattern p-10 font-spacemono text-black`}
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.3 }}>
-				<div className="contrast-250 absolute inset-0 min-h-screen w-screen bg-[url(https://grainy-gradients.vercel.app/noise.svg)] opacity-[15%]"></div>
 				<div className="z-[10] flex w-full flex-col">
 					<div className="fixed top-0 left-0 flex h-[60px] w-full ">
 						<ul className="flex w-full list-none flex-row justify-center gap-10 p-5">
@@ -49,12 +48,12 @@ const Home: NextPage = () => {
 									Github
 								</Link>
 							</li>
-							<li className="inline-block text-white hover:underline">
+							<li className="inline-block hover:underline">
 								<Link href="/auth/login" prefetch={true}>
 									Login
 								</Link>
 							</li>
-							<li className="inline-block text-white hover:underline">
+							<li className="inline-block hover:underline">
 								<Link href="/auth/signup" prefetch={true}>
 									Signup
 								</Link>
@@ -70,12 +69,12 @@ const Home: NextPage = () => {
 									animate={{ x: 0 }}
 									exit={{ x: '100%' }}
 									transition={{ duration: 0.3 }}>
-									<div className="m-5 flex h-[300px] w-[300px] items-center justify-center text-center text-5xl font-bold">
+									<div className="m-5 flex h-[300px] w-[300px] items-center justify-center border-[10px] border-black text-center text-5xl font-bold">
 										<h1 className="absolute flex rotate-90">A-THING</h1>
 										<h1 className="absolute flex">A-THING</h1>
 									</div>
 									<div className="flex flex-col items-center justify-center p-5">
-										<p className="prose my-2 w-[300px] font-light text-white">
+										<p className="prose my-2 w-[300px] font-light lg:w-[400px]">
 											A place where you can vent and log your daily life anonymously.
 										</p>
 										<div className="flex flex-row gap-5">
@@ -107,7 +106,7 @@ const Home: NextPage = () => {
 										<h1 className="flex">HERE&apos; A THING</h1>
 									</div>
 									<div className="flex flex-col items-start p-5">
-										<p className="prose my-2 w-[300px] font-light text-white">
+										<p className="prose my-2 w-[300px] font-light">
 											A Thing is a place where you can anonymously share about daily life in short notes. You can also
 											write journals and log your entries. Make them public or private, it&apos;s up to you.
 										</p>
@@ -127,7 +126,7 @@ const Home: NextPage = () => {
 									animate={{ x: 0 }}
 									exit={{ x: '100%' }}
 									transition={{ duration: 0.3 }}>
-									<p className="prose my-2 min-w-[300px] font-light text-white">
+									<p className="prose my-2 min-w-[300px] font-light">
 										The Project is completely{' '}
 										<a className="font-semibold text-green-600 underline decoration-wavy">Open Source</a> under{' '}
 										<a className="font-semibold text-yellow-600 underline decoration-wavy">MIT License</a>. Yes, You can
