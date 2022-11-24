@@ -1,7 +1,6 @@
 import React from 'react';
 import { type NextPage } from 'next';
 import { trpc } from '@utils/trpc';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { useFormik } from 'formik';
@@ -10,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { setCookie } from 'nookies';
 import { useRouter } from 'next/navigation';
 import { useAtom } from 'jotai';
+import { NextSeo } from 'next-seo';
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -120,6 +120,7 @@ const LoginPage: NextPage = () => {
 
 	return (
 		<main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
+			<NextSeo title="Login" />
 			<div className="flex">
 				<AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
 			</div>

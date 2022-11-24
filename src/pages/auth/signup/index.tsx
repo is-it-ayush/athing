@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useFormik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
+import { NextSeo } from 'next-seo';
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -16,7 +17,6 @@ import { Loading } from '@components/ui/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@components/ui/Toast';
-import { type TRPCError } from '@trpc/server';
 
 // PNG
 import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
@@ -125,6 +125,7 @@ const SignupPage: NextPage = () => {
 
 	return (
 		<main className="min-w-screen flex h-screen flex-col items-center justify-center overflow-hidden font-spacemono">
+			<NextSeo title="Sign Up" />
 			<div className="flex">
 				<AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
 			</div>

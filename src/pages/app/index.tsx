@@ -78,6 +78,7 @@ export const App: NextPage = () => {
 		<main className={`no-scrollbar font-spacemono ` + getTheme(user.styling)}>
 			{allowPagesDisplay ? (
 				<>
+					<NextSeo title="App" />
 					<Navbar key="navigation" />
 					<motion.div
 						key="content"

@@ -2,6 +2,7 @@ import { Button } from '@components/ui/Button';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { AiFillBackward } from 'react-icons/ai';
+import { NextSeo } from 'next-seo';
 
 const NotFoundAnimations = {
 	hidden: { opacity: 0 },
@@ -19,7 +20,8 @@ export default function NotFound() {
 			animate={NotFoundAnimations.visible}
 			exit={NotFoundAnimations.hidden}
 			transition={NotFoundAnimations.transition}>
-			<div className="flex flex-col items-center justify-center text-center p-5">
+			<NextSeo title="404" />
+			<div className="flex flex-col items-center justify-center p-5 text-center">
 				<h1 className="text-9xl font-bold text-pink-600">404</h1>
 				<h2 className="my-3 text-3xl">You are lost. Lets get you back.</h2>
 				<Button

@@ -3,6 +3,7 @@ import { type NextPage } from 'next';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { NextSeo } from 'next-seo';
 
 // Icons
 import { Button } from '@components/ui/Button';
@@ -32,6 +33,10 @@ const Home: NextPage = () => {
 
 	return (
 		<AnimatePresence>
+			<NextSeo
+				title="Home"
+				description="A Thing is a place where you can anonymously share about daily life in short notes or log them in a journal."
+			/>
 			<motion.div
 				className={`flex h-screen w-screen flex-col items-center justify-center bg-clouds-pattern p-10 font-spacemono text-black`}
 				initial={{ opacity: 0 }}
