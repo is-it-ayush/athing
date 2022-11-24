@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 				description="A Thing is a place where you can anonymously share about daily life in short notes or log them in a journal."
 			/>
 			<motion.div
-				className={`flex h-screen w-screen flex-col items-center justify-center bg-clouds-pattern p-10 font-spacemono text-black`}
+				className={`flex h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-clouds-pattern p-10 font-spacemono font-semibold text-black`}
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.3 }}>
@@ -79,7 +79,7 @@ const Home: NextPage = () => {
 										<h1 className="absolute flex">A-THING</h1>
 									</div>
 									<div className="flex flex-col items-center justify-center p-5">
-										<p className="prose my-2 w-[300px] font-light lg:w-[400px]">
+										<p className="font-regular prose my-2 w-[300px] lg:w-[400px]">
 											A place where you can vent and log your daily life anonymously.
 										</p>
 										<div className="flex flex-row gap-5">
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
 										<h1 className="flex">HERE&apos; A THING</h1>
 									</div>
 									<div className="flex flex-col items-start p-5">
-										<p className="prose my-2 w-[300px] font-light">
+										<p className="font-regular prose my-2 w-[300px]">
 											A Thing is a place where you can anonymously share about daily life in short notes. You can also
 											write journals and log your entries. Make them public or private, it&apos;s up to you.
 										</p>
@@ -131,7 +131,7 @@ const Home: NextPage = () => {
 									animate={{ x: 0 }}
 									exit={{ x: '100%' }}
 									transition={{ duration: 0.3 }}>
-									<p className="prose my-2 min-w-[300px] font-light">
+									<p className="font-regular prose my-2 min-w-[300px]">
 										The Project is completely{' '}
 										<a className="font-semibold text-green-600 underline decoration-wavy">Open Source</a> under{' '}
 										<a className="font-semibold text-yellow-600 underline decoration-wavy">MIT License</a>. Yes, You can
