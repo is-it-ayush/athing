@@ -135,7 +135,7 @@ const Home: NextPage = () => {
 										The Project is completely{' '}
 										<a className="font-semibold text-green-600 underline decoration-wavy">Open Source</a> under{' '}
 										<a className="font-semibold text-yellow-600 underline decoration-wavy">MIT License</a>. Yes, You can
-										literally verify through the source code. I don&apos;t store any personal data that could be tied
+										verify through the source code yourself. We don&apos;t store any personal data that could be tied
 										back to you. The account can also be deleted at any time.
 									</p>
 									<Button
