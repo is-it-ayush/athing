@@ -10,7 +10,6 @@ import { THEME_CONFIG } from "@utils/PatternController";
 
 // Variables
 const secretVar = process.env.CAPTCHA_SECRET as string;
-const siteKey = process.env.SITE_KEY as string;
 const spc_pwd = process.env.SPECIAL_ACCESS_PWD as string;
 const isUnderMaintenance = process.env.MAINTENANCE_MODE as string;
 
@@ -102,7 +101,6 @@ export const userRouter = router({
                 body: new URLSearchParams({
                     secret: secretVar,
                     response: token,
-                    sitekey: siteKey
                 }),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

@@ -11,7 +11,6 @@ export const serverSchema = z.object({
 	NODE_ENV: z.enum(['development', 'test', 'production']),
 	JWT_SECRET: z.string(),
 	CAPTCHA_SECRET: z.string(),
-	SITE_KEY: z.string(),
 	SPECIAL_ACCESS_PWD: z.string(),
 	MAINTENANCE_MODE: z.string(),
 });
