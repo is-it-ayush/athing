@@ -45,7 +45,7 @@ const Home: NextPage = () => {
 								<Link href="/stats">Stats</Link>
 							</li>
 							<li className="inline-block hover:underline">
-								<Link href="https://github.com/is-it-ayush/athing" target="_blank">
+								<Link href="https://github.com/is-it-ayush/athing" target="_blank" rel="noreferrer">
 									Github
 								</Link>
 							</li>
@@ -149,11 +149,11 @@ const Home: NextPage = () => {
 						<ul className="flex w-full justify-evenly">
 							<li className="items-center justify-center">
 								[A Thing By{' '}
-								<a href="https://twitter.com/is_it_ayush" target="_blank" className="hover:underline">
+								<a href="https://twitter.com/is_it_ayush" target="_blank" className="hover:underline" rel="noreferrer">
 									Ayush
 								</a>{' '}
 								&{' '}
-								<a href="https://instagram.com/devesh9431" target="_blank" className="hover:underline">
+								<a href="https://instagram.com/devesh9431" target="_blank" className="hover:underline" rel="noreferrer">
 									Devesh
 								</a>{' '}
 								]
