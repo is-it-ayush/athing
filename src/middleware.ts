@@ -1,11 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-
-    // // [DEBUG]
-    // console.log('middleware.ts')
-    // console.log(request)
+export async function middleware(request: NextRequest) {
 
     // Fetch the cookies from the request containing our JWT.
     const authCookie = request.cookies.get('token')?.value;

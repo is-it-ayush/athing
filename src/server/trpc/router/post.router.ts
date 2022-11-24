@@ -3,16 +3,15 @@ import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { type Post } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 
 export const postRouter = router({
     create: protectedProcedure.input(z.object({
-        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        text: z.string().trim().min(20, 'The note should at least contain 20 characters.').max(3001, 'The note can only contain 3000 characters.'),
+        isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
-        const { text } = input;
-
-        // [DEBUG]
-        console.log(`Length: ${text.length}`);
+        const { text, isPrivate } = input;
 
         try {
 
@@ -20,6 +19,7 @@ export const postRouter = router({
                 data: {
                     text,
                     userId: ctx.session,
+                    isPublished: !isPrivate,
                 }
             });
 
@@ -32,24 +32,24 @@ export const postRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while creating post.' });
+            }
+            // --todo-- add error logging.
         }
 
     }),
     get: protectedProcedure.input(z.object(
         {
             cursor: z.string().optional(),
-            limit: z.number().optional(),
         }
     )).query(async ({ input, ctx }) => {
 
-        const { cursor, limit } = input;
+        const { cursor } = input;
 
         try {
 
@@ -61,64 +61,76 @@ export const postRouter = router({
                     User: {
                         select: {
                             username: true,
-                            avatarId: true,
                         }
                     },
                 },
                 orderBy: {
                     at: 'desc',
                 },
-                take: limit || 10,
+                take: 10,
                 skip: cursor ? 1 : 0,
                 cursor: cursor ? { id: cursor } : undefined,
             });
-
-            // [Add the avatarid and username to the post]
 
             if (!posts) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'There was a error fetching Notes.', });
             }
 
-            return posts; // [DEBUG]
-
-            // post.text = post.text.substring(0, 100);
+            return posts;
         }
-        catch (err: TRPCError | any) {
+        catch (err) {
 
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+            if (err instanceof PrismaClientKnownRequestError) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: err.message, });
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while fetching Notes.' });
+            }
+            // --todo-- add error logging.
         }
-
     }),
-    getbyId: protectedProcedure.input(z.object({
+    getPostsByUserId: protectedProcedure.input(z.object({
         id: z.string().trim(),
     })).query(async ({ input, ctx }) => {
         const { id } = input;
 
-        try {
+        if (ctx.session !== id) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: "You're not authorized.", });
+        }
 
-            const post = await ctx.prisma.post.findUnique({
+        try {
+            const userPosts = await ctx.prisma.user.findUnique({
                 where: {
                     id,
                 },
-            }) as Post;
-
-            if (!post) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
-            }
-
-            return post;
-        }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
+                include: {
+                    posts: {
+                        orderBy: {
+                            at: 'desc',
+                        },
+                    }
+                },
             });
 
-            // --todo-- add error logging to sentry
+            if (!userPosts) return { id: ctx.session, posts: [] };
+
+            return {
+                id: userPosts.id,
+                posts: userPosts.posts,
+            };
+        }
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2021' || err.code === 'P2022') {
+                    return {
+                        id: ctx.session,
+                        posts: [],
+                    };
+                }
+            }
+            else {
+                throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while fetching Notes.' });
+            }
         }
 
     }),
@@ -135,7 +147,7 @@ export const postRouter = router({
                 },
             }) as Post;
 
-            if (!post) {
+            if (!post || post.userId !== ctx.session) {
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
             }
 
@@ -143,48 +155,58 @@ export const postRouter = router({
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
+        catch (err) {
 
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2025' || err.code === 'P2018') {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested notes were not found!', });
+                }
+            }
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while deleting the post.' });
 
-            // --todo-- add error logging to sentry
+            // --todo-- add error logging.
         }
 
     }),
     edit: protectedProcedure.input(z.object({
         id: z.string().trim(),
-        text: z.string().trim().min(20, 'The Note should at least contain 20 characters.').max(3001, 'The Note can only contain 3000 characters.'),
+        text: z.string().trim().min(20, 'The mote should at least contain 20 characters.').max(3001, 'The mote can only contain 3000 characters.'),
+        isPrivate: z.boolean(),
     })).mutation(async ({ input, ctx }) => {
-        const { id, text } = input;
+        const { id, text, isPrivate } = input;
 
         try {
+            const post = await ctx.prisma.post.findUnique({
+                where: {
+                    id,
+                }
+            }) as Post;
 
-            const post = await ctx.prisma.post.update({
+            if (!post || post.userId !== ctx.session) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid Post.', });
+            }
+
+            const updatedPost = await ctx.prisma.post.update({
                 where: {
                     id,
                 },
                 data: {
                     text,
+                    isPublished: !isPrivate,
                 },
             }) as Post;
-
-            if (!post) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Post not found.', });
-            }
 
             return {
                 result: true,
             };
         }
-        catch (err: TRPCError | any) {
-
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
-            // --todo-- add error logging to sentry
+        catch (err) {
+            if (err instanceof PrismaClientKnownRequestError) {
+                if (err.code === 'P2025' || err.code === 'P2018') {
+                    throw new TRPCError({ code: 'BAD_REQUEST', message: 'The requested notes were not found!', });
+                }
+            }
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while deleting the post.' });
         }
 
     })

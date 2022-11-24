@@ -5,84 +5,120 @@ import { TRPCError } from "@trpc/server";
 import { comparePassword, generateUsername, hashPassword } from "../../../utils/server.util";
 import { type User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import type { CaptchaResponse } from "@utils/server.typing";
+import { THEME_CONFIG } from "@utils/PatternController";
+
+// Variables
+const secretVar = process.env.CAPTCHA_SECRET as string;
+const spc_pwd = process.env.SPECIAL_ACCESS_PWD as string;
+const isUnderMaintenance = process.env.MAINTENANCE_MODE as string;
+
+const len = Object.keys(THEME_CONFIG).length;
 
 export const userRouter = router({
     login: publicProcedure.input(z.object(
         {
-            username: z.string().regex(/^[a-z0-9]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
-            password: z.string().min(8, 'Password must be at least 8 characters long.').max(20, 'Password must be at most 20 characters long.'),
+            username: z.string().regex(/^[a-zA-Z0-9_-]+$/, "Username must be between 3 and 20 characters long and can only contain letters, numbers and underscores."),
+            password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
             rememberMe: z.boolean()
         }
     )).mutation(async ({ input, ctx }) => {
 
         const { username, password, rememberMe } = input;
 
+        if (isUnderMaintenance === 'true') {
+            if (password !== spc_pwd) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
+            }
+        }
+
+        let user: User;
+
         try {
 
             // Find user
-            const user = await ctx.prisma.user.findUnique({
+            user = await ctx.prisma.user.findUnique({
                 where: {
                     username,
                 },
             }) as User;
 
-            // Doesn't exist; Return.
-            if (!user) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
-            }
-
-            // Exists; compare password
-            const valid: boolean = await comparePassword(password, user.password);
-
-            if (!valid) {
-                throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
-            }
-
-            // TODO: Create JWT Cookie
-            const secret = await process.env.JWT_SECRET as string;
-            const token = jwt.sign({
-                id: user.id,
-            }, secret, { expiresIn: rememberMe ? '7d' : '1d' });
-
-
-
-            return {
-                result: true,
-                token: token
-            };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
+        catch (err) {
 
-            // --todo-- add error logging to sentry
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while logging in.' });
+            // --todo-- add error logging.
         }
+
+        // Doesn't exist; Return.
+        if (!user) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid username or password.' });
+        }
+
+        // Exists; compare password
+        const valid: boolean = await comparePassword(password, user.password);
+
+        if (!valid) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid username or password.' });
+        }
+
+        // TODO: Create JWT Cookie
+        const secret = await process.env.JWT_SECRET as string;
+        const token = jwt.sign({
+            id: user.id,
+        }, secret, { expiresIn: rememberMe ? '7d' : '1d' }) as string;
+
+
+
+        return {
+            result: true,
+            token: token
+        };
+
 
     }
     ),
-    signup: publicProcedure.input(z.object(
-        {
-            password: z.string().min(8, 'Password must be at least 8 characters long.'),
-        }
+    signup: publicProcedure.input(z.object({
+        password: z.string().min(8, 'Password must be at least 8 characters long.').max(30, 'Password must be at most 30 characters long.'),
+        acceptTerms: z.boolean().refine((v) => v === true, { message: 'You must accept the terms and conditions.' }),
+        token: z.string()
+    }
     )).mutation(async ({ input, ctx }) => {
 
-        const { password } = input;
+        const { password, acceptTerms, token } = input;
 
-        // [DEBUG]
-        // SETTING A CUSTOM PASSWORD FOR TESTING OVER THE INTERNET.
-        // REMOVE THIS BEFORE DEPLOYMENT.
-        if (password !== 'sheisbeautiful@1001') {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'NOT_FOR_U_SORRY' });
+        if (isUnderMaintenance === 'true') {
+            if (password !== spc_pwd) {
+                throw new TRPCError({ code: 'BAD_REQUEST', message: 'The server is under maintenance.' });
+            }
         }
 
+
         try {
+
+            const captchRes = await fetch(`https://hcaptcha.com/siteverify`, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    secret: secretVar,
+                    response: token,
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(res => res.json()) as CaptchaResponse;
+
+            if (!captchRes.success) {
+                throw new TRPCError({ code: 'FORBIDDEN', message: 'The request was denied.' });
+            }
 
             // Generate a username
             let username: string;
 
-            // Ensure username is unique (This is a very inefficient way of doing this).
-            // --todo-- find a better way to do this
+            /**
+             * Generate a username
+             * It'll loop very-very rarely, but it'll never error out.
+             * So, it's fine. Since, I'm using nanoid, it's very unlikely to have a collision.
+             */
             while (true) {
                 username = await generateUsername();
                 const user = await ctx.prisma.user.findUnique({
@@ -104,46 +140,65 @@ export const userRouter = router({
                 data: {
                     username,
                     password: hashedPassword,
+                    acceptedTerms: acceptTerms,
                 },
             }) as User;
-
-            if (!createUser) {
-                throw new TRPCError({ code: 'BAD_REQUEST', message: 'Unable to create account.', });
-            }
 
             return {
                 username: createUser.username
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while signing up.' });
             // --todo-- add error logging to sentry
         }
     }),
-    logout: protectedProcedure.mutation(async () => {
+    update: protectedProcedure.input(z.object(
+        {
+            styling: z.number().min(0, 'Invalid styling option.').max(len, 'Invalid styling option.'),
+        }
+    )).mutation(async ({ input, ctx }) => {
+
+        const { styling } = input;
 
         try {
 
-
-            // --todo-- Invalidate the session.
-
+            const user = await ctx.prisma.user.update({
+                where: {
+                    id: ctx.user,
+                },
+                data: {
+                    styling: styling
+                }
+            }) as User;
 
             return {
                 result: true
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
-            });
-
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while updating your account.' });
             // --todo-- add error logging to sentry
         }
-    }
-    ),
+    }),
+    delete: protectedProcedure.input(z.object({})).mutation(async ({ ctx }) => {
+        try {
+            console.log(`Deleting User: ${ctx.user}`);
+            await ctx.prisma.user.delete({
+                where: {
+                    id: ctx.user,
+                },
+            });
+            return {
+                result: true
+            };
+        }
+        catch (err) {
+            console.log(err)
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while deleting your account.' });
+            // --todo-- add error logging to sentry
+        }
+    }),
     me: protectedProcedure.query(async ({ ctx }) => {
 
         try {
@@ -160,15 +215,40 @@ export const userRouter = router({
 
             return {
                 username: user.username,
-                id: user.id
+                id: user.id,
+                styling: user.styling
             };
         }
-        catch (err: TRPCError | any) {
-            throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred.' });
+            // --todo-- add error logging.
+        }
+    }),
+    feedback: protectedProcedure.input(z.object(
+        {
+            text: z.string().min(20, 'Feedback must be at least 20 character long.').max(1000, 'Feedback must be at most 1000 characters long.'),
+        }
+    )).mutation(async ({ input, ctx }) => {
+
+        const { text } = input;
+
+        try {
+
+
+            await ctx.prisma.feedback.create({
+                data: {
+                    text,
+                    authorId: ctx.user,
+                },
             });
 
-            // --todo-- add error logging to sentry
+            return {
+                result: true
+            };
         }
-    })
+        catch (err) {
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An error occurred while sending feedback.' });
+            // --todo-- add error logging.
+        }
+    }),
 });

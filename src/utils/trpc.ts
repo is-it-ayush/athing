@@ -1,12 +1,9 @@
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-import type { NextApiRequest } from "next/types";
 import superjson from "superjson";
-import * as jwt from "jsonwebtoken";
 
 import { type AppRouter } from "../server/trpc/router/_app";
-import { type PrismaClient } from "@prisma/client";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -45,47 +42,7 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 
-/**
- * Helper for getting the user's session. Only used internally.
- * @example const session = await getSession(opts.req)
- */
 
-export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
-
-  console.log(`getSession called!`);
-  const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
-  const session = cookies.token ?? null;
-  const secret = await process.env.JWT_SECRET as string
-
-  if (!session) {
-    return null;
-  }
-
-  // Verify JWT (Typescript)
-  try {
-    const decoded = jwt.verify(session, secret) as {
-      id: string;
-    };
-
-    // Fetch the user from the database using the id in the JWT
-    const userData = await prisma.user.findUnique({
-      where: {
-        id: decoded.id
-      }
-    })
-
-    // If the user is blacklisted, return null
-    if (userData?.isBlacklisted) {
-      return null;
-    }
-
-    // Return the user
-    return decoded.id
-  }
-  catch (err) {
-    return null;
-  }
-}
 
 
 

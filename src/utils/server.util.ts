@@ -1,4 +1,9 @@
 import bcrypt from 'bcrypt';
+import { type PrismaClient } from '@prisma/client';
+import * as jwt from "jsonwebtoken";
+import { type NextApiRequest } from 'next/types';
+import { nanoid } from 'nanoid';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 /**
  * Hashes a string using bcrypt
@@ -43,5 +48,82 @@ export const formatResponse = (message: string, status: number, data?: object): 
  */
 
 export const generateUsername = async (): Promise<string> => {
-    return `anon${Math.floor(Math.random() * 1000000)}`;
+    const randomId = await nanoid(13);
+    return `u_${randomId}`;
+}
+
+/**
+ * This will act as a middleware and fetch the user from the cookie and store it in the request context.
+ * @param opts : The req (NextApiRequest).
+ * @param prisma : The prisma (PrismaClient) objects
+ * @returns null | string - The user id string or null
+ */
+export const getSession = async (opts: { req: NextApiRequest }, prisma: PrismaClient) => {
+
+    const cookies = JSON.parse(JSON.stringify(opts.req.cookies));
+    const session = cookies.token ?? null;
+    const secret = await process.env.JWT_SECRET as string
+
+    if (!session) {
+        return null;
+    }
+
+    // Verify JWT (Typescript)
+    try {
+        const decoded = jwt.verify(session, secret) as {
+            id: string;
+        };
+
+        // Fetch the user from the database using the id in the JWT
+        const userData = await prisma.user.findUnique({
+            where: {
+                id: decoded.id
+            }
+        })
+
+        // If the user is blacklisted, return null
+        if (userData?.isBlacklisted) {
+            return null;
+        }
+
+        // Return the user
+        return decoded.id
+    }
+    catch (err) {
+        return null;
+    }
+}
+
+/**
+ * Convert the string to Pascal Case.
+ * @param {string} str - The string to convert
+ * @returns {string} - The converted string
+ */
+
+export const formatString = (str: string): string => {
+    let newStr = str.replace(/\w\S*/g, (txt) => {
+        return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+    });
+    newStr = newStr.replace(/\s{2,}/g, " ");
+    return newStr;
+}
+
+export const rateLimiter = new RateLimiterMemory({
+    points: 10, // 8 requests
+    duration: 60, // per 1 minute by IP 
+});
+
+/**
+ * Extract Client IP from Forwarded Headers.
+ * Since we are using a CDN (Vercel), we need to extract the client IP from the forwarded headers.
+ * @param {NextApiRequest} req - The request object
+ */
+export const getClientInfo = (req: NextApiRequest) => {
+
+    const header = req.headers.forwarded as string;
+    const userInfo = {
+        ip: header.split(';')[0]?.split('=')[1] || null,
+        host: header.split(';')[1]?.split('=')[1] || null,
+    }
+    return userInfo;
 }

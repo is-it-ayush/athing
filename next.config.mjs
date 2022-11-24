@@ -5,13 +5,7 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
-// Content Security Policy
-const ContentSecurityPolicy = `
-  default-src 'self';
-  script-src 'self';
-  style-src 'self';
-  font-src 'self' fonts.google.com;  
-`;
+
 
 // Cool Security Headers.
 const securityHeaders = [
@@ -35,10 +29,6 @@ const securityHeaders = [
 		key: 'Referrer-Policy',
 		value: 'strict-origin-when-cross-origin', // https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 	},
-	{
-		key: 'Content-Security-Policy',
-		value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
-	},
 ];
 
 /** @type {import("next").NextConfig} */
@@ -48,6 +38,14 @@ const config = {
 	i18n: {
 		locales: ['en'],
 		defaultLocale: 'en',
+	},
+	async headers() {
+		return [
+			{
+				source: '/(.*)',
+				headers: securityHeaders,
+			},
+		];
 	},
 	async redirects() {
 		return [

@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'MODERATOR', 'USER');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" STRING NOT NULL,
@@ -5,6 +8,10 @@ CREATE TABLE "User" (
     "password" STRING NOT NULL,
     "email" STRING,
     "avatarId" INT4 DEFAULT 0,
+    "isBlacklisted" BOOL NOT NULL DEFAULT false,
+    "acceptedRules" BOOL NOT NULL DEFAULT false,
+    "acceptedTerms" BOOL NOT NULL DEFAULT false,
+    "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -16,6 +23,7 @@ CREATE TABLE "Post" (
     "at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
     "userId" STRING,
+    "isPublished" BOOL NOT NULL DEFAULT true,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
@@ -31,6 +39,29 @@ CREATE TABLE "Comment" (
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Journal" (
+    "id" STRING NOT NULL,
+    "title" STRING NOT NULL,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3),
+    "userId" STRING NOT NULL,
+    "isPublic" BOOL NOT NULL DEFAULT false,
+
+    CONSTRAINT "Journal_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Entry" (
+    "id" STRING NOT NULL,
+    "text" STRING NOT NULL,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3),
+    "journalId" STRING NOT NULL,
+
+    CONSTRAINT "Entry_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
@@ -43,6 +74,12 @@ CREATE UNIQUE INDEX "Post_id_key" ON "Post"("id");
 -- CreateIndex
 CREATE UNIQUE INDEX "Comment_id_key" ON "Comment"("id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Journal_id_key" ON "Journal"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Entry_id_key" ON "Entry"("id");
+
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -51,3 +88,9 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postsId_fkey" FOREIGN KEY ("postsI
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Journal" ADD CONSTRAINT "Journal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Entry" ADD CONSTRAINT "Entry_journalId_fkey" FOREIGN KEY ("journalId") REFERENCES "Journal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

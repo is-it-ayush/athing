@@ -1,6 +1,9 @@
 import { initTRPC, TRPCError } from "@trpc/server";
+import { getClientInfo, rateLimiter } from "@utils/server.util";
 import superjson from "superjson";
 import { type Context } from "./context";
+
+const NODE_ENV = process.env.NODE_ENV as string;
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -18,9 +21,6 @@ const t = initTRPC.context<Context>().create({
  */
 const isAuthenticated = t.middleware(async ({ ctx, next }) => {
 
-  console.log(`isAuthenticated middleware called!`);
-  console.log(ctx.session)
-
   if (!ctx.session) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
@@ -32,10 +32,31 @@ const isAuthenticated = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const rateLimit = t.middleware(async ({ ctx, next }) => {
+
+  // Getting the Client IP.
+  if (NODE_ENV === "production") {
+    const ci = getClientInfo(ctx.req);
+
+    if (!ci.ip || !ci.host) {
+      throw new TRPCError({ code: 'FORBIDDEN', message: "The request is denied." });
+    }
+
+    try {
+      await rateLimiter.consume(ci.ip, 2);
+    }
+    catch (err) {
+      throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: "Too many requests." });
+    }
+  }
+  return next();
+});
+
+
 export const router = t.router;
 
 // This is thr procedure for public routes
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(rateLimit);
 
 // This is the procedure for authenticated routes
 export const protectedProcedure = t.procedure.use(isAuthenticated);

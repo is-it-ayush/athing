@@ -1,7 +1,6 @@
 import React from 'react';
 import { type NextPage } from 'next';
 import { trpc } from '@utils/trpc';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { useFormik } from 'formik';
@@ -10,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { setCookie } from 'nookies';
 import { useRouter } from 'next/navigation';
 import { useAtom } from 'jotai';
+import { NextSeo } from 'next-seo';
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -19,16 +19,17 @@ import { Toast } from '@components/ui/Toast';
 import { handleError } from '@utils/client.util';
 
 // Types
-import { ToastIntent, User } from '@utils/client.typing';
+import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
 
 const LoginPage: NextPage = () => {
 	const params = useSearchParams();
 	const router = useRouter();
 
 	// Required Toast State
-	const [showToast, setShowToast] = React.useState(false);
-	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-	const [toastMessage, setToastMessage] = React.useState('');
+	const [showToast, setShowToast] = useAtom(showToastAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [pageLoad, setPageLoad] = React.useState(false);
 
 	//TRPC
 	const mutation = trpc.user.login.useMutation();
@@ -42,16 +43,12 @@ const LoginPage: NextPage = () => {
 		}
 
 		try {
-			// [DEBUG] Calculate Time
-			// const start = Date.now();
-
 			const res = await mutation.mutateAsync({
 				username: values.username.trim(),
 				password: values.password.trim(),
 				rememberMe: values.rememberMe,
 			});
 
-			// Set the cookie on the client side.
 			setCookie(null, 'token', res.token, {
 				maxAge: values.rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
 				path: '/',
@@ -68,9 +65,8 @@ const LoginPage: NextPage = () => {
 			}, 1000);
 
 			// Redirect to the app.
-		} catch (err: TRPCError | any) {
-			console.log(err);
-			const errorMessage = (await handleError(err)) as string;
+		} catch (err) {
+			const errorMessage = await handleError(err);
 			setToastIntent('error');
 			setToastMessage(errorMessage);
 			setShowToast(true);
@@ -84,13 +80,13 @@ const LoginPage: NextPage = () => {
 			.trim()
 			.min(3)
 			.max(20)
-			.regex(/^[a-z0-9]+$/),
-		password: z.string().trim().min(8).max(20),
+			.regex(/^[a-zA-Z0-9_-]+$/),
+		password: z.string().trim().min(8).max(30),
 		rememberMe: z.boolean(),
 	});
 
 	// Formik hook for form validation and control.
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
 		initialValues: {
 			username: params.get('username') || '',
 			password: '',
@@ -101,12 +97,17 @@ const LoginPage: NextPage = () => {
 	});
 
 	React.useEffect(() => {
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Enter') {
-				handleSubmit();
-			}
-		});
+		if (!pageLoad) {
+			setPageLoad(true);
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
+		}
+	});
 
+	React.useEffect(() => {
 		// Cleanup: Remove the event listener on unmount.
 		return () => {
 			document.removeEventListener('keydown', (e) => {
@@ -115,10 +116,11 @@ const LoginPage: NextPage = () => {
 				}
 			});
 		};
-	}, []);
+	});
 
 	return (
 		<main className="flex h-screen w-screen flex-col items-center justify-center font-spacemono">
+			<NextSeo title="Login" />
 			<div className="flex">
 				<AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
 			</div>
@@ -176,16 +178,7 @@ const LoginPage: NextPage = () => {
 						Signup
 					</div>
 				</motion.div>
-				{showToast ? (
-					<Toast
-						key="toastKey"
-						intent={toastIntent}
-						message={toastMessage}
-						onClose={() => {
-							setShowToast(!showToast);
-						}}
-					/>
-				) : null}
+				{showToast ? <Toast key="toastKey" /> : null}
 			</AnimatePresence>
 		</main>
 	);

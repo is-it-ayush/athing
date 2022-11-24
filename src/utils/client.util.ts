@@ -1,5 +1,7 @@
-import { type TRPCClientError } from '@trpc/client';
 import { type AppRouter } from '@server/trpc/router/_app';
+import { TRPCClientError } from '@trpc/client';
+import { TRPCError } from '@trpc/server';
+import { ZodError } from 'zod';
 
 export const loadZxcvbn = async () => {
 
@@ -18,24 +20,60 @@ export const loadZxcvbn = async () => {
     };
 };
 
-export const handleError = async (err: TRPCClientError<AppRouter>) => {
+export const handleError = async (err: any): Promise<string> => {
     let message: string;
-    switch (err.message) {
-        case 'UNAUTHORIZED':
-            message = 'You are not authorized to perform this action.';
-            break;
-        case 'BAD_REQUEST':
-            message = 'Invalid username or password.';
-            break;
-        default:
-            if (err instanceof Array) {
-                const parsedError = JSON.parse(err.message);
-                message = parsedError[0].message ?? 'Something went wrong!';
-            }
-            else {
-                message = 'Something went wrong!';
-            }
-            break;
+    if (err instanceof TRPCClientError) {
+
+        try {
+            const parsed = JSON.parse(err.shape.message);
+            message = parsed[0].message;
+        }
+        catch {
+            message = err.shape.message;
+        }
+    }
+    else {
+        message = 'An Error Occurred.';
     }
     return message;
 };
+
+export const formatDate = (date: Date | null, type?: string) => {
+
+    let options: Intl.DateTimeFormatOptions;
+
+    switch (type) {
+        case 'includeTime':
+            options = { year: '2-digit', month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit' };
+            break;
+        case 'dateAndTime':
+            options = { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit' };
+            break;
+        default:
+            options = { year: '2-digit', month: 'short', day: '2-digit' };
+            break;
+    }
+
+
+    return date ? Intl.DateTimeFormat('en-US', options).format(new Date(date)) : 'Sometime Ago'
+}
+
+export const ComponentAnimations = {
+    hidden: {
+        opacity: 0,
+    },
+    visible: {
+        opacity: 1,
+    },
+    transitions: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+    },
+};
+
+
+/**
+ * Helper for getting the user's session. Only used internally.
+ * @example const session = await getSession(opts.req)
+ */
+

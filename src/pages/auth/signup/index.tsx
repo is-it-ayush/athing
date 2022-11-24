@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { type NextPage } from 'next';
 import { trpc } from '@utils/trpc';
 import { handleError, loadZxcvbn } from '@utils/client.util';
@@ -6,6 +6,8 @@ import { zxcvbn, zxcvbnOptions, type ZxcvbnResult } from '@zxcvbn-ts/core';
 import { z } from 'zod';
 import { useFormik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
+import { NextSeo } from 'next-seo';
 
 // Components
 import { Button } from '@components/ui/Button';
@@ -15,21 +17,22 @@ import { Loading } from '@components/ui/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@components/ui/Toast';
-import { TRPCError } from '@trpc/server';
 
 // PNG
-import { type ToastIntent } from '@utils/client.typing';
+import { showToastAtom, toastIntentAtom, toastMessageAtom } from '@utils/store';
+import { useAtom } from 'jotai';
 
 const SignupPage: NextPage = () => {
 	const [pageLoad, setPageLoad] = React.useState(false);
 	const [pwdStrength, setPwdStrength] = React.useState<ZxcvbnResult>(zxcvbn(''));
 	const [showPage, setShowPage] = React.useState(0);
 	const router = useRouter();
+	const captchaRef = useRef(null);
 
 	// Required Toast State
-	const [showToast, setShowToast] = React.useState(false);
-	const [toastIntent, setToastIntent] = React.useState<ToastIntent>('success');
-	const [toastMessage, setToastMessage] = React.useState('');
+	const [displayToast, setDisplayToast] = useAtom(showToastAtom);
+	const [, setToastMessage] = useAtom(toastMessageAtom);
+	const [, setToastIntent] = useAtom(toastIntentAtom);
 
 	//TRPC
 	const mutation = trpc.user.signup.useMutation();
@@ -37,41 +40,63 @@ const SignupPage: NextPage = () => {
 	const signupSchema = z.object({
 		password: z
 			.string()
+			.trim()
 			.min(8)
-			.max(20)
-			.refine(() => pwdStrength.score / 4 >= 0.75, {
+			.max(30)
+			.refine(() => pwdStrength.score >= 3, {
 				message: 'Password is too weak',
 			}),
 		acceptTerms: z.boolean().refine((v) => v, {
 			message: 'You must accept the terms and conditions',
 		}),
+		token: z.string(),
 	});
 
-	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, touched } = useFormik({
+	const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, setFieldValue } = useFormik({
 		initialValues: {
 			password: '',
 			acceptTerms: false,
+			token: '',
 		},
 		validationSchema: toFormikValidationSchema(signupSchema),
 		onSubmit: async (values, actions) => {
 			try {
 				actions.setSubmitting(true);
-				const res = await mutation.mutateAsync({
+				await mutation.mutateAsync({
 					password: values.password,
+					acceptTerms: values.acceptTerms,
+					token: values.token,
 				});
 				setShowPage(1);
-			} catch (err: TRPCError | any) {
-				const errorMessage = (await handleError(err)) as string;
+			} catch (err) {
+				const errorMessage = await handleError(err);
 				setToastIntent('error');
 				setToastMessage(errorMessage);
-				setShowToast(true);
+				setDisplayToast(true);
 			}
 		},
 	});
 
+	const onCaptchError = () => {
+		setToastIntent('error');
+		setToastMessage('There was an error with the captcha! Please Refresh the page and try again.');
+		setDisplayToast(true);
+	};
+
+	const onCaptchaExpire = () => {
+		setToastIntent('error');
+		setToastMessage('The captcha has expired! Please Refresh the page and try again.');
+		setDisplayToast(true);
+	};
+
 	React.useEffect(() => {
 		if (!pageLoad) {
 			loadOptions();
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
 			setPageLoad(true);
 		}
 	}, []);
@@ -81,8 +106,18 @@ const SignupPage: NextPage = () => {
 		setPwdStrength(results);
 	}, [values.password]);
 
+	React.useEffect(() => {
+		// Cleanup: Remove the event listener on unmount.
+		return () => {
+			document.removeEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					handleSubmit();
+				}
+			});
+		};
+	}, []);
+
 	async function loadOptions(): Promise<void> {
-		console.log(`Loaded options.`);
 		const options = await loadZxcvbn();
 		zxcvbnOptions.setOptions(options);
 		return Promise.resolve();
@@ -90,6 +125,7 @@ const SignupPage: NextPage = () => {
 
 	return (
 		<main className="min-w-screen flex h-screen flex-col items-center justify-center overflow-hidden font-spacemono">
+			<NextSeo title="Sign Up" />
 			<div className="flex">
 				<AnimatePresence>{mutation.isLoading && <Loading />}</AnimatePresence>
 			</div>
@@ -121,6 +157,15 @@ const SignupPage: NextPage = () => {
 							checked={values.acceptTerms}
 							onChange={handleChange}
 							onBlur={handleBlur}
+						/>
+						<HCaptcha
+							sitekey={process.env.NEXT_PUBLIC_SITE_KEY || ''}
+							onVerify={(token) => {
+								setFieldValue('token', token);
+							}}
+							onError={onCaptchError}
+							onExpire={onCaptchaExpire}
+							ref={captchaRef}
 						/>
 						<Button
 							letterSpaced={true}
@@ -160,16 +205,7 @@ const SignupPage: NextPage = () => {
 						</Button>
 					</motion.div>
 				) : null}
-				{showToast ? (
-					<Toast
-						key="toastKey"
-						intent={toastIntent}
-						message={toastMessage}
-						onClose={() => {
-							setShowToast(!showToast);
-						}}
-					/>
-				) : null}
+				{displayToast ? <Toast key="toastKey" /> : null}
 			</AnimatePresence>
 		</main>
 	);

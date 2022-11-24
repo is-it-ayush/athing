@@ -1,4 +1,4 @@
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 import React, { useEffect } from 'react';
 
 const StrengthBarStyles = cva('flex w-full h-2 transition-all', {
