@@ -1,10 +1,9 @@
-import { Button } from '@components/ui/Button';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
 import { prisma } from '@server/db/client';
-import { StatisticsProps } from '@utils/client.typing';
+import type { StatisticsProps } from '@utils/client.typing';
 import { IoArrowBack } from 'react-icons/io5';
 
 const StatsPage = ({ stats }: { stats: StatisticsProps }) => {
@@ -36,7 +35,7 @@ const StatsPage = ({ stats }: { stats: StatisticsProps }) => {
 					</div>
 				</div>
 				<div className="flex flex-col border-2 border-gray-300 bg-white p-5 hover:border-black">
-					<h1 className="text-2xl">Daily Sign Up's</h1>
+					<h1 className="text-2xl">Daily Sign Up&apos;s</h1>
 					<div className="flex flex-row items-end gap-2">
 						<h3 className="mt-2 flex text-5xl font-bold">{stats.last24HoursUserCount}</h3>
 						<p className="flex text-sm">Users ( -24 hours)</p>

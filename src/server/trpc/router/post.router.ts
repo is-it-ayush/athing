@@ -186,7 +186,7 @@ export const postRouter = router({
                 throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid Post.', });
             }
 
-            const updatedPost = await ctx.prisma.post.update({
+            await ctx.prisma.post.update({
                 where: {
                     id,
                 },
@@ -194,7 +194,7 @@ export const postRouter = router({
                     text,
                     isPublished: !isPrivate,
                 },
-            }) as Post;
+            });
 
             return {
                 result: true,

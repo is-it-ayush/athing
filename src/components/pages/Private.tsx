@@ -28,7 +28,7 @@ export const Private: React.FC = () => {
 	const [, setShowToast] = useAtom(showToastAtom);
 
 	// Atoms
-	const [user, _] = useAtom(userInfo);
+	const [user,] = useAtom(userInfo);
 
 	// TRPC
 	const deleteNote = trpc.post.delete.useMutation();

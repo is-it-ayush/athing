@@ -105,7 +105,7 @@ const LoginPage: NextPage = () => {
 				}
 			});
 		}
-	});
+	}, []);
 
 	React.useEffect(() => {
 		// Cleanup: Remove the event listener on unmount.

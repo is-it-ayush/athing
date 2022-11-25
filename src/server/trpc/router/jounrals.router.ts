@@ -82,7 +82,7 @@ export const journalRouter = router({
                 result: true,
             };
         }
-        catch (err: PrismaClientKnownRequestError | any) {
+        catch (err) {
 
             if (err instanceof PrismaClientKnownRequestError) {
                 if (err.code === 'P2025' || err.code === 'P2018') {
@@ -90,7 +90,7 @@ export const journalRouter = router({
                 }
             }
             throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
+                code: 'INTERNAL_SERVER_ERROR',
                 message: 'An error occurred while updating journal.',
             });
         }
@@ -124,7 +124,7 @@ export const journalRouter = router({
                 result: true,
             };
         }
-        catch (err: PrismaClientKnownRequestError | any) {
+        catch (err) {
 
             if (err instanceof PrismaClientKnownRequestError) {
                 if (err.code === 'P2025' || err.code === 'P2018') {
@@ -133,7 +133,7 @@ export const journalRouter = router({
             }
 
             throw new TRPCError({
-                code: err.code || 'INTERNAL_SERVER_ERROR',
+                code: 'INTERNAL_SERVER_ERROR',
                 message: 'An error occurred while deleting journal.',
             });
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { trpc } from '@utils/trpc';
-import { TRPCError } from '@trpc/server';
 import { handleError } from '@utils/client.util';
 import { motion } from 'framer-motion';
 import { Button } from './Button';

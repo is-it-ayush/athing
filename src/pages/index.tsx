@@ -12,25 +12,6 @@ const Home: NextPage = () => {
 	const [tabState, setTabState] = React.useState(0);
 	const router = useRouter();
 
-	const getColor = () => {
-		const colors = [
-			'to-blue-900',
-			'to-green-900',
-			'to-yellow-900',
-			'to-red-900',
-			'to-purple-800',
-			'to-pink-900',
-			'to-indigo-900',
-			'to-rose-900',
-			'to-emerald-900',
-			'to-cyan-900',
-			'to-teal-900',
-			'to-orange-900',
-		];
-		const random = Math.floor(Math.random() * colors.length);
-		return colors[random];
-	};
-
 	return (
 		<AnimatePresence>
 			<NextSeo
