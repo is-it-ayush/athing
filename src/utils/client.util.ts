@@ -56,6 +56,10 @@ export const formatDate = (date: Date | null, type?: string) => {
     return date ? Intl.DateTimeFormat('en-US', options).format(new Date(date)) : 'Sometime Ago'
 }
 
+export const formatNumber = (number: number) => {
+    return Intl.NumberFormat('en-US', { maximumSignificantDigits: 3, notation: "compact" }).format(number);
+}
+
 export const ComponentAnimations = {
     hidden: {
         opacity: 0,
