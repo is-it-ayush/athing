@@ -45,6 +45,7 @@
 		"zod-formik-adapter": "^1.1.1"
 	},
 	"devDependencies": {
+		"@next/bundle-analyzer": "^13.0.5",
 		"@tanstack/react-query-devtools": "^4.16.1",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie": "^0.5.1",
