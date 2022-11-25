@@ -20,14 +20,14 @@ export function Navbar() {
 
 	return (
 		<motion.div
-			className=" no-select fixed top-5 z-[996] flex w-screen items-center justify-center font-spacemono backdrop-blur-[3px] backdrop-filter"
+			className="fixed top-5 z-[996] flex w-screen items-center justify-center font-spacemono backdrop-blur-[3px] backdrop-filter"
 			initial={{ y: -100 }}
 			animate={{ y: 0 }}
 			exit={{ y: -100 }}
 			transition={{ duration: 0.5 }}>
-			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full  px-5 ">
+			<div className="flex h-[60px] w-[95%] flex-row items-center justify-between rounded-full px-5">
 				<div className="flex font-semibold">@{res.data?.username}</div>
-				<div className="hidden flex-row divide-x-2 divide-gray-300 lg:flex">
+				<div className="hidden no-select flex-row divide-x-2 divide-gray-300 lg:flex">
 					<button
 						className="duration-400 flex px-5 hover:font-semibold"
 						onClick={() => {
