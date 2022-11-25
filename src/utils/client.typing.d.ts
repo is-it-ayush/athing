@@ -47,5 +47,12 @@ export type JournalBookProps = {
     type: 'select' | 'view';
 }
 
+export type StatisticsProps = {
+    totalUserCount: number;
+    last24HoursUserCount: number;
+    postCount: number;
+    journalCount: number;
+}
+
 
 export type ToastIntent = 'success' | 'error' | 'warning' | 'info';

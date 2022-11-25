@@ -8,7 +8,7 @@ export const appRouter = router({
   user: userRouter,
   post: postRouter,
   journals: journalRouter,
-  entry: entryRouter
+  entry: entryRouter,
 });
 
 // export type definition of API
