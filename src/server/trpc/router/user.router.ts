@@ -163,14 +163,14 @@ export const userRouter = router({
 
         try {
 
-            const user = await ctx.prisma.user.update({
+            await ctx.prisma.user.update({
                 where: {
                     id: ctx.user,
                 },
                 data: {
                     styling: styling
                 }
-            }) as User;
+            });
 
             return {
                 result: true

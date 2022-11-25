@@ -191,17 +191,20 @@ const SignupPage: NextPage = () => {
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.5 }}>
-						<h1 className="code my-2 text-center text-4xl font-bold">Welcome!</h1>
+						<h1 className="my-2 text-center text-4xl font-black text-red-600">Write It Down!</h1>
 						<p className="prose my-2 text-center">
-							You have successfully signed up. Here is your username: <b>{mutation.data?.username}</b>
+							Hey! <b className="text-black">please write down</b> your <b>Password</b> and your assigned Username:{' '}
+							<b className="text-black">{mutation.data?.username}</b>. There is no way to recover your password/account
+							if you forget it we do not store anything about you to identify you.
 						</p>
 						<Button
+						    styles="danger"
 							letterSpaced={true}
 							type="button"
 							onClick={() => {
 								router.push(`/auth/login?username=${mutation.data?.username}`);
 							}}>
-							Login
+							I agree, Login
 						</Button>
 					</motion.div>
 				) : null}

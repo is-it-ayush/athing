@@ -63,6 +63,7 @@ export const Notes: React.FC = () => {
 	React.useEffect(() => {
 		let fetching = false;
 		const onScroll = (e: any) => {
+			console.log(e, null, 2);
 			const { scrollHeight, scrollTop, clientHeight } = e.target.scrollingElement;
 
 			if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {

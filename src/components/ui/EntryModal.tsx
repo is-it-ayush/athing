@@ -21,7 +21,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { FiEdit3 } from 'react-icons/fi';
 import React from 'react';
 import { CgArrowsExchangeAlt } from 'react-icons/cg';
-import { TRPCClientError } from '@trpc/client';
 import type { Entry } from '@prisma/client';
 import { handleError } from '@utils/client.util';
 

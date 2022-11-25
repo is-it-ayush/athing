@@ -10,7 +10,7 @@ export default createNextApiHandler({
   createContext,
   onError:
     env.NODE_ENV === "development"
-      ? ({ error, type, path, input }) => {
+      ? ({ type, path, input }) => {
         console.log("Error in", type, "at", path, "with input", input);
       }
       : ({ error }) => {
