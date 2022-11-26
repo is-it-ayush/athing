@@ -10,6 +10,7 @@ import { Button } from '@components/ui/Button';
 
 const Home: NextPage = () => {
 	const [tabState, setTabState] = React.useState(0);
+	const [showMenu, setShowMenu] = React.useState(false);
 	const router = useRouter();
 
 	return (
@@ -27,13 +28,23 @@ const Home: NextPage = () => {
 				transition={{ duration: 0.3 }}>
 				<div className="z-[10] flex w-full flex-col">
 					<div className="fixed top-0 left-0 flex h-[60px] w-full ">
-						<ul className="flex w-full list-none flex-row justify-center gap-10 p-5">
+						<ul className="hidden w-full list-none flex-row justify-center gap-10 p-5 lg:flex">
 							<li className="inline-block hover:underline">
 								<Link href="/stats">Stats</Link>
 							</li>
 							<li className="inline-block hover:underline">
 								<Link href="https://github.com/is-it-ayush/athing" target="_blank" rel="noreferrer">
 									Github
+								</Link>
+							</li>
+							<li className="inline-block hover:underline">
+								<Link href="/rules" rel="noreferrer">
+									Rules
+								</Link>
+							</li>
+							<li className="inline-block hover:underline">
+								<Link href="https://rzp.io/l/XySo88m" target="_blank" rel="noreferrer">
+									Donate
 								</Link>
 							</li>
 							<li className="inline-block hover:underline">
@@ -47,7 +58,46 @@ const Home: NextPage = () => {
 								</Link>
 							</li>
 						</ul>
+						<ul className="flex w-full items-center justify-center p-5 lg:hidden">
+							<li className="inline-block hover:underline" onClick={() => setShowMenu(!showMenu)}>
+								{showMenu ? 'Close' : 'Menu'}
+							</li>
+						</ul>
 					</div>
+					{showMenu ? (
+						<div className="fixed top-[50%] left-0 z-[999] w-full -translate-y-[50%] bg-black p-5 font-normal text-white">
+							<ul className="flex flex-col items-center justify-center">
+								<li className="inline-block hover:underline">
+									<Link href="/stats">Stats</Link>
+								</li>
+								<li className="inline-block hover:underline">
+									<Link href="https://github.com/is-it-ayush/athing" target="_blank" rel="noreferrer">
+										Github
+									</Link>
+								</li>
+								<li className="inline-block hover:underline">
+									<Link href="/rules" rel="noreferrer">
+										Rules
+									</Link>
+								</li>
+								<li className="inline-block hover:underline">
+									<Link href="https://rzp.io/l/XySo88m" target="_blank" rel="noreferrer">
+										Donate
+									</Link>
+								</li>
+								<li className="inline-block hover:underline">
+									<Link href="/auth/login" prefetch={true}>
+										Login
+									</Link>
+								</li>
+								<li className="inline-block hover:underline">
+									<Link href="/auth/signup" prefetch={true}>
+										Signup
+									</Link>
+								</li>
+							</ul>
+						</div>
+					) : null}
 					<div className="flex w-full flex-col text-center">
 						<AnimatePresence mode="wait">
 							{tabState === 0 ? (
@@ -97,8 +147,8 @@ const Home: NextPage = () => {
 									</div>
 									<div className="flex flex-col items-start p-5">
 										<p className="font-regular prose my-2 min-w-[200px]">
-											A Thing is a place where you can anonymously share about daily life in short notes. You can also
-											write journals and log your entries. Make them public or private, it&apos;s up to you.
+											It&apos;s &lsquo;A Thing&lsquo; where one can anonymously rant about their daily lives in short notes. One can also
+											log entries in journals for themselves or for the world.
 										</p>
 										<Button
 											width="fit"

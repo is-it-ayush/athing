@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { setCookie } from 'nookies';
 import { allowPagesDisplayAtom, currentPageAtom, menuOpenAtom, showSettingsModalAtom } from '@utils/store';
 import { useAtom } from 'jotai';
+import Link from 'next/link';
 
 export const Menu = () => {
 	const router = useRouter();
@@ -17,7 +18,7 @@ export const Menu = () => {
 		<motion.div className="fixed top-[50%] flex min-h-fit w-screen translate-y-[-50%] flex-col items-center justify-center bg-black p-5 font-spacemono text-white">
 			<ul className="lg:hidden">
 				<button
-					className="flex flex-row items-center justify-center"
+					className="flex flex-row items-center justify-start"
 					onClick={() => {
 						setShowPage(0);
 						setMenuOpen(false);
@@ -26,7 +27,7 @@ export const Menu = () => {
 					<RiArrowRightSLine />
 				</button>
 				<button
-					className="flex flex-row items-center justify-center"
+					className="flex flex-row items-center justify-start"
 					onClick={() => {
 						setShowPage(1);
 						setMenuOpen(false);
@@ -35,7 +36,7 @@ export const Menu = () => {
 					<RiArrowRightSLine />
 				</button>
 				<button
-					className="flex flex-row items-center justify-center"
+					className="flex flex-row items-center justify-start"
 					onClick={() => {
 						setShowPage(2);
 						setMenuOpen(false);
@@ -46,7 +47,7 @@ export const Menu = () => {
 			</ul>
 			<ul>
 				<button
-					className="flex flex-row items-center justify-center"
+					className="flex flex-row items-center justify-start"
 					onClick={() => {
 						setAllowPagesDisplay(false);
 						setShowSettingsModal(true);
@@ -55,8 +56,19 @@ export const Menu = () => {
 					<li className="px-5 hover:underline">Settings</li>
 					<RiArrowRightSLine />
 				</button>
+				<Link
+					href="https://rzp.io/l/XySo88m"
+					target="_blank"
+					rel="noreferrer"
+					className="flex flex-row items-center justify-start"
+					onClick={() => {
+						setMenuOpen(false);
+					}}>
+					<li className="px-5 hover:underline">Donate</li>
+					<RiArrowRightSLine />
+				</Link>
 				<button
-					className="flex flex-row items-center justify-center"
+					className="flex flex-row items-center justify-start"
 					onClick={() => {
 						setCookie(null, 'token', '', {
 							maxAge: -1,

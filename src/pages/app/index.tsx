@@ -8,7 +8,6 @@ import { Journal } from '@components/pages/Journal';
 import { Notes } from '@components/pages/Notes';
 import { Private } from '@components/pages/Private';
 import { useAtom } from 'jotai';
-import { FullLoad } from '@components/ui/FullLoad';
 import { Button } from '@components/ui/Button';
 
 // Icons
