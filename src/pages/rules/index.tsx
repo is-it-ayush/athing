@@ -13,7 +13,7 @@ const RulesData = {
 	1: {
 		title: 'If you want to tell a story, always use made up names, characters and locations.',
 		description:
-			'You can tell a story about your life, but you must use made up names, characters and locations. This is to protect your privacy and the privacy of others. We do not tolerate doxing or outing.',
+			'You can tell all stories about your life, but you must use made up names, characters and locations. This is to protect your privacy and the privacy of others. We do not tolerate doxing or outing.',
 	},
 	2: {
 		title: 'If you do not agree with someone, scroll past them.',
@@ -21,8 +21,7 @@ const RulesData = {
 			'If you do not agree with someone, scroll past them. You can also put your phone down and go outside, have some fresh air and enjoy some time without your phone. It is necessary.',
 	},
 	3: {
-		title:
-			"Anything illegal under Indian Jurisdiction is strictly not allowed. It'll lead to a permanent ban.",
+		title: "Anything illegal under Indian Jurisdiction is strictly not allowed. It'll lead to a permanent ban.",
 		description:
 			"Anything illegal under Indian Jurisdiction is strictly not allowed. It'll lead to a permanent ban. The title is self explanatory. It'll lead to an instant permanent ban.",
 	},
@@ -59,7 +58,7 @@ const RulesPage = () => {
 							However, It comes at a cost. The cost to convey your opinions responsibly even when you're anonymous.{' '}
 							<b className="font-semibold text-green-600 underline decoration-wavy">A Thing</b> has{' '}
 							<b>zero tolerance</b> for anyone that break's the following rules as defined. Not Doing so
-							<b className="font-semibold text-red-600"> will Result in a Ban.</b> If you have any suggestions, drop us
+							<b className="font-semibold text-red-600"> will result in a Ban.</b> If you have any suggestions, drop us
 							a{' '}
 							<a
 								href="https://twitter.com/intent/tweet?screen_name=athing_app"
