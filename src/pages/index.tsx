@@ -147,7 +147,7 @@ const Home: NextPage = () => {
 									</div>
 									<div className="flex flex-col items-start p-5">
 										<p className="font-regular prose my-2 min-w-[200px]">
-											It's "A Thing" where one can anonymously rant about their daily lives in short notes. One can also
+											It&apos;s &lsquo;A Thing&lsquo; where one can anonymously rant about their daily lives in short notes. One can also
 											log entries in journals for themselves or for the world.
 										</p>
 										<Button

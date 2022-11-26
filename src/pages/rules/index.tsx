@@ -54,10 +54,10 @@ const RulesPage = () => {
 					<div className="flex flex-col font-normal">
 						<h6 className=""></h6>
 						<p className="">
-							Hi,{<br />} "Freedom Of Speech" is a fundamental right. All of us deserve our opinions to be heard.
-							However, It comes at a cost. The cost to convey your opinions responsibly even when you're anonymous.{' '}
+							Hi,{<br />} &lsquo;Freedom Of Speech&lsquo; is a fundamental right. All of us deserve our opinions to be heard.
+							However, It comes at a cost. The cost to convey your opinions responsibly even when you&apos;re anonymous.{' '}
 							<b className="font-semibold text-green-600 underline decoration-wavy">A Thing</b> has{' '}
-							<b>zero tolerance</b> for anyone that break's the following rules as defined. Not Doing so
+							<b>zero tolerance</b> for anyone that break&apos;s the following rules as defined. Not Doing so
 							<b className="font-semibold text-red-600"> will result in a Ban.</b> If you have any suggestions, drop us
 							a{' '}
 							<a
@@ -107,7 +107,7 @@ const RulesPage = () => {
 								setShowRuleInfo(true);
 							}}>
 							4. Anything illegal under <b className="font-semibold text-yellow-600">Indian Jurisdiction</b> is strictly
-							not allowed. It'll lead to a permanent ban.
+							not allowed. It&apos;ll lead to a permanent ban.
 						</h6>
 						<h6
 							className="cursor-pointer p-2 hover:bg-black hover:text-white"
@@ -115,7 +115,7 @@ const RulesPage = () => {
 								setRuleInfo(RulesData[4]);
 								setShowRuleInfo(true);
 							}}>
-							5. You're free to say whatever you want, except for hate.
+							5. You&apos;re free to say whatever you want, except for hate.
 						</h6>
 					</div>
 				</div>
