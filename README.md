@@ -1,26 +1,35 @@
 [contributing]: ./CONTRIBUTING.md
 
-## What?
+# **A Thing**
+[Live Demo](https://athing.vercel.app)
 
-What is this? Well, I ask that question to myself every time I start a new project. However, for a thing. I have an answer. **A Thing** is a platform that __*provides a safe, secure and an anonymous*__ environment for everyone who want's to **journal, rant, vent or help other's** in their lives.
+![image](https://user-images.githubusercontent.com/36449128/204675000-bcb5643a-8dff-433f-901b-7a532a62301d.png)
+
+
+## What is this?
+
+**A Thing** is a platform that __*provides a safe, secure and an anonymous*__ environment for everyone who want's to **journal, rant, vent or help other's** in their lives.
 
 ## Why?
 
-To put simply, **A Thing** goal is to give people a voice in an anonymous, open source way. Me and My Friend Devesh came up with the idea on a phone call on a late night where we both felt the need for a platform. Over the coming days a quick friend-survey rooted for such a place to exist where they could rant about their day or just vent in a anonymous way without being tied to their identities. We often struggle with mental health and all of us in our lives go through stuff we barely talk about because we'd be bombarded with the great human quality called, "Judgement" or special qualities where we feel the listener "Does Not Give A F^!#$" about our thoughts that keep us occupied. A Thing is for everything that 
+To put simply, **A Thing** goal is to give people a voice in an anonymous, open source way. We often struggle with mental health and all of us in our lives go through stuff we barely talk about. This is what inspired me to build A Thing. It features:
+- Write notes, make them public or private.
+- Create Journals and write Entries in your journal. You can make journals public or private.
+- Customize your experience by selecting from a bunch of theme's both for the app and for the journals.
+- Built on top of T3=Stack, ensure's complete **typesafety**.
 
-## Ok, Cool but how?
+## Architecture
 
-How? Well, I'm glad you asked. A Thing is built on top of the T3 Stack. What is t3 stack? Here's a quick overview:
+A Thing is built on top of the T3 Stack. What is t3 stack? Here's a quick overview:
 - T3 ensures e2e type safety. [Extremely Important (& Cool)]
 - What is 'T3'?
   - T3 generally means, Typesafety, Tailwind and tRPC, however there is also NextJS, Next-Auth and Prisma which are all remarkable tools on their own. Combine them, you get t3.
 - What is 'Typesafe'?
   - Google.
 
-## I want to contribute
+## I want to contribute!
 
 Thank You! <3 I'm glad you want to contribute. Please read the [Contribution Guidelines][contributing] for more information.
-
 
 ## I want to run this locally
 
@@ -29,6 +38,8 @@ Thank You! <3 I'm glad you want to contribute. Please read the [Contribution Gui
 - NodeJS
 - Yarn
 - Github CLI
+
+Ensure you have the `.env` setup from the `.env.example` file.
 
 ### Steps
 
