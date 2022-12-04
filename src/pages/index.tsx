@@ -75,7 +75,7 @@ const Home: NextPage = () => {
 										Rules
 									</Link>
 								</li>
-								
+
 								<li className="inline-block hover:underline">
 									<Link href="/auth/login" prefetch={true}>
 										Login
