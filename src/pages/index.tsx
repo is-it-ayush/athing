@@ -43,11 +43,6 @@ const Home: NextPage = () => {
 								</Link>
 							</li>
 							<li className="inline-block hover:underline">
-								<Link href="https://rzp.io/l/XySo88m" target="_blank" rel="noreferrer">
-									Donate
-								</Link>
-							</li>
-							<li className="inline-block hover:underline">
 								<Link href="/auth/login" prefetch={true}>
 									Login
 								</Link>
@@ -80,11 +75,7 @@ const Home: NextPage = () => {
 										Rules
 									</Link>
 								</li>
-								<li className="inline-block hover:underline">
-									<Link href="https://rzp.io/l/XySo88m" target="_blank" rel="noreferrer">
-										Donate
-									</Link>
-								</li>
+								
 								<li className="inline-block hover:underline">
 									<Link href="/auth/login" prefetch={true}>
 										Login
