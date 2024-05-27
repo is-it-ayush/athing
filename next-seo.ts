@@ -8,7 +8,7 @@ const config: DefaultSeoProps = {
     siteName: 'A Thing',
   },
   twitter: {
-    site: '@athing_app',
+    site: '@is_it_ayush',
     cardType: 'summary_large_image',
   },
   description: 'A Thing is a place to write.',

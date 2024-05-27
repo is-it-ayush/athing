@@ -120,7 +120,7 @@ export const Settings = () => {
 
   async function handleHelp() {
     window.open(
-      'https://twitter.com/intent/tweet?screen_name=athing_app',
+      'https://twitter.com/intent/tweet?screen_name=is_it_ayush',
       '_blank',
     );
   }
