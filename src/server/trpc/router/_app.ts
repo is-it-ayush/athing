@@ -1,8 +1,8 @@
-import { router } from "../trpc";
-import { entryRouter } from "./entry.router";
-import { journalRouter } from "./jounrals.router";
-import { postRouter } from "./post.router";
-import { userRouter } from "./user.router";
+import { router } from '../trpc';
+import { entryRouter } from './entry.router';
+import { journalRouter } from './jounrals.router';
+import { postRouter } from './post.router';
+import { userRouter } from './user.router';
 
 export const appRouter = router({
   user: userRouter,

@@ -6,13 +6,13 @@ import SEO from '../../next-seo';
 import { DefaultSeo } from 'next-seo';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-	return (
-		<>
-			<DefaultSeo {...SEO} />
-			<Component {...pageProps} />
-			<ReactQueryDevtools initialIsOpen={false} />
-		</>
-	);
+  return (
+    <>
+      <DefaultSeo {...SEO} />
+      <Component {...pageProps} />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </>
+  );
 };
 
 export default trpc.withTRPC(MyApp);

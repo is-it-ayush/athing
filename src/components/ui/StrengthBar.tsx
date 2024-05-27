@@ -5,7 +5,8 @@ const StrengthBarStyles = cva('flex w-full h-2 transition-all', {
   variants: {},
 });
 
-export interface StrengthBarProps extends VariantProps<typeof StrengthBarStyles> {
+export interface StrengthBarProps
+  extends VariantProps<typeof StrengthBarStyles> {
   strength: number;
 }
 
@@ -14,7 +15,8 @@ export const StrengthBar = ({ strength, ...props }: StrengthBarProps) => {
   const [label, setLabel] = React.useState('Weak');
   const styles = {
     width: `${percentage * 100}%`,
-    backgroundColor: percentage < 0.5 ? 'red' : percentage < 0.75 ? 'orange' : 'green',
+    backgroundColor:
+      percentage < 0.5 ? 'red' : percentage < 0.75 ? 'orange' : 'green',
   };
 
   useEffect(() => {
