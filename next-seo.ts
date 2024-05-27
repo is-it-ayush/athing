@@ -1,4 +1,4 @@
-import { DefaultSeoProps } from 'next-seo';
+import type { DefaultSeoProps } from 'next-seo';
 
 const config: DefaultSeoProps = {
   openGraph: {
@@ -48,8 +48,8 @@ const config: DefaultSeoProps = {
       rel: 'apple-touch-icon',
       href: '/apple-touch-icon.png',
       sizes: '180x180',
-    }
-  ]
+    },
+  ],
 };
 
 export default config;
