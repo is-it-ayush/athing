@@ -137,6 +137,19 @@ const SignupPage: NextPage = () => {
     return Promise.resolve();
   }
 
+  /**
+   * Copies the provided username to the clipboard and displays a success toast message.
+   *
+   * @param username - The username to be copied to the clipboard.
+   */
+  const copyUsernameToClipboardHandler = (username?: string) => {
+    if (!username) return;
+    navigator.clipboard.writeText(username);
+    setToastIntent('success');
+    setToastMessage('Username copied to clipboard');
+    setDisplayToast(true);
+  };
+
   return (
     <main className="min-w-screen flex h-screen flex-col items-center justify-center overflow-hidden font-spacemono">
       <NextSeo title="Sign Up" />
@@ -215,9 +228,16 @@ const SignupPage: NextPage = () => {
             <p className="prose my-2 text-center">
               Hey! <b className="text-black">please write down</b> your{' '}
               <b>Password</b> and your assigned Username:{' '}
-              <b className="text-black">{mutation.data?.username}</b>. There is
-              no way to recover your password/account if you forget it we do not
-              store anything about you to identify you.
+              <b
+                className="text-black cursor-pointer hover:underline"
+                onClick={() =>
+                  copyUsernameToClipboardHandler(mutation?.data?.username)
+                }
+              >
+                {mutation.data?.username}
+              </b>
+              . There is no way to recover your password/account if you forget
+              it we do not store anything about you to identify you.
             </p>
             <Button
               styles="danger"
