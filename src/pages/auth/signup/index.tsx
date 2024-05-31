@@ -229,7 +229,7 @@ const SignupPage: NextPage = () => {
               Hey! <b className="text-black">please write down</b> your{' '}
               <b>Password</b> and your assigned Username:{' '}
               <b
-                className="text-black cursor-pointer hover:underline"
+                className="text-black cursor-pointer underline"
                 onClick={() =>
                   copyUsernameToClipboardHandler(mutation?.data?.username)
                 }
@@ -237,7 +237,8 @@ const SignupPage: NextPage = () => {
                 {mutation.data?.username}
               </b>
               . There is no way to recover your password/account if you forget
-              it we do not store anything about you to identify you.
+              it we do not store anything about you to identify you. You can
+              click to copy the username.
             </p>
             <Button
               styles="danger"
