@@ -23,7 +23,7 @@ const RulesData = {
   3: {
     title: 'Prohibited/Illegal Content Policy',
     description:
-      'Our platform operates under Indian jurisdiction. Any prohibited or illegal content will be removed, and the responsible account terminated. Zero tolerance for illegal activities. Act responsibly.',
+      'Our platform operates under Indian jurisdiction. Any content published on the platform by a user that is deemed as an offence under Bharatiya Nyaya Sanhita, 2023 (BNS) and The Information Technology Act, 2000 (IT) (as respected under the Indian Constitution) will be removed. The authorities will be notified depending on severity, and the responsible account will be terminated. Zero tolerance for illegal activities. Act responsibly.',
   },
   4: {
     title: 'Respect Others',
