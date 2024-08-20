@@ -1,6 +1,6 @@
 # **athing.**
 
-visit [athing.isitayush.dev](https://athing.isitayush.dev/)
+> Visit: [athing.isitayush.dev](https://athing.isitayush.dev/)
 
 ![image](https://user-images.githubusercontent.com/36449128/204675000-bcb5643a-8dff-433f-901b-7a532a62301d.png)
 
