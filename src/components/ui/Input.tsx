@@ -33,7 +33,8 @@ const InputStyles = cva(
 export interface InputProps extends VariantProps<typeof InputStyles> {
   id: string;
   type: string;
-  label: string;
+  label?: string;
+  customLabel?: React.ReactNode;
   value?: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
@@ -59,6 +60,7 @@ export const Input = ({
   value,
   checked,
   onChange,
+  customLabel = null,
   ...props
 }: InputProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -87,7 +89,7 @@ export const Input = ({
           htmlFor={id}
           className="ml-2 flex h-full w-full items-center justify-center whitespace-nowrap text-sm"
         >
-          {label}
+          {customLabel ? customLabel : label}
         </label>
       </div>
     );

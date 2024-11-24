@@ -178,7 +178,20 @@ const SignupPage: NextPage = () => {
             />
             <StrengthBar strength={pwdStrength.score} />
             <Input
-              label="I accept the terms and conditions."
+              customLabel={
+                <span>
+                  I accept the{' '}
+                  <a
+                    href="/rules"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-bold underline"
+                  >
+                    platform rules
+                  </a>
+                  .
+                </span>
+              }
               type="checkbox"
               intent="default"
               id="acceptTerms"
