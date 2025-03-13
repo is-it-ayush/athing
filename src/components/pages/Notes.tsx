@@ -22,6 +22,8 @@ import {
   allowPagesDisplayAtom,
 } from '@utils/store';
 
+export const POSTS_PER_PAGE = 20;
+
 export const Notes: React.FC = () => {
   const [, setSelectedNote] = useAtom(selectedNoteAtom);
 
@@ -39,11 +41,11 @@ export const Notes: React.FC = () => {
 
   const notesQuery = trpc.post.get.useInfiniteQuery(
     {
-      limit: 10,
+      limit: POSTS_PER_PAGE,
     },
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage.length < 10) return undefined;
+        if (lastPage.length < POSTS_PER_PAGE) return undefined;
         return lastPage[lastPage.length - 1]?.id;
       },
     },

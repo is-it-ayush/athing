@@ -4,6 +4,7 @@ import { router, protectedProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
 import { type Post } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { POSTS_PER_PAGE } from '@components/pages/Notes';
 
 export const postRouter = router({
   create: protectedProcedure
@@ -76,7 +77,7 @@ export const postRouter = router({
           orderBy: {
             at: 'desc',
           },
-          take: 10,
+          take: POSTS_PER_PAGE,
           skip: cursor ? 1 : 0,
           cursor: cursor ? { id: cursor } : undefined,
         });
