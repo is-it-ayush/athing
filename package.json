@@ -37,7 +37,7 @@
     "jotai": "^2.8.2",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
-    "next": "14.2.3",
+    "next": "14.2.21",
     "next-seo": "^6.5.0",
     "nookies": "^2.5.2",
     "rate-limiter-flexible": "^5.0.3",
