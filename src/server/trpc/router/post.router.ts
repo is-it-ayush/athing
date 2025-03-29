@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { router, protectedProcedure } from '../trpc';
+import { router, protectedProcedure, publicProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
 import { type Post } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -252,6 +252,103 @@ export const postRouter = router({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'An error occurred while deleting the post.',
         });
+      }
+    }),
+  share: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().trim(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      try {
+        const post = (await ctx.prisma.post.findUnique({
+          where: {
+            id,
+          },
+        })) as Post;
+
+        if (!post || post.userId !== ctx.session) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Invalid Post.',
+          });
+        }
+
+        await ctx.prisma.post.update({
+          where: {
+            id,
+          },
+          data: {
+            shared: !post.shared,
+          },
+        });
+
+        return {
+          result: true,
+          shared: post.shared,
+        };
+      } catch (err) {
+        if (err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025' || err.code === 'P2018') {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'The requested notes were not found!',
+            });
+          }
+        }
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An error occurred while sharing the post.',
+        });
+      }
+    }),
+  getSharedPost: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { id } = input;
+
+      try {
+        const sharedPost = await ctx.prisma.post.findUnique({
+          where: {
+            id: id,
+          },
+          select: {
+            text: true,
+            User: {
+              select: {
+                username: true,
+              },
+            },
+            id: true,
+            shared: true,
+            at: true,
+          },
+        });
+
+        if (!sharedPost || !sharedPost.shared) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Invalid Post.',
+          });
+        }
+        return sharedPost;
+      } catch (err) {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: err.message });
+        } else {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An error occurred while fetching note.',
+          });
+        }
+        // --todo-- add error logging.
       }
     }),
 });

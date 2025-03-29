@@ -33,6 +33,7 @@ model Post {
   userId      String?
   isPublished Boolean   @default(true)
   User        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shared      Boolean   @default(false)
   Comment     Comment[]
 }
 
@@ -67,6 +68,7 @@ model Entry {
   authorId  String
   journalId String
   journal   Journal   @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  shared    Boolean   @default(false)
 }
 
 model Feedback {

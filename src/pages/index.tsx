@@ -22,7 +22,7 @@ const Home: NextPage = () => {
       />
       <motion.div
         key="main"
-        className={`flex h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-clouds-pattern p-10 font-spacemono font-semibold text-black`}
+        className={`flex h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-[image:var(--clouds-pattern)] p-10 font-spacemono font-semibold text-black`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}

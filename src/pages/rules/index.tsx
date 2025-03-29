@@ -39,7 +39,7 @@ const RulesPage = () => {
 
   return (
     <motion.div
-      className={`flex min-h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-clouds-pattern p-10 font-spacemono font-semibold text-black`}
+      className={`flex min-h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-[image:var(--clouds-pattern)] p-10 font-spacemono font-semibold text-black`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

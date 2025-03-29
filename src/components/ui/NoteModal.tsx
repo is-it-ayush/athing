@@ -36,14 +36,14 @@ export const NoteModal = () => {
   // Add Properties
   const [text, setText] = React.useState(selectedNote?.text ?? '');
   const [isNotePrivate, setIsNotePrivate] = React.useState(
-    !selectedNote?.isPublished ?? false,
+    !selectedNote?.isPublished,
   );
 
   const createNoteMutation = trpc.post.create.useMutation();
   const updateNoteMutation = trpc.post.edit.useMutation();
 
   // Helpers
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const [user] = useAtom(userInfo);
 
   React.useEffect(() => {

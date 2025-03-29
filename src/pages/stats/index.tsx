@@ -6,13 +6,16 @@ import { prisma } from '@server/db/client';
 import type { StatisticsProps } from '@utils/client.typing';
 import { IoArrowBack } from 'react-icons/io5';
 import { formatNumber } from '@utils/client.util';
+import type { InferGetStaticPropsType } from 'next';
 
-const StatsPage = ({ stats }: { stats: StatisticsProps }) => {
+const StatsPage = ({
+  stats,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
 
   return (
     <motion.div
-      className={`flex h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-clouds-pattern p-10 font-spacemono font-semibold text-black`}
+      className={`flex h-screen w-screen flex-col items-center justify-center bg-opacity-[10%] bg-[image:var(--clouds-pattern)]  p-10 font-spacemono font-semibold text-black`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -78,13 +81,16 @@ const StatsPage = ({ stats }: { stats: StatisticsProps }) => {
   );
 };
 
+/**
+ * This is server side code which revalidate every 30 minutes with new data.
+ */
 export const getStaticProps = async () => {
-  /**
-   * Get the stats from the database
-   * We can do it directly because the code never runs on client side.
-   * This is server side code which revalidate every 30 minutes with new data.
-   * @type {StatisticsProps}
-   */
+  let stats: StatisticsProps = {
+    totalUserCount: 0,
+    last24HoursUserCount: 0,
+    postCount: 0,
+    journalCount: 0,
+  };
   const totalUserCount = await prisma.user.count();
   const last24HoursUserCount = await prisma.user.count({
     where: {
@@ -98,12 +104,12 @@ export const getStaticProps = async () => {
     where: { isPublic: true },
   });
 
-  const stats = {
+  stats = {
     totalUserCount,
     last24HoursUserCount,
     postCount,
     journalCount,
-  } as StatisticsProps;
+  };
 
   return {
     props: {

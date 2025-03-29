@@ -1,15 +1,15 @@
 export const THEME_CONFIG = {
   0: 'bg-white',
-  1: 'bg-cross-pattern',
-  2: 'bg-triangle-pattern',
-  3: 'bg-diamonds-pattern',
-  4: 'bg-overlapcrc-pattern',
-  5: 'bg-brickwall-pattern',
-  6: 'bg-bubbles-pattern',
-  7: 'bg-leaf-pattern',
-  8: 'bg-tictactoe-pattern',
-  9: 'bg-wavy-pattern',
-  10: 'bg-clouds-pattern',
+  1: 'bg-[image:var(--cross-pattern)]',
+  2: 'bg-[image:var(--triangle-pattern)]',
+  3: 'bg-[image:var(--diamonds-pattern)]',
+  4: 'bg-[image:var(--overlapcrc-pattern)]',
+  5: 'bg-[image:var(--brickwall-pattern)]',
+  6: 'bg-[image:var(--bubbles-pattern)]',
+  7: 'bg-[image:var(--leaf-pattern)]',
+  8: 'bg-[image:var(--tictactoe-pattern)]',
+  9: 'bg-[image:var(--wavy-pattern)] ',
+  10: 'bg-[image:var(--clouds-pattern)] ',
 };
 
 // --todo-- write better theme logic

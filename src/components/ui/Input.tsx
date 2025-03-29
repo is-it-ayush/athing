@@ -5,7 +5,7 @@ import React from 'react';
 import { GrFormView, GrFormViewHide } from 'react-icons/gr';
 
 const InputStyles = cva(
-  'mt-1 block w-full border-gray-300 shadow-sm outline-none duration-200',
+  'mt-1 block w-full border-gray-300 shadow-sm outline-none duration-200 py-2 px-1.5',
   {
     variants: {
       intent: {

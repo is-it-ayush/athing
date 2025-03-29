@@ -1,12 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-harting: 'Harting', sans-serif;
+  --font-spacemono: 'Space Mono', monospace;
+  --brickwall-pattern: url('/bgs/brickwall.svg');
+  --bubbles-pattern: url('/bgs/bubble.svg');
+  --clouds-pattern: url('/bgs/clouds.svg');
+  --cross-pattern: url('/bgs/cross.svg');
+  --diamonds-pattern: url('/bgs/diamonds.svg');
+  --leaf-pattern: url('/bgs/leaf.svg');
+  --overlapcrc-pattern: url('/bgs/overlapcrc.svg');
+  --tictactoe-pattern: url('/bgs/tictactoe.svg');
+  --triangle-pattern: url('/bgs/triangle.svg');
+  --wavy-pattern: url('/bgs/wavy.svg');
+}
 
 @font-face {
   font-family: 'Harting';
-  src: url('../components/assets/fonts/Harting.ttf');
+  src: url('../components/assets/fonts/Harting.ttf') format('truetype');
 }
 
 @layer base {

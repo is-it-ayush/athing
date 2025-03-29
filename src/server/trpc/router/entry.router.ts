@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { router, protectedProcedure } from '../trpc';
+import { router, protectedProcedure, publicProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
 import type { Entry, Journal } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -285,6 +285,106 @@ export const entryRouter = router({
             message: 'An error occurred while fetching the entries.',
           });
         }
+      }
+    }),
+  share: protectedProcedure
+    .input(
+      z.object({
+        entryId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { entryId } = input;
+
+      try {
+        const entry = await ctx.prisma.entry.findUnique({
+          where: {
+            id: entryId,
+          },
+        });
+
+        if (entry?.authorId !== ctx.user) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'You are not authorized.',
+          });
+        }
+
+        await ctx.prisma.entry.update({
+          where: {
+            id: entryId,
+          },
+          data: {
+            shared: !entry.shared,
+          },
+        });
+
+        return {
+          result: true,
+        };
+      } catch (err) {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: err.message,
+          });
+        } else {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An error occurred while sharing the entry.',
+          });
+        }
+      }
+    }),
+  getSharedEntry: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { id } = input;
+
+      try {
+        const sharedEntry = await ctx.prisma.entry.findUnique({
+          where: {
+            id: id,
+            shared: true,
+          },
+          select: {
+            text: true,
+            id: true,
+            journal: {
+              select: {
+                title: true,
+                user: {
+                  select: {
+                    username: true,
+                  },
+                },
+              },
+            },
+            createdAt: true,
+          },
+        });
+
+        if (!sharedEntry) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Invalid Entry.',
+          });
+        }
+        return sharedEntry;
+      } catch (err) {
+        if (err instanceof PrismaClientKnownRequestError) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: err.message });
+        } else {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An error occurred while fetching shared entry.',
+          });
+        }
+        // --todo-- add error logging.
       }
     }),
 });

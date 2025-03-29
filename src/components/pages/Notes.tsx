@@ -1,13 +1,13 @@
 import { trpc } from '@utils/trpc';
 import { useAtom } from 'jotai';
-import { formatDate } from '@utils/client.util';
+import { formatDate, handleError } from '@utils/client.util';
 
 // Components
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Icons
-import { BiBookOpen, BiEdit } from 'react-icons/bi';
+import { BiBookOpen, BiEdit, BiShare } from 'react-icons/bi';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 
 // Atoms
@@ -50,6 +50,7 @@ export const Notes: React.FC = () => {
       },
     },
   );
+  const toggleNoteShareMutation = trpc.post.share.useMutation();
 
   async function handleNoteDelete(note_id: string) {
     const res = await deleteNote.mutateAsync({ id: note_id });
@@ -59,6 +60,31 @@ export const Notes: React.FC = () => {
       setToastIntent('success');
       setToastMessage('Your note has been deleted successfully.');
       notesQuery.refetch();
+    }
+  }
+
+  async function handleToggleNoteShare(note_id: string) {
+    try {
+      const res = await toggleNoteShareMutation.mutateAsync({
+        id: note_id,
+      });
+      if (res.result) {
+        if (navigator.clipboard && res.shared) {
+          navigator.clipboard.writeText(
+            `${window.location.origin}/share/${note_id}`,
+          );
+        }
+        setToastIntent('success');
+        setToastMessage(
+          `The note has now been ${!res.shared ? 'shared and a link has been copied to your clipboard' : 'unshared'}`,
+        );
+        setShowToast(true);
+      }
+    } catch (err) {
+      const errorMessage = await handleError(err);
+      setToastIntent('error');
+      setToastMessage(errorMessage);
+      setShowToast(true);
     }
   }
 
@@ -112,7 +138,7 @@ export const Notes: React.FC = () => {
                       },
                     }}
                     key={note.id}
-                    className={`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all hover:border-black lg:m-5 lg:p-5`}
+                    className={`m-5 flex h-[200px] w-[300px] cursor-pointer flex-col justify-evenly border-2 bg-white p-5 transition-all border-white hover:border-black lg:m-5 lg:p-5`}
                   >
                     <div className="my-3 flex flex-col">
                       <h1 className="text-xl font-bold">
@@ -151,6 +177,14 @@ export const Notes: React.FC = () => {
                             }}
                           >
                             <BiEdit className="h-6 w-6" />
+                          </button>
+                          <button
+                            className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"
+                            onClick={() => {
+                              handleToggleNoteShare(note.id);
+                            }}
+                          >
+                            <BiShare className="h-6 w-6" />
                           </button>
                           <button
                             className="mr-2 w-fit cursor-pointer rounded-full p-2 transition-all duration-200 hover:bg-black hover:text-white"

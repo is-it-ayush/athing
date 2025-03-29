@@ -9,7 +9,6 @@ import {
   showSettingsModalAtom,
 } from '@utils/store';
 import { useAtom } from 'jotai';
-import Link from 'next/link';
 
 export const Menu = () => {
   const router = useRouter();
