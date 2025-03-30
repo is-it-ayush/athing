@@ -182,7 +182,11 @@ export const journalRouter = router({
       try {
         const journals = await ctx.prisma.journal.findMany({
           where: {
-            isPublic: true,
+            AND: [
+              { isPublic: true },
+              // atleast one entry
+              { entries: { some: {} } },
+            ],
           },
           include: {
             _count: {
