@@ -144,6 +144,12 @@ const SignupPage: NextPage = () => {
    */
   const copyUsernameToClipboardHandler = (username?: string) => {
     if (!username) return;
+    if (!navigator.clipboard) {
+      setToastIntent('error');
+      setToastMessage('Could not auto-copy username. Please write it down.');
+      setDisplayToast(true);
+      return;
+    }
     navigator.clipboard.writeText(username);
     setToastIntent('success');
     setToastMessage('Username copied to clipboard');
